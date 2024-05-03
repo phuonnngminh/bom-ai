@@ -6,6 +6,7 @@ import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
+import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
 import uet.oop.bomberman.graphics.Screen;
@@ -31,6 +32,7 @@ public class Board implements IRender {
 	public List<Character> _characters = new ArrayList<>();
 	protected List<Bomb> _bombs = new ArrayList<>();
 	private List<Message> _messages = new ArrayList<>();
+	private List<Item> _activeItems = new ArrayList<>();
 	
 	private int _screenToShow = -1; //1:endgame, 2:changelevel, 3:paused
 	
@@ -53,6 +55,7 @@ public class Board implements IRender {
 		updateCharacters();
 		updateBombs();
 		updateMessages();
+		updateActiveItems();
 		detectEndGame();
 		
 		for (int i = 0; i < _characters.size(); i++) {
@@ -228,6 +231,10 @@ public class Board implements IRender {
 	public Entity getEntityAt(double x, double y) {
 		return _entities[(int)x + (int)y * _levelLoader.getWidth()];
 	}
+
+	public void addActiveItem(Item item) {
+		_activeItems.add(item);
+	}
 	
 	public void addEntity(int pos, Entity e) {
 		_entities[pos] = e;
@@ -288,6 +295,14 @@ public class Board implements IRender {
 	protected void updateBombs() {
 		if( _game.isPaused() ) return;
 		Iterator<Bomb> itr = _bombs.iterator();
+		
+		while(itr.hasNext())
+			itr.next().update();
+	}
+	
+	protected void updateActiveItems() {
+		if( _game.isPaused() ) return;
+		Iterator<Item> itr = _activeItems.iterator();
 		
 		while(itr.hasNext())
 			itr.next().update();

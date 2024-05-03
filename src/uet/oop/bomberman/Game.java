@@ -30,6 +30,7 @@ public class Game extends Canvas {
 	private static final double BOMBERSPEED = 1.0;//toc do bomber
 	
 	public static final int TIME = 200;
+	public static final int ITEM_TIME = 20;
 	public static final int POINTS = 0;
 	
 	protected static int SCREENDELAY = 3;
@@ -45,7 +46,7 @@ public class Game extends Canvas {
 	private boolean _running = false;
 	private boolean _paused = true;
 	
-	private Board _board;
+	private static Board _board;
 	private Screen screen;
 	private Frame _frame;
 	
@@ -156,7 +157,7 @@ public class Game extends Canvas {
 			}
 		}
 	}
-	
+
 	public static double getBomberSpeed() {
 		return bomberSpeed;
 	}
@@ -185,7 +186,7 @@ public class Game extends Canvas {
 		_screenDelay = SCREENDELAY;
 	}
 
-	public Board getBoard() {
+	public static Board getBoard() {
 		return _board;
 	}
 
