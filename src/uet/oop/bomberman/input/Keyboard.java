@@ -7,9 +7,15 @@ import java.awt.event.KeyListener;
  * Tiếp nhận và xử lý các sự kiện nhập từ bàn phím
  */
 public class Keyboard implements KeyListener {
+
+	public interface KeyboardInputCallback {
+		void keyInputDelay();
+	}
 	
 	private boolean[] keys = new boolean[120]; //120 is enough to this game
 	public boolean up, down, left, right, space;
+	private boolean delayUp, delayDown;
+	public KeyboardInputCallback keyboardInputCallback;
 	
 	public void update() {
 		up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
