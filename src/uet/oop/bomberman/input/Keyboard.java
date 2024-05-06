@@ -1,7 +1,10 @@
 package uet.oop.bomberman.input;
 
+import uet.oop.bomberman.utils.EGameControl;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Optional;
 
 /**
  * Tiếp nhận và xử lý các sự kiện nhập từ bàn phím
@@ -9,13 +12,12 @@ import java.awt.event.KeyListener;
 public class Keyboard implements KeyListener {
 
 	public interface KeyboardInputCallback {
-		void keyInputDelay();
+		void onKeyPressed(EGameControl gameControl);
 	}
 	
 	private boolean[] keys = new boolean[120]; //120 is enough to this game
 	public boolean up, down, left, right, space;
-	private boolean delayUp, delayDown;
-	public KeyboardInputCallback keyboardInputCallback;
+	public Optional<KeyboardInputCallback> keyboardInputCallback;
 	
 	public void update() {
 		up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
@@ -25,13 +27,45 @@ public class Keyboard implements KeyListener {
 		space = keys[KeyEvent.VK_SPACE] || keys[KeyEvent.VK_X];
 	}
 
+	private EGameControl keyToGameControl(int keyCode) {
+		if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W) {
+			return EGameControl.UP;
+		}
+
+		if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S) {
+			return EGameControl.DOWN;
+		}
+
+		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A) {
+			return EGameControl.LEFT;
+		}
+
+		if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) {
+			return EGameControl.RIGHT;
+		}
+
+		if (keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_X) {
+			return EGameControl.SPACE;
+		}
+
+		if (keyCode == KeyEvent.VK_ENTER) {
+			return EGameControl.ENTER;
+		}
+
+		return EGameControl.NONE;
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e) {}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		keys[e.getKeyCode()] = true;
-		
+
+		if (keyboardInputCallback.isPresent()) {
+			KeyboardInputCallback callback = keyboardInputCallback.get();
+			callback.onKeyPressed(keyToGameControl(e.getKeyCode()));
+		}
 	}
 
 	@Override

@@ -3,10 +3,13 @@ package uet.oop.bomberman.screen;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.utils.EGameControl;
 import uet.oop.bomberman.utils.EGameLevel;
+import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class SelectLevelScreen extends GameScreen {
@@ -20,6 +23,26 @@ public class SelectLevelScreen extends GameScreen {
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
         levels.add(EGameLevel.HARD.getStringLevel());
+
+        _input.keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
+            @Override
+            public void onKeyPressed(EGameControl gameControl) {
+                switch (gameControl) {
+                    case UP:
+                        selectorIndex--;
+                    case DOWN:
+                        selectorIndex++;
+                    case ENTER:
+                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                }
+
+                if (selectorIndex < 0) {
+                    selectorIndex = levels.size() - 1;
+                } else if (selectorIndex > levels.size() - 1) {
+                    selectorIndex = 0;
+                }
+            }
+        });
     }
 
     @Override
@@ -84,19 +107,5 @@ public class SelectLevelScreen extends GameScreen {
     }
 
     @Override
-    public void update() {
-        if (_input.getSingleUp()) {
-            System.out.print("vao day up");
-            selectorIndex++;
-        } else if (_input.getSingleDown()) {
-            selectorIndex--;
-            System.out.print("vao day down");
-        }
-
-        if (selectorIndex < 0) {
-            selectorIndex = levels.size() - 1;
-        } else if (selectorIndex > levels.size() - 1) {
-            selectorIndex = 0;
-        }
-    }
+    public void update() {}
 }
