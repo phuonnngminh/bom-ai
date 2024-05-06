@@ -13,13 +13,15 @@ public class BombItem extends Item {
 	}
 
 	@Override
-	protected void handleItemActive() {
-		Game.addBombRate(1);
-	}
-
-	@Override
-	protected void handleItemInactive() {
-		Game.addBombRate(-1);
+	public boolean collide(Entity e) {
+		// TODO: xử lý Bomber ăn Item
+            if (e instanceof Bomber) {
+                
+                Sound.play("Item");
+                Game.addBombRate(1);
+                remove();
+            }
+        return false;
 	}
 
 }
