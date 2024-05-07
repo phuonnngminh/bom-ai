@@ -30,10 +30,13 @@ public class SelectLevelScreen extends GameScreen {
                 switch (gameControl) {
                     case UP:
                         selectorIndex--;
+                        break;
                     case DOWN:
                         selectorIndex++;
+                        break;
                     case ENTER:
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        break;
                 }
 
                 if (selectorIndex < 0) {
