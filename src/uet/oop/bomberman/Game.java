@@ -108,11 +108,16 @@ public class Game extends Canvas {
 	private void update() {
 		_input.update();
 		_board.update();
+		if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+			_board.setShow(3); // Hiển thị màn hình tạm dừng
+			_paused = true; // Đặt trạng thái game là tạm dừng
+			return;
+	}
 	}
 	
 	public void start() {
 		_running = true;
-		
+		_paused = false; 
 		long  lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
 		final double ns = 1000000000.0 / 60.0; //nanosecond, 60 frames per second
@@ -129,17 +134,20 @@ public class Game extends Canvas {
 				updates++;
 				delta--;
 			}
-			
-			if(_paused) {
-				if(_screenDelay <= 0) {
-					_board.setShow(-1);
-					_paused = false;
-				}
-					
-				renderScreen();
+			if (_input.pause) {
+			_paused = !_paused; 
+			if (_paused) {
+				_board.setShow(3); 
 			} else {
-				renderGame();
+				_board.setShow(-1); 
 			}
+		}
+
+		if(_paused) {
+			renderScreen();
+		} else {
+			renderGame();
+		}
 				
 			
 			frames++;
