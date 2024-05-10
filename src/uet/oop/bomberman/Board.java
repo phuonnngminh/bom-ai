@@ -134,7 +134,7 @@ public class Board implements IRender {
 
 	// thêm tỉ lệ đặt bom của minvo
 	public int getBombRate() {
-		return 50;
+		return 30;
 	}
 
 	public void drawScreen(Graphics g) {
