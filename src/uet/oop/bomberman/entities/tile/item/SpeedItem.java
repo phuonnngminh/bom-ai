@@ -21,4 +21,9 @@ public class SpeedItem extends Item {
 	protected void handleItemInactive() {
 		Game.addBomberSpeed(-0.5);
 	}
+
+	@Override
+	public String getDisplayActiveItem() {
+		return "Speed:";
+	}
 }

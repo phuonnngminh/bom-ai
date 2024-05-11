@@ -22,4 +22,9 @@ public class BombItem extends Item {
 		Game.addBombRate(-1);
 	}
 
+	@Override
+	public String getDisplayActiveItem() {
+		return "Bomb:";
+	}
+
 }
