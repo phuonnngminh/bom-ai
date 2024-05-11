@@ -6,7 +6,7 @@ import uet.oop.bomberman.Game;
 import javax.swing.*;
 
 
-import javafx.event.ActionEvent;
+import javafx.event.*;
 
 import java.awt.*;
 
@@ -34,19 +34,6 @@ public class InfoPanel extends JPanel {
 		pauseButton = new JButton("Pause");
         pauseButton.setForeground(Color.white);
 		pauseButton.setHorizontalAlignment(JButton.CENTER);
-		pauseButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Nếu trò chơi đang tạm dừng, tiếp tục trò chơi và thay đổi trạng thái
-				if (gamePaused) {
-					_board.setShow(3); // Tiếp tục trò chơi
-					gamePaused = false; // Thay đổi trạng thái
-				} else { // Nếu trò chơi đang chạy, tạm dừng trò chơi và thay đổi trạng thái
-					_board.setShow(-1); // Tạm dừng trò chơi
-					gamePaused = true; // Thay đổi trạng thái
-				}
-			}
-		});
 		add(timeLabel);
 		add(pointsLabel);
 		add(pauseButton);

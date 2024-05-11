@@ -56,7 +56,11 @@ public class Screen {
 			}
 		}
 	}
-	
+	public void clear() {
+		for (int i = 0; i < _pixels.length; i++) {
+			_pixels[i] = 0;
+		}
+	}
 	public static void setOffset(int xO, int yO) {
 		xOffset = xO;
 		yOffset = yO;
