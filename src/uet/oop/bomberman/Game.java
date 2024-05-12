@@ -3,11 +3,13 @@ package uet.oop.bomberman;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
-
+import uet.oop.bomberman.gui.InfoPanel;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+
+import javafx.event.ActionEvent;
 
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
@@ -44,6 +46,7 @@ public class Game extends Canvas {
 	private Keyboard _input;
 	private boolean _running = false;
 	private boolean _paused = true;
+	private boolean _paused1 = true;
 	
 	private Board _board;
 	private Screen screen;
@@ -114,10 +117,8 @@ public class Game extends Canvas {
 			return;
 	}
 	}
-	
 	public void start() {
 		_running = true;
-		_paused = false; 
 		long  lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
 		final double ns = 1000000000.0 / 60.0; //nanosecond, 60 frames per second
@@ -134,19 +135,27 @@ public class Game extends Canvas {
 				updates++;
 				delta--;
 			}
-			if (_input.pause) {
-			_paused = !_paused; 
 			if (_paused) {
+				if (_screenDelay <= 0) {
+					_board.setShow(-1);
+					_paused = false;
+				}
+				renderScreen();
+			} else {
+				renderGame();
+			}
+			if (_paused1) {
 				_board.setShow(3); 
 			} else {
 				_board.setShow(-1); 
 			}
-		}
 
-		if(_paused) {
-			renderScreen();
-		} else {
-			renderGame();
+			if (_input.pause) {
+			_paused1 = !_paused1; 
+			if (_paused) {
+				_board.setShow(3); 
+			} else {
+			}
 		}
 				
 			
@@ -202,7 +211,7 @@ public class Game extends Canvas {
 	}
 	
 	public void pause() {
-		_paused = true;
+		_paused = !_paused;
 	}
 	public static void setBombRate(int bombRate) {
         Game.bombRate = bombRate;
@@ -215,4 +224,5 @@ public class Game extends Canvas {
     public static void setBomberSpeed(double bomberSpeed) {
         Game.bomberSpeed = bomberSpeed;
     }
+	
 }
