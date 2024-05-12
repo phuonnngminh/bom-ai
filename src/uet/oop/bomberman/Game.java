@@ -26,6 +26,7 @@ public class Game extends Canvas {
 	private static final int BOMBRATE = 1;
 	private static final int BOMBRADIUS = 1;
 	private static final double BOMBERSPEED = 1.0;// toc do bomber
+	private static int itemTime;
 
 	public static final int TIME = 200;
 	public static final int POINTS = 0;
@@ -42,7 +43,8 @@ public class Game extends Canvas {
 	private boolean _running = false;
 	private boolean _paused = true;
 
-	private Board _board;
+	private static Board _board;
+
 	private Screen screen;
 	private Frame _frame;
 
@@ -141,6 +143,7 @@ public class Game extends Canvas {
 			if (System.currentTimeMillis() - timer > 1000) {
 				_frame.setTime(_board.subtractTime());
 				_frame.setPoints(_board.getPoints());
+				_frame.setItemTime(_board.getItemTime());
 				timer += 1000;
 				_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 				updates = 0;
@@ -150,6 +153,10 @@ public class Game extends Canvas {
 					--_screenDelay;
 			}
 		}
+	}
+
+	public static int getItemTime() {
+		return itemTime;
 	}
 
 	public static double getBomberSpeed() {
@@ -180,7 +187,7 @@ public class Game extends Canvas {
 		_screenDelay = SCREENDELAY;
 	}
 
-	public Board getBoard() {
+	public static Board getBoard() {
 		return _board;
 	}
 
@@ -203,4 +210,5 @@ public class Game extends Canvas {
 	public static void setBomberSpeed(double bomberSpeed) {
 		Game.bomberSpeed = bomberSpeed;
 	}
+
 }

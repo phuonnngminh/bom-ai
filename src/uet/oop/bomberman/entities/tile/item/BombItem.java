@@ -8,6 +8,14 @@ import uet.oop.bomberman.sound.Sound;
 
 public class BombItem extends Item {
 
+	public void handleItemActive() {
+
+	}
+
+	public void handleItemInactive() {
+
+	}
+
 	public BombItem(int x, int y, Sprite sprite) {
 		super(x, y, sprite);
 	}
@@ -15,13 +23,18 @@ public class BombItem extends Item {
 	@Override
 	public boolean collide(Entity e) {
 		// TODO: xử lý Bomber ăn Item
-            if (e instanceof Bomber) {
-                
-                Sound.play("Item");
-                Game.addBombRate(1);
-                remove();
-            }
-        return false;
+		if (e instanceof Bomber) {
+
+			Sound.play("Item");
+			Game.addBombRate(1);
+			remove();
+		}
+		return false;
+	}
+
+	@Override
+	public String getDisplayActiveItem() {
+		return "Bomb:";
 	}
 
 }
