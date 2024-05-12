@@ -21,4 +21,9 @@ public class FlameItem extends Item {
 	protected void handleItemInactive() {
 		Game.addBombRadius(-1);
 	}
+
+	@Override
+	public String getDisplayActiveItem() {
+		return "Flame:";
+	}
 }
