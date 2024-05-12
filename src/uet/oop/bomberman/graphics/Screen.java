@@ -4,7 +4,6 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Bomber;
-import uet.oop.bomberman.utils.Global;
 
 import java.awt.*;
 
@@ -23,9 +22,7 @@ public class Screen {
 		_height = height;
 		
 		_pixels = new int[width * height];
-
-		Global.screenWidth = this.getRealWidth();
-		Global.screenHeight = this.getRealHeight();
+		
 	}
 	
 	public void clear() {
