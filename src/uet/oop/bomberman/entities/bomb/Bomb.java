@@ -52,7 +52,7 @@ public class Bomb extends AnimatedEntitiy {
 			_sprite =  Sprite.bomb_exploded2;
 			renderFlames(screen);
 		} else
-			_sprite = Sprite.movingSprite(Sprite.bomb, Sprite.bomb_1, Sprite.bomb_2, _animate, 60);
+			_sprite = Sprite.movingSprite(Sprite.bomb, Sprite.bomb_1, Sprite.bomb_2, _animate, Game.TICKS_PER_SECOND);
 		
 		int xt = (int)_x << 4;
 		int yt = (int)_y << 4;

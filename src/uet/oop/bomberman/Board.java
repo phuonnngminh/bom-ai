@@ -348,7 +348,7 @@ public class Board implements IRender {
 	public int getItemTime() {
 		int totalTime = 0;
 		for (int i = 0; i < _activeItems.size(); i++) {
-			totalTime += _activeItems.get(i).getDuration() / 60;
+			totalTime += _activeItems.get(i).getDuration() / Game.TICKS_PER_SECOND;
 		}
 		return totalTime;
 	}

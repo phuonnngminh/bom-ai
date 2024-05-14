@@ -66,7 +66,7 @@ public abstract class Enemy extends Character {
 				_sprite = _deadSprite;
 				_animate = 0;
 			} else {
-				_sprite = Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, _animate, 60);
+				_sprite = Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, _animate, Game.TICKS_PER_SECOND);
 			}
 				
 		}

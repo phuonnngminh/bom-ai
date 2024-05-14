@@ -58,7 +58,7 @@ public class InfoPanel extends JPanel {
 			if ((item.getDuration()) == 0) {
 				continue;
 			}
-			label += item.getDisplayActiveItem() + item.getDuration() / 60 + " ";
+			label += item.getDisplayActiveItem() + item.getDuration() / Game.TICKS_PER_SECOND + " ";
 		}
 		itemTimeLabel.setText(label);
 	}
