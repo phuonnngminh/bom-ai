@@ -15,7 +15,7 @@ public class InfoPanel extends JPanel {
 	private JLabel timeLabel;
 	private JLabel pointsLabel;
 	private JLabel itemTimeLabel;
-
+	private Game game;
 	public InfoPanel(Game game) {
 		setLayout(new GridLayout());
 		timeLabel = new JLabel("Time: " + game.getBoard().getTime());

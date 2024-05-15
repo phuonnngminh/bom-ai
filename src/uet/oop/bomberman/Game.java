@@ -45,8 +45,7 @@ public class Game extends Canvas {
 	private Keyboard _input;
 	private boolean _running = false;
 	private boolean _paused = true;
-	private boolean _paused1 = true;
-	private Board _board;
+	private static Board _board;
 	private Screen screen;
 	private Frame _frame;
 
@@ -196,11 +195,9 @@ public class Game extends Canvas {
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
 	}
-
 	public static Board getBoard() {
 		return _board;
 	}
-
 	public boolean isPaused() {
 		return _paused;
 	}
