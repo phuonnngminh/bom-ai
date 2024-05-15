@@ -3,13 +3,13 @@ package uet.oop.bomberman;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
-import uet.oop.bomberman.gui.InfoPanel;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-import javafx.event.ActionEvent;
+import javax.swing.JButton;
+
 
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
@@ -47,7 +47,6 @@ public class Game extends Canvas {
 	private boolean _running = false;
 	private boolean _paused = true;
 	private boolean _paused1 = true;
-	
 	private Board _board;
 	private Screen screen;
 	private Frame _frame;
@@ -64,6 +63,7 @@ public class Game extends Canvas {
 		
 		_board = new Board(this, _input, screen);
 		addKeyListener(_input);
+	
 	}
 	
 	
@@ -144,19 +144,12 @@ public class Game extends Canvas {
 			} else {
 				renderGame();
 			}
-			if (_paused1) {
-				_board.setShow(3); 
-			} else {
-				_board.setShow(-1); 
-			}
 
-			if (_input.pause) {
-			_paused1 = !_paused1; 
-			if (_paused) {
-				_board.setShow(3); 
-			} else {
-			}
-		}
+			if (_input.resume) {
+				_paused = false;
+				_board.setShow(-1);
+				}
+		
 				
 			
 			frames++;
