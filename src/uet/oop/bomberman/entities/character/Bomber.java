@@ -129,22 +129,23 @@ public class Bomber extends Character {
     }
 
     @Override
-    protected void calculateMove() {
-        // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
-        // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-        int xa = 0, ya = 0;
-		if(_input.up) ya--;
-		if(_input.down) ya++;
-		if(_input.left) xa--;
-		if(_input.right) xa++;
-		
-		if(xa != 0 || ya != 0)  {
-			move(xa * Game.getBomberSpeed(), ya * Game.getBomberSpeed());
-			_moving = true;
-		} else {
-			_moving = false;
-		}
+protected void calculateMove() {
+    int xa = 0, ya = 0;
+    if(_input.up) ya--;
+    if(_input.down) ya++;
+    if(_input.left) xa--;
+    if(_input.right) xa++;
+    
+    double speedPerFrame = Game.getBomberSpeed() / 60.0;
+    
+    if(xa != 0 || ya != 0)  {
+        move(xa * speedPerFrame, ya * speedPerFrame);
+        _moving = true;
+    } else {
+        _moving = false;
     }
+}
+
 
     @Override
     public boolean canMove(double x, double y) {
