@@ -1,7 +1,7 @@
 package uet.oop.bomberman.entities.bomb;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Bomber;
@@ -15,12 +15,12 @@ public class Bomb extends AnimatedEntitiy {
 	protected double _timeToExplode = 120; //2 seconds - thoi gian phat no
 	public int _timeAfter = 20;// thoi gian de no
 	
-	protected Board _board;
+	protected IEntityManager _board;
 	protected Flame[] _flames;
 	protected boolean _exploded = false;
 	protected boolean _allowedToPassThru = true;
 	 
-	public Bomb(int x, int y, Board board) {
+	public Bomb(int x, int y, IEntityManager board) {
 		_x = x;
 		_y = y;
 		_board = board;

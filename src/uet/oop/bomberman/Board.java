@@ -1,5 +1,7 @@
 package uet.oop.bomberman;
 
+import uet.oop.bomberman.base.IEntityManager;
+import uet.oop.bomberman.base.IMessageManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -22,7 +24,7 @@ import java.util.List;
 /**
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
-public class Board implements IRender {
+public class Board implements IRender, IEntityManager, IMessageManager {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Keyboard _input;
@@ -153,6 +155,7 @@ public class Board implements IRender {
 		}
 	}
 
+	@Override
 	public Entity getEntity(double x, double y, Character m) {
 
 		Entity res = null;
@@ -174,10 +177,12 @@ public class Board implements IRender {
 		return res;
 	}
 
+	@Override
 	public List<Bomb> getBombs() {
 		return _bombs;
 	}
 
+	@Override
 	public Bomb getBombAt(double x, double y) {
 		Iterator<Bomb> bs = _bombs.iterator();
 		Bomb b;
@@ -190,6 +195,7 @@ public class Board implements IRender {
 		return null;
 	}
 
+	@Override
 	public Bomber getBomber() {
 		Iterator<Character> itr = _characters.iterator();
 
@@ -204,6 +210,7 @@ public class Board implements IRender {
 		return null;
 	}
 
+	@Override
 	public Character getCharacterAtExcluding(int x, int y, Character a) {
 		Iterator<Character> itr = _characters.iterator();
 
@@ -223,6 +230,7 @@ public class Board implements IRender {
 		return null;
 	}
 
+	@Override
 	public FlameSegment getFlameSegmentAt(int x, int y) {
 		Iterator<Bomb> bs = _bombs.iterator();
 		Bomb b;
@@ -238,6 +246,7 @@ public class Board implements IRender {
 		return null;
 	}
 
+	@Override
 	public Entity getEntityAt(double x, double y) {
 		return _entities[(int) x + (int) y * _levelLoader.getWidth()];
 	}
@@ -246,18 +255,22 @@ public class Board implements IRender {
 		_activeItems.add(item);
 	}
 
+	@Override
 	public void addEntity(int pos, Entity e) {
 		_entities[pos] = e;
 	}
 
+	@Override
 	public void addCharacter(Character e) {
 		_characters.add(e);
 	}
 
+	@Override
 	public void addBomb(Bomb e) {
 		_bombs.add(e);
 	}
 
+	@Override
 	public void addMessage(Message e) {
 		_messages.add(e);
 	}
