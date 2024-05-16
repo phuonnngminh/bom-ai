@@ -60,19 +60,12 @@ public class Bomber extends Character {
 
     @Override
     public void render(Screen screen) {
-        calculateXOffset();
-
         if (_alive)
             chooseSprite();
         else
             _sprite = Sprite.player_dead1;
 
         screen.renderEntity((int) _x, (int) _y - _sprite.SIZE, this);
-    }
-
-    public void calculateXOffset() {
-        int xScroll = Screen.calculateXOffset(_board, this);
-        Screen.setOffset(xScroll, 0);
     }
 
     /**

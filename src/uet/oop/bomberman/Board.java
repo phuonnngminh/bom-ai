@@ -54,6 +54,11 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		loadLevel(1); // start in level 1
 	}
 
+	private void snapCameraToPlayer() {
+        int xScroll = Screen.calculateXOffset(this, getPlayer());
+        Screen.setOffset(xScroll, 0);
+    }
+
 	@Override
 	public void update() {
 		if (_game.isPaused())
@@ -65,6 +70,8 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		updateMessages();
 		updateActiveItems();
 		detectEndGame();
+
+		snapCameraToPlayer();
 
 		for (int i = 0; i < _characters.size(); i++) {
 			Character a = _characters.get(i);
