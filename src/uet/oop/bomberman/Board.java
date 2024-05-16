@@ -102,7 +102,7 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		if(_input.right) xa++;
 		
 		if(xa != 0 || ya != 0)  {
-			player.move(xa * Game.getBomberSpeed(), ya * Game.getBomberSpeed());
+			player.move(xa * player.getSpeed(), ya * player.getSpeed());
 			player.setMoving(true);
 		} else {
 			player.setMoving(false);
@@ -170,8 +170,8 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 
 	@Override
 	public boolean isEnemyCleared() {
-		return _characters.stream()
-			.allMatch(character -> character != getPlayer());
+		return !_characters.stream()
+			.anyMatch(character -> character != getPlayer());
 	}
 
 	public void drawScreen(Graphics g) {

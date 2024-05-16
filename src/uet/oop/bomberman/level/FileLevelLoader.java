@@ -102,7 +102,13 @@ public class FileLevelLoader extends LevelLoader {
                         break;
                     // Thêm Bomber player
                     case 'p':
-                        Bomber bomber = new Bomber(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board, _board);
+                        Bomber bomber = new Bomber(
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            Game.BOMBERSPEED,
+                            _board,
+                            _board
+                        );
                         _board.addCharacter(bomber);
                         _board.setPlayer(bomber);
                         Screen.setOffset(0, 0);

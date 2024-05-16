@@ -34,8 +34,8 @@ public class Bomber extends Character {
 
     private Board _board;
 
-    public Bomber(int x, int y, IEntityManager entityManager, Board board) {
-        super(x, y, entityManager);
+    public Bomber(int x, int y, double baseSpeed, IEntityManager entityManager, Board board) {
+        super(x, y, baseSpeed, entityManager);
         this._board = board;
         _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;

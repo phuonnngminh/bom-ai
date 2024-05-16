@@ -10,6 +10,7 @@ import uet.oop.bomberman.sound.Sound;
 public abstract class Item extends Tile {
 	protected int _duration = 30 * Game.TICKS_PER_SECOND; // 30s
 	protected boolean _active = false;
+
 	protected int _level;
 
 	public Item(int x, int y, Sprite sprite) {
@@ -23,10 +24,12 @@ public abstract class Item extends Tile {
 	@Override
 	public boolean collide(Entity e) {
 		if (e instanceof Character && ((Character)e).isPlayer()) {
+			Character player = (Character) e;
 			Sound.play("Item");
 			handleItemActive();
 			_active = true;
 			Game.getBoard().addActiveItem(this);
+			player.addActiveItem(this);
 			remove();
 		}
 		return false;
@@ -48,5 +51,9 @@ public abstract class Item extends Tile {
 		return _duration;
 	}
 
-	public  abstract String getDisplayActiveItem();
+	public abstract String getDisplayActiveItem();
+
+	public boolean isActive() {
+		return _active;
+	}
 }

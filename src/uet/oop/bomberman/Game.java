@@ -28,7 +28,7 @@ public class Game extends Canvas {
 
 	private static final int BOMBRATE = 1;
 	private static final int BOMBRADIUS = 1;
-	private static final double BOMBERSPEED = 1.0;// toc do bomber
+	public static final double BOMBERSPEED = 1.0;// toc do bomber
 	private static int itemTime;
 
 	public static final int TIME = 200;
