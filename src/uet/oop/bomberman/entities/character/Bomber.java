@@ -14,6 +14,7 @@ import java.util.List;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.bomb.Flame;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
+import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.level.Coordinates;
 import uet.oop.bomberman.sound.Sound;
@@ -22,10 +23,8 @@ public class Bomber extends Character {
 
     private List<Bomb> _bombs;
     public static List<Item> _items = new ArrayList<Item>();//xu li Item
-    /**
-     * nếu giá trị này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
-     * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong mỗi lần update()
-     */
+
+    private final int baseBombLimit;
     protected int bombCooldown = 0;
 
     public int getBombCooldown() {
@@ -34,8 +33,9 @@ public class Bomber extends Character {
 
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, IEntityManager entityManager, Board board) {
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, IEntityManager entityManager, Board board) {
         super(x, y, baseSpeed, entityManager);
+        this.baseBombLimit = baseBombLimit;
         this._board = board;
         _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
@@ -66,14 +66,28 @@ public class Bomber extends Character {
         screen.renderEntity((int) _x, (int) _y - _sprite.SIZE, this);
     }
 
+    public int getBombLimit() {
+        int bombLimitBonus = 0;
+        for (Item item: getActiveItems()) {
+            if (!item.isActive()) continue;
+            if (item instanceof BombItem) {
+                bombLimitBonus += BombItem.BOMB_LIMIT_BONUS;
+            }
+        }
+        return this.baseBombLimit + bombLimitBonus;
+    }
+
+    public int getBombRemainingQuota() {
+        return getBombLimit() - _bombs.size();
+    }
+
     public boolean placeBomb() {
-        if(Game.getBombRate() > 0 && bombCooldown < 0) {
+        if(getBombRemainingQuota() > 0 && bombCooldown < 0) {
 			
 			int xt = Coordinates.pixelToTile(_x + _sprite.getSize() / 2);
 			int yt = Coordinates.pixelToTile( (_y + _sprite.getSize() / 2) - _sprite.getSize() ); //subtract half player height and minus 1 y position
 			
 			placeBomb(xt,yt);
-			Game.addBombRate(-1);
 			
 			bombCooldown = 30;
             return true;
@@ -96,7 +110,6 @@ public class Bomber extends Character {
             b = bs.next();
             if (b.isRemoved()) {
                 bs.remove();
-                Game.addBombRate(1);
             }
         }
 

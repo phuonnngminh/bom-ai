@@ -106,6 +106,7 @@ public class FileLevelLoader extends LevelLoader {
                             Coordinates.tileToPixel(x),
                             Coordinates.tileToPixel(y) + Game.TILES_SIZE,
                             Game.BOMBERSPEED,
+                            Game.BOMBRATE,
                             _board,
                             _board
                         );

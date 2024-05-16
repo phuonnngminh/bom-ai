@@ -26,8 +26,8 @@ public class Game extends Canvas {
 	public static final String TITLE = "BombermanGame";
 	public static final int TICKS_PER_SECOND = 60;
 
-	private static final int BOMBRATE = 1;
-	private static final int BOMBRADIUS = 1;
+	public static final int BOMBRATE = 1;
+	public static final int BOMBRADIUS = 1;
 	public static final double BOMBERSPEED = 1.0;// toc do bomber
 	private static int itemTime;
 
