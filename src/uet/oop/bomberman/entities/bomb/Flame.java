@@ -2,8 +2,7 @@ package uet.oop.bomberman.entities.bomb;
 
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.character.Bomber;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
+import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.graphics.Screen;
 
 public class Flame extends Entity {
@@ -110,9 +109,9 @@ public class Flame extends Entity {
 
 	@Override
 	public boolean collide(Entity e) {
-		// TODO: xử lý va chạm với Bomber, Enemy. Chú ý đối tượng này có vị trí chính là vị trí của Bomb đã nổ
-		if(e instanceof Bomber) ((Bomber) e).kill();
-                if(e instanceof Enemy) ((Enemy) e).kill();
-                return true;
+		if (e instanceof Character) {
+			((Character)e).kill();
+		}
+		return true;
 	}
 }

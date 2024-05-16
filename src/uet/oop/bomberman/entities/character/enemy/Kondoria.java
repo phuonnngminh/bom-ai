@@ -11,7 +11,7 @@ public class Kondoria extends Enemy {
 
         _sprite = Sprite.kondoria_right1;
 
-        _ai = new AIMedium(entityManager.getBomber(), this);
+        _ai = new AIMedium(entityManager.getPlayer(), this);
         _direction = _ai.calculateDirection();
         // this._speed += random.nextDouble()/2;
     }
