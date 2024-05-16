@@ -13,7 +13,7 @@ public class Minvo extends Enemy {
         _board = board;
         _sprite = Sprite.minvo_right1;
 
-        _ai = new AIMedium(_board.getBomber(), this);
+        _ai = new AIMedium(_board.getPlayer(), this);
         _direction = _ai.calculateDirection();
     }
 

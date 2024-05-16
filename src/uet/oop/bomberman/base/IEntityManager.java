@@ -5,13 +5,11 @@ import java.util.List;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
-import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 
 public interface IEntityManager {
 
     public List<Bomb> getBombs();
-    public Bomber getBomber();
 
     public Entity getEntity(double x, double y, Character m);
     public Entity getEntityAt(double x, double y);
@@ -22,5 +20,10 @@ public interface IEntityManager {
     public void addEntity(int pos, Entity e);
     public void addCharacter(Character e);
     public void addBomb(Bomb e);
+
+    public void setPlayer(Character character);
+    public Character getPlayer();
+
+    public boolean isEnemyCleared();
 
 }

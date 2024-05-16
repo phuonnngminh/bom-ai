@@ -22,7 +22,7 @@ public class Doll extends Enemy{
 
         _sprite = Sprite.balloom_left1;
 
-        _ai = new AIMedium(entityManager.getBomber(), this);
+        _ai = new AIMedium(entityManager.getPlayer(), this);
         _direction = _ai.calculateDirection();
 
     }

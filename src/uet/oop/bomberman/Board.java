@@ -6,7 +6,6 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
-import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
@@ -35,6 +34,8 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 	protected List<Bomb> _bombs = new ArrayList<>();
 	private List<Message> _messages = new ArrayList<>();
 	private List<Item> _activeItems = new ArrayList<>();
+
+	private Character player;
 
 	public List<Item> getActiveItems() {
 		return _activeItems;
@@ -131,14 +132,10 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		_game.pause();
 	}
 
-	public boolean detectNoEnemies() {// phat hien enemies
-		int total = 0;
-		for (int i = 0; i < _characters.size(); i++) {
-			if (_characters.get(i) instanceof Bomber == false)
-				++total;
-		}
-
-		return total == 0;
+	@Override
+	public boolean isEnemyCleared() {
+		return _characters.stream()
+			.allMatch(character -> character != getPlayer());
 	}
 
 	public void drawScreen(Graphics g) {
@@ -196,18 +193,8 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 	}
 
 	@Override
-	public Bomber getBomber() {
-		Iterator<Character> itr = _characters.iterator();
-
-		Character cur;
-		while (itr.hasNext()) {
-			cur = itr.next();
-
-			if (cur instanceof Bomber)
-				return (Bomber) cur;
-		}
-
-		return null;
+	public Character getPlayer() {
+		return this.player;
 	}
 
 	@Override
@@ -404,6 +391,11 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 
 	public int getHeight() {
 		return _levelLoader.getHeight();
+	}
+
+	@Override
+	public void setPlayer(Character character) {
+		this.player = character;
 	}
 
 }

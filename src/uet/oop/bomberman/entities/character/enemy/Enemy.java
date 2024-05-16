@@ -2,11 +2,9 @@ package uet.oop.bomberman.entities.character.enemy;
 
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.enemy.ai.AI;
 import uet.oop.bomberman.graphics.Screen;
@@ -135,13 +133,13 @@ public abstract class Enemy extends Character {
 	@Override
 	public boolean collide(Entity e) {
 		if(e instanceof Flame){
-                    this.kill();
-                    return false;
-                }
-                if(e instanceof Bomber){
-                    ((Bomber) e).kill();
-                    return false;
-                }
+			this.kill();
+			return false;
+		}
+		if(e instanceof Character && ((Character)e).isPlayer()){
+			((Character) e).kill();
+			return false;
+		}
 		return true;
 	}
 	
