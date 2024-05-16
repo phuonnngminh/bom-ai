@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
  */
 public class Keyboard implements KeyListener {
 	
-	private boolean[] keys = new boolean[120]; //120 is enough to this game
+	private boolean[] keys = new boolean[65536];
 	public boolean up, down, left, right, space,pause,resume;
 	
 	public void update() {

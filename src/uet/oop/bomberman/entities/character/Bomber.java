@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities.character;
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Screen;
@@ -29,9 +30,12 @@ public class Bomber extends Character {
      */
     protected int _timeBetweenPutBombs = 0;
 
-    public Bomber(int x, int y, Board board) {
-        super(x, y, board);
-        _bombs = _board.getBombs();
+    private Board _board;
+
+    public Bomber(int x, int y, IEntityManager entityManager, Board board) {
+        super(x, y, entityManager);
+        this._board = board;
+        _bombs = entityManager.getBombs();
         _input = _board.getInput();
         _sprite = Sprite.player_right;
     }
@@ -94,8 +98,8 @@ public class Bomber extends Character {
 
     protected void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
-        Bomb b = new Bomb(x, y, _board);
-	_board.addBomb(b);
+        Bomb b = new Bomb(x, y, entityManager);
+        entityManager.addBomb(b);
         Sound.play("BOM_SET");
     }
 
@@ -153,7 +157,7 @@ public class Bomber extends Character {
 			double xt = ((_x + x) + c % 2 * 9) / Game.TILES_SIZE; //divide with tiles size to pass to tile coordinate
 			double yt = ((_y + y) + c / 2 * 10 - 13) / Game.TILES_SIZE; //these values are the best from multiple tests
 			
-			Entity a = _board.getEntity(xt, yt, this);
+			Entity a = entityManager.getEntity(xt, yt, this);
 			
 			if(!a.collide(this))
 				return false;

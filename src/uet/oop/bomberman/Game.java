@@ -24,6 +24,7 @@ public class Game extends Canvas {
 	public static int SCALE = 3;
 
 	public static final String TITLE = "BombermanGame";
+	public static final int TICKS_PER_SECOND = 60;
 
 	private static final int BOMBRATE = 1;
 	private static final int BOMBRADIUS = 1;
@@ -118,7 +119,7 @@ public class Game extends Canvas {
 		_running = true;
 		long  lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
-		final double ns = 1000000000.0 / 60.0; // nanosecond, 60 frames per second
+		final double ns = 1000000000.0 / TICKS_PER_SECOND; // nanosecond, 60 frames per second
 		double delta = 0;
 		int frames = 0;
 		int updates = 0;

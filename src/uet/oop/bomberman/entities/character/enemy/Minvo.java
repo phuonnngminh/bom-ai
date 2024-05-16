@@ -24,7 +24,7 @@ public class Minvo extends Enemy {
             case 1:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3,
-                            _animate, 60);
+                            _animate, Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.minvo_left1;
                 break;
@@ -32,7 +32,7 @@ public class Minvo extends Enemy {
             case 3:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, _animate,
-                            60);
+                    Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.minvo_left1;
                 break;

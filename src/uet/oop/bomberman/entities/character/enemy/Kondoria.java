@@ -11,7 +11,7 @@ public class Kondoria extends Enemy {
 
         _sprite = Sprite.kondoria_right1;
 
-        _ai = new AIMedium(_board.getBomber(), this);
+        _ai = new AIMedium(entityManager.getBomber(), this);
         _direction = _ai.calculateDirection();
         // this._speed += random.nextDouble()/2;
     }
@@ -23,7 +23,7 @@ public class Kondoria extends Enemy {
             case 1:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.kondoria_right1, Sprite.kondoria_right2,
-                            Sprite.kondoria_right3, _animate, 60);
+                            Sprite.kondoria_right3, _animate, Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.kondoria_left1;
                 break;
@@ -31,7 +31,7 @@ public class Kondoria extends Enemy {
             case 3:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.kondoria_left1, Sprite.kondoria_left2, Sprite.kondoria_left3,
-                            _animate, 60);
+                            _animate, Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.kondoria_left1;
                 break;

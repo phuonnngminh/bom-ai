@@ -8,7 +8,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
 public abstract class Item extends Tile {
-	protected int _duration = 300; // 5s
+	protected int _duration = 30 * Game.TICKS_PER_SECOND; // 30s
 	protected boolean _active = false;
 	protected int _level;
 
