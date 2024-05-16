@@ -6,6 +6,7 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
+import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
@@ -72,11 +73,39 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		detectEndGame();
 
 		snapCameraToPlayer();
+		processPlayerInput();
 
 		for (int i = 0; i < _characters.size(); i++) {
 			Character a = _characters.get(i);
 			if (a.isRemoved())
 				_characters.remove(i);
+		}
+	}
+
+	private void processPlayerInput() {
+		Character player = getPlayer();
+		if (!player.isAlive()) return;
+
+		processPlayerInputMove(player);
+
+		if (player instanceof Bomber) {
+			Bomber bomber = (Bomber) player;
+			if(_input.space) bomber.placeBomb();
+		}
+	}
+
+	private void processPlayerInputMove(Character player) {
+		int xa = 0, ya = 0;
+		if(_input.up) ya--;
+		if(_input.down) ya++;
+		if(_input.left) xa--;
+		if(_input.right) xa++;
+		
+		if(xa != 0 || ya != 0)  {
+			player.move(xa * Game.getBomberSpeed(), ya * Game.getBomberSpeed());
+			player.setMoving(true);
+		} else {
+			player.setMoving(false);
 		}
 	}
 

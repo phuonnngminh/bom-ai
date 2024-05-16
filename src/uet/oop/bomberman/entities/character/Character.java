@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities.character;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
@@ -14,7 +13,16 @@ public abstract class Character extends AnimatedEntitiy {
 	protected IEntityManager entityManager;
 	protected int _direction = -1;
 	protected boolean _alive = true;
+	public boolean isAlive() {
+		return _alive;
+	}
+
 	protected boolean _moving = false;
+
+	public void setMoving(boolean moving) {
+		this._moving = moving;
+	}
+
 	public int _timeAfter = 40;
 	
 	public Character(int x, int y, IEntityManager entityManager) {
@@ -34,7 +42,7 @@ public abstract class Character extends AnimatedEntitiy {
 	 */
 	protected abstract void calculateMove();
 	
-	protected abstract void move(double xa, double ya);
+	public abstract void move(double xa, double ya);
 
 	/**
 	 * Được gọi khi đối tượng bị tiêu diệt
