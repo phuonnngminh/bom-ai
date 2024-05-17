@@ -15,7 +15,7 @@ public class Screen {
 	protected int _width, _height;
 	public int[] _pixels;
 	private int _transparentColor = 0xffff00ff;
-	
+
 	public static int xOffset = 0, yOffset = 0;
 	
 	public Screen(int width, int height) {
@@ -105,7 +105,7 @@ public class Screen {
 		g.setFont(font);
 		g.setColor(Color.white);
 		drawCenteredString("Press R to retry", getRealWidth(), getRealHeight()/2 + (Game.TILES_SIZE * 4) * Game.SCALE, g);
-		drawCenteredString("Press ENTER to select level", getRealWidth(), getRealHeight() + (Game.TILES_SIZE * 5) * Game.SCALE, g);
+		drawCenteredString("Press B to Back Home", getRealWidth(), getRealHeight()/2 + (Game.TILES_SIZE * 5) * Game.SCALE, g);
 		}
 
 	public void drawChangeLevel(Graphics g, int level) {
