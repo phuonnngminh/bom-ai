@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities.character;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
@@ -84,8 +85,8 @@ public abstract class Character extends AnimatedEntitiy {
 		this._moving = moving;
 	}
 
-	public List<Item> getActiveItems() {
-		return Collections.unmodifiableList(activeItems);
+	public Stream<Item> getActiveItems() {
+		return activeItems.stream().filter(Item::isActive);
 	}
 
 	public void addActiveItem(Item item) {

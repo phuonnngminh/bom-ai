@@ -15,6 +15,7 @@ import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.bomb.Flame;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.BombItem;
+import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.level.Coordinates;
 import uet.oop.bomberman.sound.Sound;
@@ -27,15 +28,19 @@ public class Bomber extends Character {
     private final int baseBombLimit;
     protected int bombCooldown = 0;
 
+    private final int baseBombRadius;
+    private int bombRadius;
+
     public int getBombCooldown() {
         return bombCooldown;
     }
 
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, IEntityManager entityManager, Board board) {
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
+        this.baseBombRadius = baseBombRadius;
         this._board = board;
         _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
@@ -67,18 +72,19 @@ public class Bomber extends Character {
     }
 
     public int getBombLimit() {
-        int bombLimitBonus = 0;
-        for (Item item: getActiveItems()) {
-            if (!item.isActive()) continue;
-            if (item instanceof BombItem) {
-                bombLimitBonus += BombItem.BOMB_LIMIT_BONUS;
-            }
-        }
+        int countActiveItem = (int) getActiveItems().filter(item -> item instanceof BombItem).count();
+        int bombLimitBonus = countActiveItem * BombItem.BOMB_LIMIT_BONUS;
         return this.baseBombLimit + bombLimitBonus;
     }
 
     public int getBombRemainingQuota() {
         return getBombLimit() - _bombs.size();
+    }
+
+    public int getBombRadius() {
+        int countActiveItem = (int) getActiveItems().filter(item -> item instanceof FlameItem).count();
+        int bombRadiusBonus = countActiveItem * FlameItem.BOMB_RADIUS_BONUS;
+        return this.baseBombRadius + bombRadiusBonus;
     }
 
     public boolean placeBomb() {
@@ -97,7 +103,7 @@ public class Bomber extends Character {
 
     public void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
-        Bomb b = new Bomb(x, y, entityManager);
+        Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
         entityManager.addBomb(b);
         Sound.play("BOM_SET");
     }
