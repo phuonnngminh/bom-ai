@@ -39,7 +39,7 @@ public class Board implements IRender {
 	}
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
-
+	private boolean GameOver = false;
 	private int _time = Game.TIME;
 	private int _points = Game.POINTS;
 
@@ -122,9 +122,15 @@ public class Board implements IRender {
 		if (_time <= 0)
 			endGame();
 	}
-
+	public boolean isGameOver(){
+		return GameOver;
+	}
+	public boolean GameNotOver(){
+		return GameOver = false;
+	}
 	public void endGame() {
 		_screenToShow = 1;
+		GameOver = true;
 		_game.resetScreenDelay();
 		_game.pause();
 	}

@@ -196,7 +196,6 @@ public class Bomber extends Character {
         if( e instanceof LayeredEntity) return(e.collide(this));
         return true;
     }
-
     //sprite
     private void chooseSprite() {
         switch (_direction) {

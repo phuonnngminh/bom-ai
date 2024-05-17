@@ -8,4 +8,6 @@ public enum EGameControl {
     RIGHT,
     ENTER,
     SPACE,
+    RESTART,
+    BACK
 }
