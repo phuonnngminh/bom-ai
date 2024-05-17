@@ -31,7 +31,7 @@ public abstract class Enemy extends Character {
 	private Board _board;
 	
 	public Enemy(int x, int y, Board board, Sprite dead, double speed, int points) {
-		super(x, y, board);
+		super(x, y, speed, board);
 
 		this._board = board;
 		

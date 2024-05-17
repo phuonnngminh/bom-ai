@@ -1,9 +1,15 @@
 package uet.oop.bomberman.entities.character;
 
-import uet.oop.bomberman.Board;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
+import uet.oop.bomberman.entities.tile.item.Item;
+import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.graphics.Screen;
 
 /**
@@ -16,11 +22,16 @@ public abstract class Character extends AnimatedEntitiy {
 	protected boolean _alive = true;
 	protected boolean _moving = false;
 	public int _timeAfter = 40;
+
+	private final double baseSpeed;
+
+	private List<Item> activeItems = new ArrayList<>();
 	
-	public Character(int x, int y, IEntityManager entityManager) {
+	public Character(int x, int y, double baseSpeed, IEntityManager entityManager) {
 		_x = x;
 		_y = y;
 		this.entityManager = entityManager;
+		this.baseSpeed = baseSpeed;
 	}
 	
 	@Override
@@ -34,7 +45,7 @@ public abstract class Character extends AnimatedEntitiy {
 	 */
 	protected abstract void calculateMove();
 	
-	protected abstract void move(double xa, double ya);
+	public abstract void move(double xa, double ya);
 
 	/**
 	 * Được gọi khi đối tượng bị tiêu diệt
@@ -66,4 +77,31 @@ public abstract class Character extends AnimatedEntitiy {
 		return entityManager.getPlayer() == this;
 	}
 	
+	public boolean isAlive() {
+		return _alive;
+	}
+
+	public void setMoving(boolean moving) {
+		this._moving = moving;
+	}
+
+	public Stream<Item> getActiveItems() {
+		return activeItems.stream().filter(Item::isActive);
+	}
+
+	public void addActiveItem(Item item) {
+		this.activeItems.add(item);
+	}
+
+	public double getSpeed() {
+		double speedMultiplier = 1;
+		for (Item item: activeItems) {
+			if (!item.isActive()) continue;
+			if (item instanceof SpeedItem) {
+				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
+			}
+		}
+		return speedMultiplier * this.baseSpeed;
+	}
+
 }

@@ -5,6 +5,8 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public class SpeedItem extends Item {
 
+	public static final double SPEED_MULTIPLIER = 0.5;
+
 	public SpeedItem(int x, int y, Sprite sprite) {
 		super(x, y, sprite);
 	}

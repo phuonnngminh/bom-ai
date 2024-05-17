@@ -19,12 +19,15 @@ public class Bomb extends AnimatedEntitiy {
 	protected Flame[] _flames;
 	protected boolean _exploded = false;
 	protected boolean _allowedToPassThru = true;
+
+	private final int bombRadius;
 	 
-	public Bomb(int x, int y, IEntityManager board) {
+	public Bomb(int x, int y, int bombRadius, IEntityManager board) {
 		_x = x;
 		_y = y;
 		_board = board;
 		_sprite = Sprite.bomb;
+		this.bombRadius = bombRadius;
 	}
 	
 	@Override
@@ -86,7 +89,7 @@ public class Bomb extends AnimatedEntitiy {
 		// TODO: tạo các Flame
                 _flames = new Flame[4];
                 for (int i = 0; i < _flames.length; i++) {
-                    _flames[i] = new Flame((int) _x, (int) _y, i, Game.getBombRadius(), _board);
+                    _flames[i] = new Flame((int) _x, (int) _y, i, bombRadius, _board);
                 }
                 Sound.play("BOM_11_M");
 	}
