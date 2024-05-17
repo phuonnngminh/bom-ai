@@ -2,14 +2,15 @@ package uet.oop.bomberman.entities.tile.item;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
 public abstract class Item extends Tile {
-	protected int _duration = 300; // 5s
+	protected int _duration = 30 * Game.TICKS_PER_SECOND; // 30s
 	protected boolean _active = false;
+
 	protected int _level;
 
 	public Item(int x, int y, Sprite sprite) {
@@ -22,12 +23,13 @@ public abstract class Item extends Tile {
 
 	@Override
 	public boolean collide(Entity e) {
-		// TODO: xử lý Bomber ăn Item
-		if (e instanceof Bomber) {
+		if (e instanceof Character && ((Character)e).isPlayer()) {
+			Character player = (Character) e;
 			Sound.play("Item");
 			handleItemActive();
 			_active = true;
 			Game.getBoard().addActiveItem(this);
+			player.addActiveItem(this);
 			remove();
 		}
 		return false;
@@ -49,5 +51,9 @@ public abstract class Item extends Tile {
 		return _duration;
 	}
 
-	public  abstract String getDisplayActiveItem();
+	public abstract String getDisplayActiveItem();
+
+	public boolean isActive() {
+		return _active;
+	}
 }

@@ -6,6 +6,7 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.utils.Global;
 
+
 import java.awt.*;
 
 /**
@@ -27,13 +28,6 @@ public class Screen {
 		Global.screenWidth = this.getRealWidth();
 		Global.screenHeight = this.getRealHeight();
 	}
-	
-	public void clear() {
-		for (int i = 0; i < _pixels.length; i++) {
-			_pixels[i] = 0;
-		}
-	}
-	
 	public void renderEntity(int xp, int yp, Entity entity) { //save entity pixels
 		xp -= xOffset;
 		yp -= yOffset;
@@ -66,23 +60,27 @@ public class Screen {
 			}
 		}
 	}
-	
+	public void clear() {
+		for (int i = 0; i < _pixels.length; i++) {
+			_pixels[i] = 0;
+		}
+	}
 	public static void setOffset(int xO, int yO) {
 		xOffset = xO;
 		yOffset = yO;
 	}
 	
-	public static int calculateXOffset(Board board, Bomber bomber) {
-		if(bomber == null) return 0;
+	public static int calculateXOffset(Board board, Entity entity) {
+		if(entity == null) return 0;
 		int temp = xOffset;
 		
-		double BomberX = bomber.getX() / 16;
+		double x = entity.getX() / 16;
 		double complement = 0.5;
 		int firstBreakpoint = board.getWidth() / 4;
 		int lastBreakpoint = board.getWidth() - firstBreakpoint;
 		
-		if( BomberX > firstBreakpoint + complement && BomberX < lastBreakpoint - complement) {
-			temp = (int)bomber.getX()  - (Game.WIDTH / 2);
+		if( x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
+			temp = (int)entity.getX()  - (Game.WIDTH / 2);
 		}
 		
 		return temp;

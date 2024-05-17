@@ -1,7 +1,6 @@
 package uet.oop.bomberman.level;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,9 +100,19 @@ public class FileLevelLoader extends LevelLoader {
                                 )
                         );
                         break;
-                    // Thêm Bomber
+                    // Thêm Bomber player
                     case 'p':
-                        _board.addCharacter(new Bomber(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        Bomber bomber = new Bomber(
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            Game.BOMBERSPEED,
+                            Game.BOMBRATE,
+                            Game.BOMBRADIUS,
+                            _board,
+                            _board
+                        );
+                        _board.addCharacter(bomber);
+                        _board.setPlayer(bomber);
                         Screen.setOffset(0, 0);
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
