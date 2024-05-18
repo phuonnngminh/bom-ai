@@ -7,7 +7,7 @@ import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.screen.SelectLevelScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
-
+import uet.oop.bomberman.screen.SelectOption;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -43,12 +43,13 @@ public class Game extends Canvas {
     protected static double bomberSpeed = BOMBERSPEED;
 
     protected int _screenDelay = SCREENDELAY;
-
     private Keyboard _input;
+    private Keyboard _input1;
     private boolean _running = false;
     private boolean _paused = true;
 
     private static Board _board;
+    
     private Screen screen;
     private Frame _frame;
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -61,7 +62,7 @@ public class Game extends Canvas {
 
     // game screens
     private SelectLevelScreen selectLevelScreen;
-
+    private SelectOption selectOption;
 
     public Game(Frame frame) {
         _frame = frame;
@@ -69,9 +70,11 @@ public class Game extends Canvas {
 
         screen = new Screen(WIDTH, HEIGHT);
         _input = new Keyboard();
-
+        _input1 = new Keyboard();
         _board = new Board(this, _input, screen);
+
         addKeyListener(_input);
+        addKeyListener(_input1);
 
         initScreen();
     }
@@ -97,8 +100,8 @@ public class Game extends Canvas {
 
     private void initScreen() {
         Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
-
         this.selectLevelScreen = new SelectLevelScreen(_input);
+        this.selectOption = new SelectOption(_input1, this);
     }
 
     private void update() {
@@ -110,23 +113,10 @@ public class Game extends Canvas {
             case SELECT_LEVEL_SCREEN:
                 selectLevelScreen.update();
                 break;
+            case END_GAME_SCREEN:
+                selectOption.update();
+                break;
         }
-
-        // Check if the game is over
-        if (_board.isGameOver()) {
-            if (_input.restart) {
-                restartGame();
-            } else if (_input.backhome) {
-				_board.setShow(-1);
-				_paused = false;
-				initScreen();
-				_board.GameNotOver();
-				resetGameParams();
-				startNewGame();
-
-            }
-        }
-
     
     }
 	private void resetGameParams() {
@@ -134,18 +124,22 @@ public class Game extends Canvas {
 		bombRadius = BOMBRADIUS;
 		bomberSpeed = BOMBERSPEED;
 	}
-    private void restartGame() {
+    public void restartGame() {
 		Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
         screen = new Screen(WIDTH, HEIGHT);
-        _input.restart = false;
         _board = new Board(this, _input, screen);
     }
-	private void startNewGame() {
+
+    public void startNewGame() {
+        _board.setShow(-1);
+		_paused = false;
 		initScreen();
-        _input.backhome = false;
+		_board.GameNotOver();
+		resetGameParams();
+        initScreen();
 		screen = new Screen(WIDTH, HEIGHT);
         _board = new Board(this, _input, screen);
-		resetGameParams();
+		resetGameParams();        
     }
 
     private void showScreen() {
@@ -186,6 +180,9 @@ public class Game extends Canvas {
             case SELECT_LEVEL_SCREEN:
                 // TODO: render select level screen
                 selectLevelScreen.drawScreen(g);
+                break;
+            case END_GAME_SCREEN:
+                selectOption.drawScreen(g);
                 break;
         }
 

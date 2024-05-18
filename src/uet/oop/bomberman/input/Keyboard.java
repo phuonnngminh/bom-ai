@@ -17,8 +17,6 @@ public class Keyboard implements KeyListener {
 	
 	private boolean[] keys = new boolean[120]; //120 is enough to this game
 	public boolean up, down, left, right, space;
-	public boolean restart,backhome = false;
-
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 	
 	public void update() {
@@ -26,9 +24,7 @@ public class Keyboard implements KeyListener {
 		down = keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];
 		left = keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A];
 		right = keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];
-		space = keys[KeyEvent.VK_SPACE] || keys[KeyEvent.VK_X];
-		restart = keys[KeyEvent.VK_R];
-		backhome = keys[KeyEvent.VK_B];
+		space = keys[KeyEvent.VK_SPACE];
 	}
 
 	private EGameControl keyToGameControl(int keyCode) {
@@ -48,29 +44,30 @@ public class Keyboard implements KeyListener {
 			return EGameControl.RIGHT;
 		}
 
-		if (keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_X) {
+		if (keyCode == KeyEvent.VK_SPACE) {
 			return EGameControl.SPACE;
 		}
 
 		if (keyCode == KeyEvent.VK_ENTER) {
 			return EGameControl.ENTER;
 		}
+		if (keyCode == KeyEvent.VK_X) {
+			return EGameControl.X;
+		}
 
 		return EGameControl.NONE;
 	}
-
 	@Override
 	public void keyTyped(KeyEvent e) {}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		keys[e.getKeyCode()] = true;
-
-		if (keyboardInputCallback.isPresent()) {
-			KeyboardInputCallback callback = keyboardInputCallback.get();
-			callback.onKeyPressed(keyToGameControl(e.getKeyCode()));
-		}
-	}
+        keys[e.getKeyCode()] = true;
+        if (keyboardInputCallback.isPresent()) {
+            KeyboardInputCallback callback = keyboardInputCallback.get();
+            callback.onKeyPressed(keyToGameControl(e.getKeyCode()));
+        }
+    }
 
 	@Override
 	public void keyReleased(KeyEvent e) {
