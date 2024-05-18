@@ -13,12 +13,10 @@ public class FlameItem extends Item {
 
 	@Override
 	protected void handleItemActive() {
-		Game.addBombRadius(1);
 	}
 
 	@Override
 	protected void handleItemInactive() {
-		Game.addBombRadius(-1);
 	}
 
 	@Override

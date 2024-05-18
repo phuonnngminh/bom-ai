@@ -13,12 +13,10 @@ public class BombItem extends Item {
 
 	@Override
 	protected void handleItemActive() {
-		Game.addBombRate(1);
 	}
 
 	@Override
 	protected void handleItemInactive() {
-		Game.addBombRate(-1);
 	}
 
 	@Override

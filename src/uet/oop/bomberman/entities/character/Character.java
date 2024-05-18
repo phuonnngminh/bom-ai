@@ -1,7 +1,6 @@
 package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -91,6 +90,7 @@ public abstract class Character extends AnimatedEntitiy {
 
 	public void addActiveItem(Item item) {
 		this.activeItems.add(item);
+		entityManager.addActiveItem(item);
 	}
 
 	public double getSpeed() {

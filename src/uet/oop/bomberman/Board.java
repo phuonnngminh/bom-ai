@@ -1,6 +1,7 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.base.IEntityManager;
+import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.IMessageManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
@@ -20,11 +21,12 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
-public class Board implements IRender, IEntityManager, IMessageManager {
+public class Board implements IRender, IEntityManager, IMessageManager, IGameInfoManager {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Keyboard _input;
@@ -38,8 +40,9 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 
 	private Character player;
 
+	@Override
 	public List<Item> getActiveItems() {
-		return _activeItems;
+		return getPlayer().getActiveItems().collect(Collectors.toList());
 	}
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
@@ -132,9 +135,6 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 	}
 
 	public void nextLevel() {
-		Game.setBombRadius(1);
-		Game.setBombRate(1);
-		Game.setBomberSpeed(1.0);
 		loadLevel(_levelLoader.getLevel() + 1);
 	}
 
@@ -274,6 +274,7 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		return _entities[(int) x + (int) y * _levelLoader.getWidth()];
 	}
 
+	@Override
 	public void addActiveItem(Item item) {
 		_activeItems.add(item);
 	}
@@ -374,19 +375,12 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		}
 	}
 
+	@Override
 	public int subtractTime() {
 		if (!_game.isPaused() && _time > 0)
 			return --_time;
 		else
 			return _time;
-	}
-
-	public int getItemTime() {
-		int totalTime = 0;
-		for (int i = 0; i < _activeItems.size(); i++) {
-			totalTime += _activeItems.get(i).getDuration() / Game.TICKS_PER_SECOND;
-		}
-		return totalTime;
 	}
 
 	public Keyboard getInput() {
@@ -409,14 +403,17 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		_screenToShow = i;
 	}
 
+	@Override
 	public int getTime() {
 		return _time;
 	}
 
+	@Override
 	public int getPoints() {
 		return _points;
 	}
 
+	@Override
 	public void addPoints(int points) {
 		this._points += points;
 	}

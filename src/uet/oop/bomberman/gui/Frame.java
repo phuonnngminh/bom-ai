@@ -20,7 +20,7 @@ public class Frame extends JFrame {
 		
 		_containerpane = new JPanel(new BorderLayout());
 		_gamepane = new GamePanel(this);
-		_infopanel = new InfoPanel(_gamepane.getGame());
+		_infopanel = new InfoPanel(_gamepane.getGame().getGameInfoManager());
 		
 		_containerpane.add(_infopanel, BorderLayout.PAGE_START);
 		_containerpane.add(_gamepane, BorderLayout.PAGE_END);
@@ -46,8 +46,8 @@ public class Frame extends JFrame {
 		_infopanel.setPoints(points);
 	}
 
-	public void setItemTime(int itemTime) {
-		_infopanel.setItemTime(itemTime);
+	public void renderItemTime() {
+		_infopanel.renderItemTime();
 	}
 	
 }
