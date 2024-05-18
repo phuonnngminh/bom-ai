@@ -1,5 +1,6 @@
 package uet.oop.bomberman;
 
+import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
@@ -7,9 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-
-import javax.swing.JButton;
-
 
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
@@ -29,24 +27,18 @@ public class Game extends Canvas {
 	public static final int BOMBRATE = 1;
 	public static final int BOMBRADIUS = 1;
 	public static final double BOMBERSPEED = 1.0;// toc do bomber
-	private static int itemTime;
 
 	public static final int TIME = 200;
-	public static final int ITEM_TIME = 20;
 	public static final int POINTS = 0;
 
 	protected static int SCREENDELAY = 3;
-
-	protected static int bombRate = BOMBRATE;
-	protected static int bombRadius = BOMBRADIUS;
-	protected static double bomberSpeed = BOMBERSPEED;
 
 	protected int _screenDelay = SCREENDELAY;
 
 	private Keyboard _input;
 	private boolean _running = false;
 	private boolean _paused = true;
-	private static Board _board;
+	private Board _board;
 	private Screen screen;
 	private Frame _frame;
 
@@ -153,7 +145,7 @@ public class Game extends Canvas {
 			if (System.currentTimeMillis() - timer > 1000) {
 				_frame.setTime(_board.subtractTime());
 				_frame.setPoints(_board.getPoints());
-				_frame.setItemTime(_board.getItemTime());
+				_frame.renderItemTime();
 				timer += 1000;
 				_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 				updates = 0;
@@ -165,39 +157,8 @@ public class Game extends Canvas {
 		}
 	}
 
-	public static int getItemTime() {
-		return itemTime;
-	}
-
-	public static double getBomberSpeed() {
-		return bomberSpeed;
-	}
-
-	public static int getBombRate() {
-		return bombRate;
-	}
-
-	public static int getBombRadius() {
-		return bombRadius;
-	}
-
-	public static void addBomberSpeed(double i) {
-		bomberSpeed += i;
-	}
-
-	public static void addBombRadius(int i) {
-		bombRadius += i;
-	}
-
-	public static void addBombRate(int i) {
-		bombRate += i;
-	}
-
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
-	}
-	public static Board getBoard() {
-		return _board;
 	}
 	public boolean isPaused() {
 		return _paused;
@@ -207,16 +168,8 @@ public class Game extends Canvas {
 		_paused = !_paused;
 	}
 
-	public static void setBombRate(int bombRate) {
-		Game.bombRate = bombRate;
-	}
-
-	public static void setBombRadius(int bombRadius) {
-		Game.bombRadius = bombRadius;
-	}
-
-	public static void setBomberSpeed(double bomberSpeed) {
-		Game.bomberSpeed = bomberSpeed;
+	public IGameInfoManager getGameInfoManager() {
+		return _board;
 	}
 
 }

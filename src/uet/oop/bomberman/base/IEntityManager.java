@@ -7,7 +7,7 @@ import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Character;
 
-public interface IEntityManager {
+public interface IEntityManager extends IActiveItemManager {
 
     public List<Bomb> getBombs();
 

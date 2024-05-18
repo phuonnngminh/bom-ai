@@ -28,7 +28,6 @@ public abstract class Item extends Tile {
 			Sound.play("Item");
 			handleItemActive();
 			_active = true;
-			Game.getBoard().addActiveItem(this);
 			player.addActiveItem(this);
 			remove();
 		}
