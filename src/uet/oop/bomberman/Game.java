@@ -113,6 +113,8 @@ public class Game extends Canvas {
 	}
 
 	private void update() {
+		_input1.update();
+		_input2.update();
 		_input.update();
 		_board.update();
 		if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn

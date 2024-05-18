@@ -20,7 +20,7 @@ import uet.oop.bomberman.level.Coordinates;
 public class Bomber extends Character {
 
     protected Keyboard1 _input1;
-    public static List<Item> _items = new ArrayList<Item>();// xu li Item
+    // public static List<Item> _items = new ArrayList<Item>();// xu li Item
     /**
      * nếu giá trị này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
      * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong
@@ -77,13 +77,13 @@ public class Bomber extends Character {
         // hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
         int xa = 0, ya = 0;
-        if (_input1.up)
+        if (_input1.up1)
             ya--;
-        if (_input1.down)
+        if (_input1.down1)
             ya++;
-        if (_input1.left)
+        if (_input1.left1)
             xa--;
-        if (_input1.right)
+        if (_input1.right1)
             xa++;
 
         if (xa != 0 || ya != 0) {

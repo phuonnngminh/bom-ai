@@ -100,6 +100,7 @@ public abstract class Character extends AnimatedEntitiy {
 	/**
 	 * Được gọi khi đối tượng bị tiêu diệt
 	 */
+
 	public void kill() {
 		if (!_alive)
 			return;
@@ -146,9 +147,8 @@ public abstract class Character extends AnimatedEntitiy {
 			if (!a.collide(this))
 				return false;
 		}
-
 		return true;
-		// return false;
+
 	};
 
 	public boolean collide(Entity e) {

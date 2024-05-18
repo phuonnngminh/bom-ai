@@ -15,6 +15,22 @@ public class Keyboard2 extends Keyboard {
         down2 = keys[KeyEvent.VK_DOWN];
         left2 = keys[KeyEvent.VK_LEFT];
         right2 = keys[KeyEvent.VK_RIGHT];
-        space = keys[KeyEvent.VK_SPACE];
+        space = keys[KeyEvent.VK_M];
+        // System.out.println("hello");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        keys[e.getKeyCode()] = true;
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        keys[e.getKeyCode()] = false;
+
     }
 }

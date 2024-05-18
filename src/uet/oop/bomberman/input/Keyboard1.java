@@ -17,4 +17,18 @@ public class Keyboard1 extends Keyboard {
         right1 = keys[KeyEvent.VK_D];
         space = keys[KeyEvent.VK_X];
     }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        keys[e.getKeyCode()] = true;
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        keys[e.getKeyCode()] = false;
+    }
 }

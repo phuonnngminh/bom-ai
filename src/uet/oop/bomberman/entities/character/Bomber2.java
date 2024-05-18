@@ -42,13 +42,13 @@ public class Bomber2 extends Character {
     protected void calculateMove() {
         // TODO Auto-generated method stub
         int xa = 0, ya = 0;
-        if (_input2.up)
+        if (_input2.up2)
             ya--;
-        if (_input2.down)
+        if (_input2.down2)
             ya++;
-        if (_input2.left)
+        if (_input2.left2)
             xa--;
-        if (_input2.right)
+        if (_input2.right2)
             xa++;
 
         if (xa != 0 || ya != 0) {
