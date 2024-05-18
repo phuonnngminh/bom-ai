@@ -3,13 +3,15 @@ package uet.oop.bomberman;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.input.Keyboard1;
+import uet.oop.bomberman.input.Keyboard2;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
 import javax.swing.JButton;
-
 
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
@@ -43,6 +45,8 @@ public class Game extends Canvas {
 	protected int _screenDelay = SCREENDELAY;
 
 	private Keyboard _input;
+	private Keyboard1 _input1;
+	private Keyboard2 _input2;
 	private boolean _running = false;
 	private boolean _paused = true;
 	private static Board _board;
@@ -57,11 +61,14 @@ public class Game extends Canvas {
 		_frame.setTitle(TITLE);
 
 		screen = new Screen(WIDTH, HEIGHT);
+		_input1 = new Keyboard1();
+		_input2 = new Keyboard2();
 		_input = new Keyboard();
 
-		_board = new Board(this, _input, screen);
+		_board = new Board(this, _input, _input1, _input2, screen);
 		addKeyListener(_input);
-	
+		addKeyListener(_input1);
+		addKeyListener(_input2);
 	}
 
 	private void renderGame() {
@@ -112,11 +119,12 @@ public class Game extends Canvas {
 			_board.setShow(3); // Hiển thị màn hình tạm dừng
 			_paused = true; // Đặt trạng thái game là tạm dừng
 			return;
+		}
 	}
-	}
+
 	public void start() {
 		_running = true;
-		long  lastTime = System.nanoTime();
+		long lastTime = System.nanoTime();
 		long timer = System.currentTimeMillis();
 		final double ns = 1000000000.0 / 60.0; // nanosecond, 60 frames per second
 		double delta = 0;
@@ -147,7 +155,7 @@ public class Game extends Canvas {
 			if (_input.resume) {
 				_paused = false;
 				_board.setShow(-1);
-				}
+			}
 			frames++;
 			if (System.currentTimeMillis() - timer > 1000) {
 				_frame.setTime(_board.subtractTime());
@@ -195,9 +203,11 @@ public class Game extends Canvas {
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
 	}
+
 	public static Board getBoard() {
 		return _board;
 	}
+
 	public boolean isPaused() {
 		return _paused;
 	}

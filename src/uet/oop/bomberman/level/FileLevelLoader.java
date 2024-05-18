@@ -9,6 +9,7 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber2;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
 import uet.oop.bomberman.entities.character.enemy.Doll;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
@@ -41,13 +42,13 @@ public class FileLevelLoader extends LevelLoader {
         // TODO: cập nhật các giá trị đọc được vào _width, _height, _level, _map
         List<String> list = new ArrayList<>();
         try {
-            FileReader fr = new FileReader("res/levels/Level" + level + ".txt");//doc tep luu map
+            FileReader fr = new FileReader("res/levels/Level" + level + ".txt");// doc tep luu map
             BufferedReader br = new BufferedReader(fr);
             String line = br.readLine();
             while (!line.equals("")) {
                 list.add(line);
                 line = br.readLine();
-                //doc file txt luu vao list
+                // doc file txt luu vao list
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +63,7 @@ public class FileLevelLoader extends LevelLoader {
                 _map[i][j] = list.get(i + 1).charAt(j);
             }
         }
-        //gan cac phan tu cho mang
+        // gan cac phan tu cho mang
     }
 
     @Override
@@ -81,10 +82,12 @@ public class FileLevelLoader extends LevelLoader {
                     case ' ':
                         _board.addEntity(pos, new Grass(x, y, Sprite.grass));
                         break;
+
                     // Thêm Wall
                     case '#':
                         _board.addEntity(pos, new Wall(x, y, Sprite.wall));
                         break;
+
                     // Thêm Portal
                     case 'x':
                         _board.addEntity(pos, new LayeredEntity(x, y,
@@ -92,39 +95,49 @@ public class FileLevelLoader extends LevelLoader {
                                 new Portal(x, y, _board, Sprite.portal),
                                 new Brick(x, y, Sprite.brick)));
                         break;
+
                     // Thêm brick
                     case '*':
                         _board.addEntity(x + y * _width,
                                 new LayeredEntity(x, y,
                                         new Grass(x, y, Sprite.grass),
-                                        new Brick(x, y, Sprite.brick)
-                                )
-                        );
+                                        new Brick(x, y, Sprite.brick)));
                         break;
+
                     // Thêm Bomber
                     case 'p':
-                        _board.addCharacter(new Bomber(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        _board.addCharacter(new Bomber(Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        Screen.setOffset(0, 0);
+                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        break;
+                    case 'a':
+                        _board.addCharacter(new Bomber2(Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
                         Screen.setOffset(0, 0);
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
 
                     // Thêm balloon
                     case '1':
-                        _board.addCharacter(new Balloon(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        _board.addCharacter(new Balloon(Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
                     // Thêm oneal
                     case '2':
-                        _board.addCharacter(new Oneal(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        _board.addCharacter(new Oneal(Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
                         _board.addEntity(pos, new Grass(x, y, Sprite.grass));
                         break;
                     // Thêm doll
                     case '3':
-                        _board.addCharacter(new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        _board.addCharacter(new Doll(Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
                     // Thêm oneal
-                    // Thêm BomItem            
+                    // Thêm BomItem
                     case 'b':
                         LayeredEntity layer = new LayeredEntity(x, y,
                                 new Grass(x, y, Sprite.grass),

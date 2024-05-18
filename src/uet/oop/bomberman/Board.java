@@ -11,6 +11,9 @@ import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.input.Keyboard1;
+import uet.oop.bomberman.input.Keyboard2;
+
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
 
@@ -25,7 +28,10 @@ import java.util.List;
 public class Board implements IRender {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
+	protected Keyboard1 _input1;
+	protected Keyboard2 _input2;
 	protected Keyboard _input;
+
 	protected Screen _screen;
 
 	public Entity[] _entities;
@@ -43,9 +49,11 @@ public class Board implements IRender {
 	private int _time = Game.TIME;
 	private int _points = Game.POINTS;
 
-	public Board(Game game, Keyboard input, Screen screen) {
+	public Board(Game game, Keyboard input, Keyboard1 input1, Keyboard2 input2, Screen screen) {
 		_game = game;
 		_input = input;
+		_input1 = input1;
+		_input2 = input2;
 		_screen = screen;
 
 		loadLevel(1); // start in level 1
@@ -355,6 +363,14 @@ public class Board implements IRender {
 
 	public Keyboard getInput() {
 		return _input;
+	}
+
+	public Keyboard1 getInput1() {
+		return _input1;
+	}
+
+	public Keyboard2 getInput2() {
+		return _input2;
 	}
 
 	public LevelLoader getLevel() {
