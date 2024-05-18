@@ -13,6 +13,9 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import javax.swing.JButton;
+
+
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
  * Gọi phương thức render(), update() cho tất cả các entity
@@ -25,12 +28,13 @@ public class Game extends Canvas {
 
     public static int SCALE = 3;
 
-    public static final String TITLE = "BombermanGame";
+	public static final String TITLE = "BombermanGame";
+	public static final int TICKS_PER_SECOND = 60;
 
-    private static final int BOMBRATE = 1;
-    private static final int BOMBRADIUS = 1;
-    private static final double BOMBERSPEED = 1.0; // toc do bomber
-    private static int itemTime;
+	public static final int BOMBRATE = 1;
+	public static final int BOMBRADIUS = 1;
+	public static final double BOMBERSPEED = 1.0;// toc do bomber
+	private static int itemTime;
 
     public static final int TIME = 200;
     public static final int ITEM_TIME = 20;
@@ -55,6 +59,7 @@ public class Game extends Canvas {
     private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
+
     // game variable
     private int frames;
     private int updates;
@@ -63,6 +68,7 @@ public class Game extends Canvas {
     // game screens
     private SelectLevelScreen selectLevelScreen;
     private SelectOption selectOption;
+
 
     public Game(Frame frame) {
         _frame = frame;
@@ -92,6 +98,7 @@ public class Game extends Canvas {
         g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
         _board.renderMessages(g);
     }
+
 
     private void renderScreen(Graphics g) {
         screen.clear();
