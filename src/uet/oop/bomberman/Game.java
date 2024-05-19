@@ -93,7 +93,7 @@ public class Game extends Canvas {
 	private void initScreen() {
 		Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
 
-		this.selectLevelScreen = new SelectLevelScreen(_input);
+		this.selectLevelScreen = new SelectLevelScreen(_input, _board);
 	}
 
 	private void update() {

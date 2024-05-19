@@ -1,5 +1,6 @@
 package uet.oop.bomberman.screen;
 
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
@@ -16,9 +17,11 @@ public class SelectLevelScreen extends GameScreen {
     ArrayList<String> levels = new ArrayList<String>();
     int selectorIndex = 0;
     private Keyboard _input;
+    private Board _board;
 
-    public SelectLevelScreen(Keyboard input) {
+    public SelectLevelScreen(Keyboard input, Board board) {
         _input = input;
+        _board = board;
 
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
@@ -36,6 +39,8 @@ public class SelectLevelScreen extends GameScreen {
                         break;
                     case ENTER:
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        Global.gameLevel = selectorIndex + 1;
+                        _board.loadLevel(Global.gameLevel);
                         break;
                 }
 
