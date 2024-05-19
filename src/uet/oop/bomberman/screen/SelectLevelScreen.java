@@ -59,7 +59,6 @@ public class SelectLevelScreen extends GameScreen {
         drawOptions(g);
         drawSelector(g);
     }
-
     private void drawTitle(Graphics g) {
         String title = "SELECT LEVEL";
         Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
