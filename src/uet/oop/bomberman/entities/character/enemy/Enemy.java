@@ -5,7 +5,6 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.enemy.ai.AI;
 import uet.oop.bomberman.graphics.Screen;
@@ -28,9 +27,13 @@ public abstract class Enemy extends Character {
 	
 	protected int _finalAnimation = 30;
 	protected Sprite _deadSprite;
+
+	private Board _board;
 	
 	public Enemy(int x, int y, Board board, Sprite dead, double speed, int points) {
-		super(x, y, board);
+		super(x, y, speed, board);
+
+		this._board = board;
 		
 		_points = points;
 		_speed = speed;
@@ -66,7 +69,7 @@ public abstract class Enemy extends Character {
 				_sprite = _deadSprite;
 				_animate = 0;
 			} else {
-				_sprite = Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, _animate, 60);
+				_sprite = Sprite.movingSprite(Sprite.mob_dead1, Sprite.mob_dead2, Sprite.mob_dead3, _animate, Game.TICKS_PER_SECOND);
 			}
 				
 		}
@@ -122,7 +125,7 @@ public abstract class Enemy extends Character {
 		int xx = Coordinates.pixelToTile(xr) +(int)x;
 		int yy = Coordinates.pixelToTile(yr) +(int)y;
 		
-		Entity a = _board.getEntity(xx, yy, this); //entity of the position we want to go
+		Entity a = entityManager.getEntity(xx, yy, this); //entity of the position we want to go
 		
 		return a.collide(this);
 	}
@@ -130,13 +133,13 @@ public abstract class Enemy extends Character {
 	@Override
 	public boolean collide(Entity e) {
 		if(e instanceof Flame){
-                    this.kill();
-                    return false;
-                }
-                if(e instanceof Bomber){
-                    ((Bomber) e).kill();
-                    return false;
-                }
+			this.kill();
+			return false;
+		}
+		if(e instanceof Character && ((Character)e).isPlayer()){
+			((Character) e).kill();
+			return false;
+		}
 		return true;
 	}
 	

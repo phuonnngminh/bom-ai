@@ -9,11 +9,11 @@ public class Minvo extends Enemy {
     private Board _board;
 
     public Minvo(int x, int y, Board board) {
-        super(x, y, board, Sprite.minvo_dead, Game.getBomberSpeed() * 1.5, 800);
+        super(x, y, board, Sprite.minvo_dead, Game.BOMBERSPEED * 1.5, 800);
         _board = board;
         _sprite = Sprite.minvo_right1;
 
-        _ai = new AIMedium(_board.getBomber(), this);
+        _ai = new AIMedium(_board.getPlayer(), this);
         _direction = _ai.calculateDirection();
     }
 
@@ -24,7 +24,7 @@ public class Minvo extends Enemy {
             case 1:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3,
-                            _animate, 60);
+                            _animate, Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.minvo_left1;
                 break;
@@ -32,7 +32,7 @@ public class Minvo extends Enemy {
             case 3:
                 if (_moving)
                     _sprite = Sprite.movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, _animate,
-                            60);
+                    Game.TICKS_PER_SECOND);
                 else
                     _sprite = Sprite.minvo_left1;
                 break;

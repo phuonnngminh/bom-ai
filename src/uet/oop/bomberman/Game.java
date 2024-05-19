@@ -1,5 +1,6 @@
 package uet.oop.bomberman;
 
+import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
@@ -25,29 +26,23 @@ public class Game extends Canvas {
 	public static int SCALE = 3;
 
 	public static final String TITLE = "BombermanGame";
+	public static final int TICKS_PER_SECOND = 60;
 
-	private static final int BOMBRATE = 1;
-	private static final int BOMBRADIUS = 1;
-	private static final double BOMBERSPEED = 1.0;// toc do bomber
-	private static int itemTime;
+	public static final int BOMBRATE = 1;
+	public static final int BOMBRADIUS = 1;
+	public static final double BOMBERSPEED = 1.0;// toc do bomber
 
 	public static final int TIME = 200;
-	public static final int ITEM_TIME = 20;
 	public static final int POINTS = 0;
 
 	protected static int SCREENDELAY = 3;
-
-	protected static int bombRate = BOMBRATE;
-	protected static int bombRadius = BOMBRADIUS;
-	protected static double bomberSpeed = BOMBERSPEED;
 
 	protected int _screenDelay = SCREENDELAY;
 
 	private Keyboard _input;
 	private boolean _running = false;
 	private boolean _paused = true;
-
-	private static Board _board;
+	private Board _board;
 	private Screen screen;
 	private Frame _frame;
 
@@ -73,6 +68,7 @@ public class Game extends Canvas {
 		addKeyListener(_input);
 
 		initScreen();
+	
 	}
 	
 	
@@ -104,7 +100,12 @@ public class Game extends Canvas {
 		_input.update();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
-				_board.update();
+			_board.update();
+			if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+				_board.setShow(3); // Hiển thị màn hình tạm dừng
+				_paused = true; // Đặt trạng thái game là tạm dừng
+				return;
+		}
 				break;
 			case SELECT_LEVEL_SCREEN:
 				// TODO: call select level screen update
@@ -123,8 +124,8 @@ public class Game extends Canvas {
 
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
-				if(_paused) {
-					if(_screenDelay <= 0) {
+				if (_paused) {
+					if (_screenDelay <= 0) {
 						_board.setShow(-1);
 						_paused = false;
 					}
@@ -134,18 +135,21 @@ public class Game extends Canvas {
 					renderGame(g);
 				}
 
-
+				if (_input.resume) {
+					_paused = false;
+					_board.setShow(-1);
+					}
 				frames++;
-				if(System.currentTimeMillis() - timer > 1000) {
+				if (System.currentTimeMillis() - timer > 1000) {
 					_frame.setTime(_board.subtractTime());
 					_frame.setPoints(_board.getPoints());
-					_frame.setItemTime(_board.getItemTime());
+					_frame.renderItemTime();
 					timer += 1000;
 					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 					updates = 0;
 					frames = 0;
 
-					if(_board.getShow() == 2)
+					if (_board.getShow() == 2)
 						--_screenDelay;
 				}
 				break;
@@ -164,7 +168,6 @@ public class Game extends Canvas {
 		this.frames = 0;
 		this.updates = 0;
 	}
-
 	public void start() {
 		_running = true;
 
@@ -188,60 +191,19 @@ public class Game extends Canvas {
 		}
 	}
 
-	public static int getItemTime() {
-		return itemTime;
-	}
-
-	public static double getBomberSpeed() {
-		return bomberSpeed;
-	}
-
-	public static int getBombRate() {
-		return bombRate;
-	}
-
-	public static int getBombRadius() {
-		return bombRadius;
-	}
-
-	public static void addBomberSpeed(double i) {
-		bomberSpeed += i;
-	}
-
-	public static void addBombRadius(int i) {
-		bombRadius += i;
-	}
-
-	public static void addBombRate(int i) {
-		bombRate += i;
-	}
-
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
 	}
-
-	public static Board getBoard() {
-		return _board;
-	}
-
 	public boolean isPaused() {
 		return _paused;
 	}
 
 	public void pause() {
-		_paused = true;
+		_paused = !_paused;
 	}
 
-	public static void setBombRate(int bombRate) {
-		Game.bombRate = bombRate;
-	}
-
-	public static void setBombRadius(int bombRadius) {
-		Game.bombRadius = bombRadius;
-	}
-
-	public static void setBomberSpeed(double bomberSpeed) {
-		Game.bomberSpeed = bomberSpeed;
+	public IGameInfoManager getGameInfoManager() {
+		return _board;
 	}
 
 }
