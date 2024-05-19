@@ -4,6 +4,10 @@ import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.screen.SelectLevelScreen;
+import uet.oop.bomberman.utils.EScreenName;
+import uet.oop.bomberman.utils.Global;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -43,8 +47,16 @@ public class Game extends Canvas {
 	private Frame _frame;
 
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+	private int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 
+	// game variable
+	private int frames;
+	private int updates;
+	private long timer;
+
+	// game screens
+	private SelectLevelScreen selectLevelScreen;
+	
 	public Game(Frame frame) {
 		_frame = frame;
 		_frame.setTitle(TITLE);
@@ -54,16 +66,13 @@ public class Game extends Canvas {
 
 		_board = new Board(this, _input, screen);
 		addKeyListener(_input);
+
+		initScreen();
 	
 	}
-
-	private void renderGame() {
-		BufferStrategy bs = getBufferStrategy();
-		if (bs == null) {
-			createBufferStrategy(3);
-			return;
-		}
-
+	
+	
+	private void renderGame(Graphics g) {
 		screen.clear();
 
 		_board.render(screen);
@@ -71,50 +80,102 @@ public class Game extends Canvas {
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = screen._pixels[i];
 		}
-
-		Graphics g = bs.getDrawGraphics();
-
+		
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		_board.renderMessages(g);
-
-		g.dispose();
-		bs.show();
+	}
+	
+	private void renderScreen(Graphics g) {
+		screen.clear();
+		_board.drawScreen(g);
 	}
 
-	private void renderScreen() {
+	private void initScreen() {
+		Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
+
+		this.selectLevelScreen = new SelectLevelScreen(_input, _board);
+	}
+
+	private void update() {
+		_input.update();
+		switch (Global.currentScreen) {
+			case GAME_PLAY_SCREEN:
+			_board.update();
+			if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+				_board.setShow(3); // Hiển thị màn hình tạm dừng
+				_paused = true; // Đặt trạng thái game là tạm dừng
+				return;
+		}
+				break;
+			case SELECT_LEVEL_SCREEN:
+				// TODO: call select level screen update
+				selectLevelScreen.update();
+				break;
+		}
+	}
+
+	private void showScreen() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
 			createBufferStrategy(3);
 			return;
 		}
-
-		screen.clear();
-
 		Graphics g = bs.getDrawGraphics();
 
-		_board.drawScreen(g);
+		switch (Global.currentScreen) {
+			case GAME_PLAY_SCREEN:
+				if (_paused) {
+					if (_screenDelay <= 0) {
+						_board.setShow(-1);
+						_paused = false;
+					}
+
+					renderScreen(g);
+				} else {
+					renderGame(g);
+				}
+
+				if (_input.resume) {
+					_paused = false;
+					_board.setShow(-1);
+					}
+				frames++;
+				if (System.currentTimeMillis() - timer > 1000) {
+					_frame.setTime(_board.subtractTime());
+					_frame.setPoints(_board.getPoints());
+					_frame.renderItemTime();
+					timer += 1000;
+					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
+					updates = 0;
+					frames = 0;
+
+					if (_board.getShow() == 2)
+						--_screenDelay;
+				}
+				break;
+			case SELECT_LEVEL_SCREEN:
+				// TODO: render select level screen
+				selectLevelScreen.drawScreen(g);
+				break;
+		}
 
 		g.dispose();
 		bs.show();
 	}
 
-	private void update() {
-		_input.update();
-		_board.update();
-		if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
-			_board.setShow(3); // Hiển thị màn hình tạm dừng
-			_paused = true; // Đặt trạng thái game là tạm dừng
-			return;
-	}
+	private void initGame() {
+		this.timer = System.currentTimeMillis();
+		this.frames = 0;
+		this.updates = 0;
 	}
 	public void start() {
 		_running = true;
+
+		initGame();
+		
 		long  lastTime = System.nanoTime();
-		long timer = System.currentTimeMillis();
-		final double ns = 1000000000.0 / TICKS_PER_SECOND; // nanosecond, 60 frames per second
+		final double ns = 1000000000.0 / 60.0; //nanosecond, 60 frames per second
 		double delta = 0;
-		int frames = 0;
-		int updates = 0;
 		requestFocus();
 		while (_running) {
 			long now = System.nanoTime();
@@ -126,34 +187,7 @@ public class Game extends Canvas {
 				delta--;
 			}
 
-			if (_paused) {
-				if (_screenDelay <= 0) {
-					_board.setShow(-1);
-					_paused = false;
-				}
-
-				renderScreen();
-			} else {
-				renderGame();
-			}
-
-			if (_input.resume) {
-				_paused = false;
-				_board.setShow(-1);
-				}
-			frames++;
-			if (System.currentTimeMillis() - timer > 1000) {
-				_frame.setTime(_board.subtractTime());
-				_frame.setPoints(_board.getPoints());
-				_frame.renderItemTime();
-				timer += 1000;
-				_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
-				updates = 0;
-				frames = 0;
-
-				if (_board.getShow() == 2)
-					--_screenDelay;
-			}
+			showScreen();
 		}
 	}
 

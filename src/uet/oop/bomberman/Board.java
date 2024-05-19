@@ -16,6 +16,7 @@ import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
+import uet.oop.bomberman.utils.Global;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		_input = input;
 		_screen = screen;
 
-		loadLevel(1); // start in level 1
+		loadLevel(Global.gameLevel); // start in level 1
 	}
 
 	private void snapCameraToPlayer() {
