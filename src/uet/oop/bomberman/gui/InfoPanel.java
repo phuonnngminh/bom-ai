@@ -30,7 +30,7 @@ public class InfoPanel extends JPanel {
 		itemTimeLabel.setForeground(Color.white);
 		itemTimeLabel.setHorizontalAlignment(JLabel.LEFT);
 		itemTimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
-
+		
 		add(itemTimeLabel);
 		add(timeLabel);
 		add(pointsLabel);

@@ -4,10 +4,11 @@ import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.screen.DeadScreen;
 import uet.oop.bomberman.screen.SelectLevelScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
-import uet.oop.bomberman.screen.SelectOption;
+import uet.oop.bomberman.screen.DeadScreen;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -66,8 +67,8 @@ public class Game extends Canvas {
     private long timer;
 
     // game screens
-    private SelectLevelScreen selectLevelScreen;
-    private SelectOption selectOption;
+    public SelectLevelScreen selectLevelScreen;
+    public DeadScreen deadScreen;
 
 
     public Game(Frame frame) {
@@ -76,12 +77,11 @@ public class Game extends Canvas {
 
         screen = new Screen(WIDTH, HEIGHT);
         _input = new Keyboard();
-        _input1 = new Keyboard();
+		_input1 = new Keyboard();
         _board = new Board(this, _input, screen);
 
         addKeyListener(_input);
-        addKeyListener(_input1);
-
+		addKeyListener(_input1);
         initScreen();
     }
 
@@ -108,7 +108,7 @@ public class Game extends Canvas {
     private void initScreen() {
         Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
         this.selectLevelScreen = new SelectLevelScreen(_input);
-        this.selectOption = new SelectOption(_input, this);
+		this.deadScreen = new DeadScreen(_input1, this);
     }
 
     private void update() {
@@ -121,7 +121,7 @@ public class Game extends Canvas {
                 selectLevelScreen.update();
                 break;
             case END_GAME_SCREEN:
-                selectOption.update();
+            deadScreen.update();
                 break;
         }
     
@@ -189,7 +189,7 @@ public class Game extends Canvas {
                 selectLevelScreen.drawScreen(g);
                 break;
             case END_GAME_SCREEN:
-                selectOption.drawScreen(g);
+                deadScreen.drawScreen(g);
                 break;
         }
 

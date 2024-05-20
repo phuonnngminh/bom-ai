@@ -15,6 +15,7 @@ import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
+import uet.oop.bomberman.screen.DeadScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
@@ -170,7 +171,6 @@ public class Board implements IRender, IEntityManager, IMessageManager {
 		return GameOver = false;
 	}
 	public void endGame() {
-
 		Global.currentScreen = EScreenName.END_GAME_SCREEN;
 		
 	}
