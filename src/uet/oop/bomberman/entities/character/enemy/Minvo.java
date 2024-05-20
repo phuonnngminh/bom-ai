@@ -39,6 +39,24 @@ public class Minvo extends Enemy {
         }
     }
 
+    @Override
+    protected void clearBombs() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'clearBombs'");
+    }
+
+    @Override
+    public void calculateXOffset() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calculateXOffset'");
+    }
+
+    @Override
+    protected void detectPlaceBomb() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'detectPlaceBomb'");
+    }
+
     // // Thêm hành vi cho Minvo
 
     // @Override

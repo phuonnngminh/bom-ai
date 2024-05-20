@@ -3,7 +3,6 @@ package uet.oop.bomberman.input;
 import java.awt.event.KeyEvent;
 
 public class Keyboard2 extends Keyboard {
-    public boolean up2, down2, left2, right2; // Phím điều khiển riêng cho Bomber 1
     private boolean[] keys = new boolean[120]; // 120 is enough to this game
 
     @Override
@@ -11,10 +10,10 @@ public class Keyboard2 extends Keyboard {
         super.update();
 
         // Cập nhật các phím điều khiển riêng cho Bomber 1
-        up2 = keys[KeyEvent.VK_UP];
-        down2 = keys[KeyEvent.VK_DOWN];
-        left2 = keys[KeyEvent.VK_LEFT];
-        right2 = keys[KeyEvent.VK_RIGHT];
+        up = keys[KeyEvent.VK_UP];
+        down = keys[KeyEvent.VK_DOWN];
+        left = keys[KeyEvent.VK_LEFT];
+        right = keys[KeyEvent.VK_RIGHT];
         space = keys[KeyEvent.VK_M];
         // System.out.println("hello");
     }

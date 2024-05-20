@@ -14,7 +14,7 @@ import uet.oop.bomberman.graphics.Sprite;
  *
  * @author TUNG318
  */
-public class Doll extends Enemy{
+public class Doll extends Enemy {
 
     public Doll(int x, int y, Board board) {
         super(x, y, board, Sprite.balloom_dead, 0.8, 100);
@@ -32,7 +32,8 @@ public class Doll extends Enemy{
             case 0:
             case 1:
                 if (_moving) {
-                    _sprite = Sprite.movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, _animate, 60);
+                    _sprite = Sprite.movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, _animate,
+                            60);
                 } else {
                     _sprite = Sprite.doll_left1;
                 }
@@ -40,11 +41,30 @@ public class Doll extends Enemy{
             case 2:
             case 3:
                 if (_moving) {
-                    _sprite = Sprite.movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, _animate, 60);
+                    _sprite = Sprite.movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, _animate,
+                            60);
                 } else {
                     _sprite = Sprite.doll_left1;
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void clearBombs() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'clearBombs'");
+    }
+
+    @Override
+    public void calculateXOffset() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calculateXOffset'");
+    }
+
+    @Override
+    protected void detectPlaceBomb() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'detectPlaceBomb'");
     }
 }

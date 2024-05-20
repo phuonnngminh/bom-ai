@@ -8,7 +8,7 @@ import java.util.List;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.LayeredEntity;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber1;
 import uet.oop.bomberman.entities.character.Bomber2;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
 import uet.oop.bomberman.entities.character.enemy.Doll;
@@ -106,7 +106,7 @@ public class FileLevelLoader extends LevelLoader {
 
                     // Thêm Bomber
                     case 'p':
-                        _board.addCharacter(new Bomber(Coordinates.tileToPixel(x),
+                        _board.addCharacter(new Bomber1(Coordinates.tileToPixel(x),
                                 Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
                         Screen.setOffset(0, 0);
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));

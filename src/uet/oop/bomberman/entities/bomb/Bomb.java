@@ -4,7 +4,7 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber1;
 import uet.oop.bomberman.entities.character.Bomber2;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
@@ -116,7 +116,7 @@ public class Bomb extends AnimatedEntitiy {
 	public boolean collide(Entity e) {
 		// TODO: xử lý khi Bomber đi ra sau khi vừa đặt bom (_allowedToPassThru)
 
-		if (e instanceof Bomber || e instanceof Bomber2) {
+		if (e instanceof Bomber1 || e instanceof Bomber2) {
 			double diffX = e.getX() - Coordinates.tileToPixel(getX());
 			double diffY = e.getY() - Coordinates.tileToPixel(getY());
 

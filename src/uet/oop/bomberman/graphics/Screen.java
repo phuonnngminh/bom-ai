@@ -3,7 +3,7 @@ package uet.oop.bomberman.graphics;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Player;
 import uet.oop.bomberman.entities.character.Character;
 
 import java.awt.*;

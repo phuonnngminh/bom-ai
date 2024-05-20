@@ -2,7 +2,7 @@ package uet.oop.bomberman.entities.tile.item;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber1;
 import uet.oop.bomberman.entities.character.Bomber2;
 import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.graphics.Sprite;
@@ -24,7 +24,7 @@ public abstract class Item extends Tile {
 	@Override
 	public boolean collide(Entity e) {
 		// TODO: xử lý Bomber ăn Item
-		if (e instanceof Bomber || e instanceof Bomber2) {
+		if (e instanceof Bomber1 || e instanceof Bomber2) {
 			Sound.play("Item");
 			handleItemActive();
 			_active = true;

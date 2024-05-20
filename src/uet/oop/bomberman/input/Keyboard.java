@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 public class Keyboard implements KeyListener {
 
 	private boolean[] keys = new boolean[120]; // 120 is enough to this game
-	public boolean space, pause, resume;
+	public boolean space, pause, resume, up, down, left, right;
 
 	public void update() {
 		pause = keys[KeyEvent.VK_ESCAPE];

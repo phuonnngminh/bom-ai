@@ -1,9 +1,7 @@
 package uet.oop.bomberman.entities.character;
 
-import java.util.ArrayList;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
@@ -11,24 +9,15 @@ import uet.oop.bomberman.input.Keyboard1;
 
 import java.util.Iterator;
 import java.util.List;
-import uet.oop.bomberman.entities.LayeredEntity;
-import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
-import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.level.Coordinates;
 
-public class Bomber extends Character {
+public class Bomber1 extends Player {
 
     protected Keyboard1 _input1;
-    // public static List<Item> _items = new ArrayList<Item>();// xu li Item
-    /**
-     * nếu giá trị này < 0 thì cho phép đặt đối tượng Bomb tiếp theo,
-     * cứ mỗi lần đặt 1 Bomb mới, giá trị này sẽ được reset về 0 và giảm dần trong
-     * mỗi lần update()
-     */
+
     private List<Bomb> _bombs1;
 
-    public Bomber(int x, int y, Board board) {
+    public Bomber1(int x, int y, Board board) {
         super(x, y, board);
         _bombs1 = _board.getBombs();
         _input1 = _board.getInput1();
@@ -36,10 +25,16 @@ public class Bomber extends Character {
     }
 
     @Override
-    public void calculateXOffset() {
-        int xScroll = Screen.calculateXOffset(_board, this);
-        Screen.setOffset(xScroll, 0);
-    }
+    public void render(Screen screen) {
+        calculateXOffset();
+
+        if (_alive)
+            chooseSprite();
+        else
+            _sprite = Sprite.player_dead1;
+
+        screen.renderEntity((int) _x, (int) _y - _sprite.SIZE, this);
+    };
 
     /**
      * Kiểm tra xem có đặt được bom hay không? nếu có thì đặt bom tại vị trí hiện
@@ -77,13 +72,13 @@ public class Bomber extends Character {
         // hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
         int xa = 0, ya = 0;
-        if (_input1.up1)
+        if (_input1.up)
             ya--;
-        if (_input1.down1)
+        if (_input1.down)
             ya++;
-        if (_input1.left1)
+        if (_input1.left)
             xa--;
-        if (_input1.right1)
+        if (_input1.right)
             xa++;
 
         if (xa != 0 || ya != 0) {
@@ -108,4 +103,47 @@ public class Bomber extends Character {
             }
         }
     }
+
+    // sprite
+    @Override
+    public void chooseSprite() {
+        switch (_direction) {
+            case 0:
+                _sprite = Sprite.player_up;
+                if (_moving) {
+                    _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2,
+                            _animate, 20);
+                }
+                break;
+            case 1:
+                _sprite = Sprite.player_right;
+                if (_moving) {
+                    _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2,
+                            _animate, 20);
+                }
+                break;
+            case 2:
+                _sprite = Sprite.player_down;
+                if (_moving) {
+                    _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2,
+                            _animate, 20);
+                }
+                break;
+            case 3:
+                _sprite = Sprite.player_left;
+                if (_moving) {
+                    _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2,
+                            _animate, 20);
+                }
+                break;
+            default:
+                _sprite = Sprite.player_right;
+                if (_moving) {
+                    _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2,
+                            _animate, 20);
+                }
+                break;
+        }
+    }
+
 }

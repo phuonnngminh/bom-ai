@@ -4,7 +4,7 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
-import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber1;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
@@ -140,7 +140,7 @@ public class Board implements IRender {
 	public boolean detectNoEnemies() {// phat hien enemies
 		int total = 0;
 		for (int i = 0; i < _characters.size(); i++) {
-			if (_characters.get(i) instanceof Bomber == false)
+			if (_characters.get(i) instanceof Bomber1 == false)
 				++total;
 		}
 
@@ -198,15 +198,15 @@ public class Board implements IRender {
 		return null;
 	}
 
-	public Bomber getBomber() {
+	public Bomber1 getBomber() {
 		Iterator<Character> itr = _characters.iterator();
 
 		Character cur;
 		while (itr.hasNext()) {
 			cur = itr.next();
 
-			if (cur instanceof Bomber)
-				return (Bomber) cur;
+			if (cur instanceof Bomber1)
+				return (Bomber1) cur;
 		}
 
 		return null;
