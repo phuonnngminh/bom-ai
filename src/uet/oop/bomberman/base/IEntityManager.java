@@ -25,5 +25,6 @@ public interface IEntityManager extends IActiveItemManager {
     public Character getPlayer();
 
     public boolean isEnemyCleared();
+    public void handleOnDeath(Character character, Character killer);
 
 }

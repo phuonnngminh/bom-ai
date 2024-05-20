@@ -68,9 +68,13 @@ public class FlameSegment extends Entity {
 
 	@Override
 	public boolean collide(Entity e) {
-		if (e instanceof Character) ((Character)e).kill();
+		if (e instanceof Character) ((Character)e).handleOnDeath();
 		return true;
 	}
-	
+
+	@Override
+	public boolean canBePassedThroughBy(Entity other) {
+		return true;
+	}
 
 }

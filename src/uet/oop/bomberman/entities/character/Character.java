@@ -7,20 +7,24 @@ import java.util.stream.Stream;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.AnimatedEntitiy;
+import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.LayeredEntity;
+import uet.oop.bomberman.entities.bomb.Flame;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.graphics.Screen;
+import uet.oop.bomberman.level.Coordinates;
 
 /**
  * Bao gồm Bomber và Enemy
  */
 public abstract class Character extends AnimatedEntitiy {
 	
-	protected IEntityManager entityManager;
+	protected final IEntityManager entityManager;
 	protected int _direction = -1;
 	protected boolean _alive = true;
 	protected boolean _moving = false;
-	public int _timeAfter = 40;
+	protected int timerDeathAnimation = 40;
 
 	private final double baseSpeed;
 
@@ -34,7 +38,19 @@ public abstract class Character extends AnimatedEntitiy {
 	}
 	
 	@Override
-	public abstract void update();
+	public final void update() {
+        if (!_alive) {
+            if (timerDeathAnimation > 0) {
+                timerDeathAnimation -= 1;
+            } else {
+                handleAfterDeath();
+            }
+            return;
+        }
+		handleUpdate();
+	};
+
+	protected abstract void handleUpdate();
 	
 	@Override
 	public abstract void render(Screen screen);
@@ -44,17 +60,44 @@ public abstract class Character extends AnimatedEntitiy {
 	 */
 	protected abstract void calculateMove();
 	
-	public abstract void move(double xa, double ya);
+	/** Check if can be moved with vector (xa, ya).
+	 * @param xa
+	 * @param ya
+	 */
+	public void move(double xa, double ya) {
+        if(xa > 0) _direction = 1;
+		if(xa < 0) _direction = 3;
+		if(ya > 0) _direction = 2;
+		if(ya < 0) _direction = 0;
+		
+		if(canMove(0, ya)) _y += ya;
+		if(canMove(xa, 0)) _x += xa;
+
+        Entity collidingEntity = entityManager.getEntity(
+            Coordinates.pixelToTile(getCenterX()),
+            Coordinates.pixelToTile(getCenterY()),
+            this
+        );
+        if (collidingEntity != null) {
+            this.collide(collidingEntity);
+            collidingEntity.collide(this);
+        }
+	}
 
 	/**
 	 * Được gọi khi đối tượng bị tiêu diệt
 	 */
-	public abstract void kill();
+	public final void handleOnDeath() {
+		if(!_alive) return;
+		_alive = false;
+		// TODO: determine killer
+		entityManager.handleOnDeath(this, null);
+	}
 
 	/**
 	 * Xử lý hiệu ứng bị tiêu diệt
 	 */
-	protected abstract void afterKill();
+	protected abstract void handleAfterDeath();
 
 	/**
 	 * Kiểm tra xem đối tượng có di chuyển tới vị trí đã tính toán hay không
@@ -102,6 +145,34 @@ public abstract class Character extends AnimatedEntitiy {
 			}
 		}
 		return speedMultiplier * this.baseSpeed;
+	}
+
+	public abstract int getPoints();
+
+	@Override
+	public boolean collide(Entity e) {
+		if(e instanceof Flame){
+			this.handleOnDeath();
+			return false;
+		}
+		if (e instanceof Character) {
+			Character other = (Character) e;
+			if (this.isPlayer() && !other.isPlayer()) {
+				this.handleOnDeath();
+				return false;
+			}
+			if (other.isPlayer() && !this.isPlayer()) {
+				other.handleOnDeath();
+				return false;
+			}
+		}
+		if( e instanceof LayeredEntity) return(e.collide(this));
+		return true;
+	}
+
+	@Override
+	public boolean canBePassedThroughBy(Entity other) {
+		return true;
 	}
 
 }
