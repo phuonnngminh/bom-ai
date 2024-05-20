@@ -4,6 +4,7 @@ import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
+import uet.oop.bomberman.screen.SelectGameModeScreen;
 import uet.oop.bomberman.screen.SelectLevelScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
@@ -56,6 +57,7 @@ public class Game extends Canvas {
 
 	// game screens
 	private SelectLevelScreen selectLevelScreen;
+	private SelectGameModeScreen selectGameModeScreen;
 	
 	public Game(Frame frame) {
 		_frame = frame;
@@ -91,25 +93,29 @@ public class Game extends Canvas {
 	}
 
 	private void initScreen() {
-		Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
+		Global.currentScreen = EScreenName.SELECT_GAME_MODE;
 
-		this.selectLevelScreen = new SelectLevelScreen(_input, _board);
+		this.selectGameModeScreen = new SelectGameModeScreen();
+		this.selectLevelScreen = new SelectLevelScreen(_board);
 	}
 
 	private void update() {
 		_input.update();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
-			_board.update();
-			if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
-				_board.setShow(3); // Hiển thị màn hình tạm dừng
-				_paused = true; // Đặt trạng thái game là tạm dừng
-				return;
-		}
+				_board.update();
+				if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+					_board.setShow(3); // Hiển thị màn hình tạm dừng
+					_paused = true; // Đặt trạng thái game là tạm dừng
+					return;
+				}
 				break;
 			case SELECT_LEVEL_SCREEN:
 				// TODO: call select level screen update
 				selectLevelScreen.update();
+				break;
+			case SELECT_GAME_MODE:
+				selectGameModeScreen.update();
 				break;
 		}
 	}
@@ -155,8 +161,16 @@ public class Game extends Canvas {
 				break;
 			case SELECT_LEVEL_SCREEN:
 				// TODO: render select level screen
+				if (Global.currentScreen != Global.previousScreen) {
+					selectLevelScreen.setInput(_input);
+				}
 				selectLevelScreen.drawScreen(g);
 				break;
+			case SELECT_GAME_MODE:
+				if (Global.currentScreen != Global.previousScreen) {
+					selectGameModeScreen.setInput(_input);
+				}
+				selectGameModeScreen.drawScreen(g);
 		}
 
 		g.dispose();
