@@ -65,6 +65,11 @@ public class Message extends Entity {
 	public boolean collide(Entity e) {
 		return true;
 	}
+
+	@Override
+	public boolean canBePassedThroughBy(Entity other) {
+		return true;
+	}
 	
 	
 }

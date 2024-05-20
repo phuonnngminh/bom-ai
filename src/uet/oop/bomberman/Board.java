@@ -16,6 +16,7 @@ import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
+import uet.oop.bomberman.sound.Sound;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -429,6 +430,23 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	@Override
 	public void setPlayer(Character character) {
 		this.player = character;
+	}
+
+	@Override
+	public void handleOnDeath(Character character, Character killer) {
+		if (character.isPlayer()) {
+			// TODO: handle player death
+			Sound.play("endgame3");
+		} else {
+			// TODO: document how to calculate message coord
+			double messageX = (character.getX() * Game.SCALE) + (character.getSprite().SIZE / 2 * Game.SCALE);
+			double messageY = (character.getY() * Game.SCALE) - (character.getSprite().SIZE / 2 * Game.SCALE);
+			int points = character.getPoints();
+			addPoints(points);
+			Message msg = new Message("+" + points, messageX, messageY, 2, Color.white, 14);
+			addMessage(msg);
+			Sound.play("AA126_11");
+		}
 	}
 
 }

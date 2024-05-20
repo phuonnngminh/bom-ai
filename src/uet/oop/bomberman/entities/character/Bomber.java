@@ -29,7 +29,6 @@ public class Bomber extends Character {
     protected int bombCooldown = 0;
 
     private final int baseBombRadius;
-    private int bombRadius;
 
     public int getBombCooldown() {
         return bombCooldown;
@@ -47,16 +46,10 @@ public class Bomber extends Character {
     }
 
     @Override
-    public void update() {
-        clearBombs();
-        if (!_alive) {
-            afterKill();
-            return;
-        }
-
+    public void handleUpdate() {
+        clearExpiredBombs();
         if (bombCooldown < -7500) bombCooldown = 0;
         else bombCooldown--;
-
         animate();
 
     }
@@ -108,7 +101,7 @@ public class Bomber extends Character {
         Sound.play("BOM_SET");
     }
 
-    private void clearBombs() {
+    private void clearExpiredBombs() {
         Iterator<Bomb> bs = _bombs.iterator();
 
         Bomb b;
@@ -122,18 +115,8 @@ public class Bomber extends Character {
     }
 
     @Override
-    public void kill() {
-        if (!_alive) return;
-        _alive = false;
-        Sound.play("endgame3");
-    }
-
-    @Override
-    protected void afterKill() {
-        if (_timeAfter > 0) --_timeAfter;
-        else {
-            _board.endGame();
-        }
+    protected void handleAfterDeath() {
+        _board.endGame();
     }
 
     @Override
@@ -149,7 +132,7 @@ public class Bomber extends Character {
 			
 			Entity a = entityManager.getEntity(xt, yt, this);
 			
-			if(!a.collide(this))
+			if(!a.canBePassedThroughBy(this))
 				return false;
 		}
 		
@@ -158,36 +141,8 @@ public class Bomber extends Character {
     }
 
     @Override
-    public void move(double xa, double ya) {
-        // TODO: sử dụng canMove() để kiểm tra xem có thể di chuyển tới điểm đã tính toán hay không và thực hiện thay đổi tọa độ _x, _y
-        // TODO: nhớ cập nhật giá trị _direction sau khi di chuyển
-        if(xa > 0) _direction = 1;
-		if(xa < 0) _direction = 3;
-		if(ya > 0) _direction = 2;
-		if(ya < 0) _direction = 0;
-		
-		if(canMove(0, ya)) { //separate the moves for the player can slide when is colliding
-			_y += ya;
-		}
-		
-		if(canMove(xa, 0)) {
-			_x += xa;
-		}
-    }
-
-    @Override
     public boolean collide(Entity e) {
-        // TODO: xử lý va chạm với Flame
-        // TODO: xử lý va chạm với Enemy
-        if(e instanceof Flame){
-            this.kill();
-            return false;
-        }
-        if(e instanceof Enemy){
-            this.kill();
-            return true;
-        }
-        if( e instanceof LayeredEntity) return(e.collide(this));
+        if (!super.collide(e)) return false;
         return true;
     }
 
@@ -225,5 +180,10 @@ public class Bomber extends Character {
                 }
                 break;
         }
+    }
+
+    @Override
+    public int getPoints() {
+        return 0;
     }
 }

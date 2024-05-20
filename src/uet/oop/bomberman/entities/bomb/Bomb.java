@@ -83,9 +83,9 @@ public class Bomb extends AnimatedEntitiy {
 		_allowedToPassThru = true;
 		// TODO: xử lý khi Character đứng tại vị trí Bomb
 		Character x = _board.getCharacterAtExcluding((int)_x, (int)_y, null);
-                if(x != null){
-                    x.kill();
-                }
+		if(x != null){
+			x.handleOnDeath();
+		}
 		// TODO: tạo các Flame
                 _flames = new Flame[4];
                 for (int i = 0; i < _flames.length; i++) {
@@ -93,7 +93,7 @@ public class Bomb extends AnimatedEntitiy {
                 }
                 Sound.play("BOM_11_M");
 	}
-        public void time_explode() {
+	public void handleChainExplode() {
 		_timeToExplode = 0;
 	}
 	public FlameSegment flameAt(int x, int y) {
@@ -110,11 +110,20 @@ public class Bomb extends AnimatedEntitiy {
 
 	@Override
 	public boolean collide(Entity e) {
-        // TODO: xử lý khi Bomber đi ra sau khi vừa đặt bom (_allowedToPassThru)
-        
-        if(e instanceof Bomber) {
-			double diffX = e.getX() - Coordinates.tileToPixel(getX());
-			double diffY = e.getY() - Coordinates.tileToPixel(getY());
+		// Xử lý va chạm với Flame của Bomb khác: chain explosion
+		if(e instanceof Flame) {
+			handleChainExplode();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean canBePassedThroughBy(Entity other) {
+        // Xử lý khi Bomber đi ra sau khi vừa đặt bom (_allowedToPassThru)
+        if(other instanceof Bomber) {
+			double diffX = other.getX() - Coordinates.tileToPixel(getX());
+			double diffY = other.getY() - Coordinates.tileToPixel(getY());
 			
 			if(!(diffX >= -10 && diffX < 16 && diffY >= 1 && diffY <= 28)) { // differences to see if the player has moved out of the bomb, tested values
 				_allowedToPassThru = false;
@@ -122,11 +131,8 @@ public class Bomb extends AnimatedEntitiy {
 			
 			return _allowedToPassThru;
 		}
-	// TODO: xử lý va chạm với Flame của Bomb khác
-		if(e instanceof Flame ) {
-			time_explode();
-			return true;
-		}
+
 		return false;
 	}
+
 }
