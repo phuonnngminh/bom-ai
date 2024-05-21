@@ -44,9 +44,10 @@ public class SelectLevelScreen extends GameScreen {
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
                         Global.gameLevel = selectorIndex + 1;
                         _board.loadLevel(Global.gameLevel);
-                        onDestroy();
+//                        onDestroy();
                         break;
                 }
+                onDestroy();
 
                 if (selectorIndex < 0) {
                     selectorIndex = levels.size() - 1;
@@ -123,6 +124,6 @@ public class SelectLevelScreen extends GameScreen {
 
     @Override
     public void onDestroy() {
-        this._input = null;
+        this._input.get().keyboardInputCallback = Optional.ofNullable(null);;
     }
 }
