@@ -6,14 +6,18 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.action.ActionPlaceBomb;
+import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException;
+import uet.oop.bomberman.entities.character.exceptions.BombQuotaReachedException;
+import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
+import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Iterator;
 import java.util.List;
-import uet.oop.bomberman.entities.LayeredEntity;
-import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
@@ -186,4 +190,25 @@ public class Bomber extends Character {
     public int getPoints() {
         return 0;
     }
+
+    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
+        addAll(ActionConstants.LIST_ACTION_MOVE);
+        add(ActionConstants.PLACE_BOMB);
+    }};
+    @Override
+	protected List<? extends Action> getValidActions() {
+        return VALID_ACTIONS;
+	}
+
+    @Override
+    protected void performAction(Action action, boolean isDryRun)
+            throws InvalidActionException, CannotPerformActionException {
+        super.performAction(action, isDryRun);
+        if (action instanceof ActionPlaceBomb) {
+            if (getBombRemainingQuota() < 0) throw new BombQuotaReachedException();
+            if (bombCooldown > 0) throw new ActionOnCooldownException();
+            if (!isDryRun) placeBomb();
+        }
+    }
+
 }

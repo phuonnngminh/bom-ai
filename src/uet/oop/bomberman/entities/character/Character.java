@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import uet.oop.bomberman.Game;
@@ -10,6 +11,12 @@ import uet.oop.bomberman.entities.AnimatedEntitiy;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.bomb.Flame;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.action.ActionMove;
+import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
+import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
+import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.graphics.Screen;
@@ -59,7 +66,42 @@ public abstract class Character extends AnimatedEntitiy {
 	 * Tính toán hướng đi
 	 */
 	protected abstract void calculateMove();
-	
+
+	protected List<? extends Action> getValidActions() { return ActionConstants.LIST_ACTION_MOVE; }
+
+	public boolean isValidAction(Action action) {
+		return getValidActions().contains(action);
+	}
+
+	public final void performAction(Action action) throws InvalidActionException, CannotPerformActionException {
+		performAction(action, false);
+	}
+
+	protected void performAction(Action action, boolean isDryRun) throws InvalidActionException, CannotPerformActionException {
+		if (!isValidAction(action)) throw new InvalidActionException();
+		if (action instanceof ActionMove) {
+			ActionMove actionMove = (ActionMove) action;
+			double dx = actionMove.getDx() * getSpeed();
+			double dy = actionMove.getDy() * getSpeed();
+			if (!isDryRun) move(dx, dy);
+		}
+	};
+
+	public final boolean canPerformAction(Action action) {
+		try {
+			performAction(action, true);
+			return true;
+		} catch (CharacterActionException ex) {
+			return false;
+		}
+	};
+
+	public List<? extends Action> getPerformableActions() {
+		return getValidActions().stream()
+			.filter(this::canPerformAction)
+			.collect(Collectors.toList());
+	}
+
 	/** Check if can be moved with vector (xa, ya).
 	 * @param xa
 	 * @param ya

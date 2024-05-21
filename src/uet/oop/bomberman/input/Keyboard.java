@@ -15,7 +15,7 @@ public class Keyboard implements KeyListener {
 		void onKeyPressed(EGameControl gameControl);
 	}
 	
-	private boolean[] keys = new boolean[120]; //120 is enough to this game
+	private boolean[] keys = new boolean[65536];
 	public boolean up, down, left, right, space,pause,resume;
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 	
