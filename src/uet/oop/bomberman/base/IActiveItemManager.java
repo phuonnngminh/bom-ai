@@ -6,7 +6,7 @@ import uet.oop.bomberman.entities.tile.item.Item;
 
 public interface IActiveItemManager {
 
-    public List<Item> getActiveItems();
+    public List<Item> getPlayerActiveItems();
     public void addActiveItem(Item item);
 
 }

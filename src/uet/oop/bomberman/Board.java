@@ -43,7 +43,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	private Character player;
 
 	@Override
-	public List<Item> getActiveItems() {
+	public List<Item> getPlayerActiveItems() {
 		return getPlayer().getActiveItems().collect(Collectors.toList());
 	}
 
