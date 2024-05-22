@@ -105,8 +105,8 @@ public abstract class Character extends AnimatedEntitiy {
 		if (!isValidAction(action)) throw new InvalidActionException();
 		if (action instanceof ActionMove) {
 			ActionMove actionMove = (ActionMove) action;
-			double dx = actionMove.getDx();
-			double dy = actionMove.getDy();
+			double dx = actionMove.getDx() * Game.TILES_SIZE;
+			double dy = actionMove.getDy() * Game.TILES_SIZE;
 			if (isMoving()) throw new ActionOnCooldownException();
 			if (!isDryRun) move(dx, dy);
 		}
@@ -132,8 +132,6 @@ public abstract class Character extends AnimatedEntitiy {
 	 * @param ya
 	 */
 	public void move(double xa, double ya) {
-		xa *= Game.TILES_SIZE;
-		ya *= Game.TILES_SIZE;
 		double moveDurationBase = Game.TICKS_PER_SECOND / getSpeed();
 		Waypoint waypointX = new Waypoint(
 			xa,
