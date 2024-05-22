@@ -82,7 +82,7 @@ public class Bomb extends AnimatedEntitiy {
 		_exploded = true;
 		_allowedToPassThru = true;
 		// TODO: xử lý khi Character đứng tại vị trí Bomb
-		Character x = _board.getCharacterAtExcluding((int)_x, (int)_y, null);
+		Character x = _board.getCharacterManager().getCharacterAtExcluding((int)_x, (int)_y, null);
 		if(x != null){
 			x.handleOnDeath();
 		}

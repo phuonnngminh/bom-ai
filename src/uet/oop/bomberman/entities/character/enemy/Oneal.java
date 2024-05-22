@@ -1,13 +1,13 @@
 package uet.oop.bomberman.entities.character.enemy;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Oneal extends Enemy {
 	//private Random random = new Random();
-	public Oneal(int x, int y, Board board) {
-		super(x, y, board, Sprite.balloom_dead, Game.BOMBERSPEED, 100);
+	public Oneal(int x, int y, IEntityManager entityManager) {
+		super(x, y, entityManager, Sprite.balloom_dead, Game.BOMBERSPEED, 100);
 		
 		_sprite = Sprite.balloom_left1;
 	}

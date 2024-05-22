@@ -4,11 +4,7 @@ import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
-import uet.oop.bomberman.base.IMessageManager;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Message;
-import uet.oop.bomberman.entities.bomb.Bomb;
-import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
@@ -16,7 +12,6 @@ import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.action.ActionConstants;
 import uet.oop.bomberman.entities.character.action.ActionMove;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
-import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
@@ -24,7 +19,7 @@ import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
-import uet.oop.bomberman.sound.Sound;
+import uet.oop.bomberman.manager.EntityManager;
 import uet.oop.bomberman.utils.Global;
 
 import java.awt.*;
@@ -36,25 +31,23 @@ import java.util.stream.Collectors;
 /**
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
-public class Board implements Copyable, IRender, IEntityManager, IMessageManager, IGameInfoManager {
+public class Board implements Copyable, IRender, IGameInfoManager {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Keyboard _input;
 	protected Screen _screen;
 
-	public Tile[] tiles;
-	public List<Character> _characters = new ArrayList<>();
-	protected List<Bomb> _bombs = new ArrayList<>();
 	private List<Message> _messages = new ArrayList<>();
 	private List<Item> _activeItems = new ArrayList<>();
 	private List<Agent> agents = new ArrayList<>();
 
-	private Character player;
+	private EntityManager entityManager;
 
 	@Override
 	public List<Item> getPlayerActiveItems() {
-		if (!(getPlayer() instanceof CanUseItem)) return new ArrayList<>();
-		return ((CanUseItem)getPlayer()).getActiveItems().collect(Collectors.toList());
+		Character player = entityManager.getPlayer();
+		if (!(player instanceof CanUseItem)) return new ArrayList<>();
+		return ((CanUseItem)player).getActiveItems().collect(Collectors.toList());
 	}
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
@@ -71,7 +64,7 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 	}
 
 	private void snapCameraToPlayer() {
-        int xScroll = Screen.calculateXOffset(this, getPlayer());
+        int xScroll = Screen.calculateXOffset(this, entityManager.getPlayer());
         Screen.setOffset(xScroll, 0);
     }
 
@@ -80,9 +73,7 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 		if (_game.isPaused())
 			return;
 
-		updateEntities();
-		updateCharacters();
-		updateBombs();
+		entityManager.update();
 		updateMessages();
 		updateActiveItems();
 		detectEndGame();
@@ -91,12 +82,6 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 
 		snapCameraToPlayer();
 		processPlayerInput();
-
-		for (int i = 0; i < _characters.size(); i++) {
-			Character a = _characters.get(i);
-			if (a.isRemoved())
-				_characters.remove(i);
-		}
 	}
 
 	public void addAgent(Agent agent) {
@@ -113,7 +98,7 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 	}
 
 	private void processPlayerInput() {
-		Character player = getPlayer();
+		Character player = entityManager.getPlayer();
 		if (!player.isAlive()) return;
 
 		processPlayerInputMove(player);
@@ -146,22 +131,7 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 	public void render(Screen screen) {
 		if (_game.isPaused())
 			return;
-
-		// only render the visible part of screen
-		int x0 = Screen.xOffset >> 4; // tile precision, -> left X
-		int x1 = (Screen.xOffset + screen.getWidth() + Game.TILES_SIZE) / Game.TILES_SIZE; // -> right X
-		int y0 = Screen.yOffset >> 4;
-		int y1 = (Screen.yOffset + screen.getHeight()) / Game.TILES_SIZE; // render one tile plus to fix black margins
-
-		for (int y = y0; y < y1; y++) {
-			for (int x = x0; x < x1; x++) {
-				tiles[x + y * _levelLoader.getWidth()].render(screen);
-			}
-		}
-
-		renderBombs(screen);
-		renderCharacter(screen);
-
+		entityManager.render(screen);
 	}
 
 	public void nextLevel() {
@@ -173,13 +143,10 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 		_screenToShow = 2;
 		_game.resetScreenDelay();
 		_game.pause();
-		_characters.clear();
-		_bombs.clear();
-		_messages.clear();
-
+		
 		try {
 			_levelLoader = new FileLevelLoader(this, level);
-			tiles = new Tile[_levelLoader.getHeight() * _levelLoader.getWidth()];
+			entityManager = new EntityManager(_levelLoader, this);
 
 			_levelLoader.createEntities();
 		} catch (LoadLevelException e) {
@@ -198,12 +165,6 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 		_game.pause();
 	}
 
-	@Override
-	public boolean isEnemyCleared() {
-		return !_characters.stream()
-			.anyMatch(character -> character != getPlayer());
-	}
-
 	public void drawScreen(Graphics g) {
 		switch (_screenToShow) {
 			case 1:
@@ -219,133 +180,13 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 	}
 
 	@Override
-	public Entity getEntityAtExcluding(double x, double y, Character m) {
-
-		Entity res = null;
-
-		if (x < 0) return null;
-		if (y < 0) return null;
-		if (x >= _levelLoader.getWidth()) return null;
-		if (y >= _levelLoader.getHeight()) return null;
-
-		res = getFlameSegmentAt((int) x, (int) y);
-		if (res != null)
-			return res;
-
-		res = getBombAt(x, y);
-		if (res != null)
-			return res;
-
-		res = getCharacterAtExcluding((int) x, (int) y, m);
-		if (res != null)
-			return res;
-
-		res = getTileAt((int) x, (int) y);
-
-		return res;
-	}
-
-	@Override
-	public List<Bomb> getBombs() {
-		return _bombs;
-	}
-
-	@Override
-	public Bomb getBombAt(double x, double y) {
-		Iterator<Bomb> bs = _bombs.iterator();
-		Bomb b;
-		while (bs.hasNext()) {
-			b = bs.next();
-			if (b.getX() == (int) x && b.getY() == (int) y)
-				return b;
-		}
-
-		return null;
-	}
-
-	@Override
-	public Character getPlayer() {
-		return this.player;
-	}
-
-	@Override
-	public Character getCharacterAtExcluding(int x, int y, Character a) {
-		Iterator<Character> itr = _characters.iterator();
-
-		Character cur;
-		while (itr.hasNext()) {
-			cur = itr.next();
-			if (cur == a) {
-				continue;
-			}
-
-			if (cur.getXTile() == x && cur.getYTile() == y) {
-				return cur;
-			}
-
-		}
-
-		return null;
-	}
-
-	@Override
-	public FlameSegment getFlameSegmentAt(int x, int y) {
-		Iterator<Bomb> bs = _bombs.iterator();
-		Bomb b;
-		while (bs.hasNext()) {
-			b = bs.next();
-
-			FlameSegment e = b.flameAt(x, y);
-			if (e != null) {
-				return e;
-			}
-		}
-
-		return null;
-	}
-
-	@Override
-	public Tile getTileAt(double x, double y) {
-		return tiles[(int) x + (int) y * _levelLoader.getWidth()];
-	}
-
-	@Override
 	public void addActiveItem(Item item) {
 		_activeItems.add(item);
 	}
 
 	@Override
-	public void addTile(int pos, Tile e) {
-		tiles[pos] = e;
-	}
-
-	@Override
-	public void addCharacter(Character e) {
-		_characters.add(e);
-	}
-
-	@Override
-	public void addBomb(Bomb e) {
-		_bombs.add(e);
-	}
-
-	@Override
 	public void addMessage(Message e) {
 		_messages.add(e);
-	}
-
-	protected void renderCharacter(Screen screen) {
-		Iterator<Character> itr = _characters.iterator();
-
-		while (itr.hasNext())
-			itr.next().render(screen);
-	}
-
-	protected void renderBombs(Screen screen) {
-		Iterator<Bomb> itr = _bombs.iterator();
-
-		while (itr.hasNext())
-			itr.next().render(screen);
 	}
 
 	public void renderMessages(Graphics g) {
@@ -357,32 +198,6 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 			g.setColor(m.getColor());
 			g.drawString(m.getMessage(), (int) m.getX() - Screen.xOffset * Game.SCALE, (int) m.getY());
 		}
-	}
-
-	protected void updateEntities() {
-		if (_game.isPaused())
-			return;
-		for (int i = 0; i < tiles.length; i++) {
-			tiles[i].update();
-		}
-	}
-
-	protected void updateCharacters() {
-		if (_game.isPaused())
-			return;
-		Iterator<Character> itr = _characters.iterator();
-
-		while (itr.hasNext() && !_game.isPaused())
-			itr.next().update();
-	}
-
-	protected void updateBombs() {
-		if (_game.isPaused())
-			return;
-		Iterator<Bomb> itr = _bombs.iterator();
-
-		while (itr.hasNext())
-			itr.next().update();
 	}
 
 	protected void updateActiveItems() {
@@ -461,26 +276,8 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 		return _levelLoader.getHeight();
 	}
 
-	@Override
-	public void setPlayer(Character character) {
-		this.player = character;
-	}
-
-	@Override
-	public void handleOnDeath(Character character, Character killer) {
-		if (character.isPlayer()) {
-			// TODO: handle player death
-			Sound.play("endgame3");
-		} else {
-			// TODO: document how to calculate message coord
-			double messageX = (character.getX() * Game.SCALE) + (character.getSprite().SIZE / 2 * Game.SCALE);
-			double messageY = (character.getY() * Game.SCALE) - (character.getSprite().SIZE / 2 * Game.SCALE);
-			int points = character.getPoints();
-			addPoints(points);
-			Message msg = new Message("+" + points, messageX, messageY, 2, Color.white, 14);
-			addMessage(msg);
-			Sound.play("AA126_11");
-		}
+	public IEntityManager getEntityManager() {
+		return entityManager;
 	}
 
 	@Override

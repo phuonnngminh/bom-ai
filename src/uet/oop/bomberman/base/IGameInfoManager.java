@@ -1,6 +1,6 @@
 package uet.oop.bomberman.base;
 
-public interface IGameInfoManager extends IActiveItemManager {
+public interface IGameInfoManager extends IActiveItemManager, IMessageManager {
 
     public int subtractTime();
     public int getTime();

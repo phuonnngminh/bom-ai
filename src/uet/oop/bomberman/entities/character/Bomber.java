@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities.character;
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.base.IActiveItemManager;
+import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -18,6 +19,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import uet.oop.bomberman.entities.tile.item.BombItem;
@@ -29,7 +31,7 @@ import uet.oop.bomberman.sound.Sound;
 
 public class Bomber extends Character implements CanUseItem {
 
-    private List<Bomb> _bombs;
+    private List<Bomb> _bombs = new ArrayList<>();
     private List<Item> activeItems = new ArrayList<>();
 
     private final int baseBombLimit;
@@ -37,22 +39,19 @@ public class Bomber extends Character implements CanUseItem {
 
     private final int baseBombRadius;
     
-    private final IActiveItemManager activeItemManager;
-
-    public int getBombCooldown() {
-        return bombCooldown;
-    }
-
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, Board board) {
+    private final IActiveItemManager activeItemManager;
+    private final IBombManager bombManager;
+
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, IBombManager bombManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
         this._board = board;
-        _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
         this.activeItemManager = activeItemManager;
+        this.bombManager = bombManager;
     }
 
     @Override
@@ -90,6 +89,10 @@ public class Bomber extends Character implements CanUseItem {
         return this.baseBombRadius + bombRadiusBonus;
     }
 
+    public int getBombCooldown() {
+        return bombCooldown;
+    }
+
     public boolean placeBomb() {
         if(getBombRemainingQuota() > 0 && bombCooldown < 0) {
 			
@@ -107,21 +110,15 @@ public class Bomber extends Character implements CanUseItem {
     public void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
         Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
-        entityManager.addBomb(b);
+        this._bombs.add(b);
+        bombManager.addBomb(b);
         Sound.play("BOM_SET");
     }
 
     private void clearExpiredBombs() {
-        Iterator<Bomb> bs = _bombs.iterator();
-
-        Bomb b;
-        while (bs.hasNext()) {
-            b = bs.next();
-            if (b.isRemoved()) {
-                bs.remove();
-            }
-        }
-
+        _bombs = _bombs.stream()
+            .filter(bomb -> !bomb.isRemoved())
+            .collect(Collectors.toList());
     }
 
     @Override

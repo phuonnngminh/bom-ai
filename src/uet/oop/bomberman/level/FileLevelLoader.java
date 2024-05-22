@@ -73,6 +73,7 @@ public class FileLevelLoader extends LevelLoader {
     public void createEntities() {
         Enemy enemy;
         Agent agent;
+        LayeredEntity layeredEntity;
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
                 int pos = x + y * getWidth();
@@ -80,27 +81,30 @@ public class FileLevelLoader extends LevelLoader {
                 switch (c) {
                     // Thêm grass
                     case ' ':
-                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
+                        _board.getEntityManager().getTileManager().addTile(pos, new Grass(x, y, Sprite.grass));
                         break;
                     // Thêm Wall
                     case '#':
-                        _board.addTile(pos, new Wall(x, y, Sprite.wall));
+                        _board.getEntityManager().getTileManager().addTile(pos, new Wall(x, y, Sprite.wall));
                         break;
                     // Thêm Portal
                     case 'x':
-                        _board.addTile(pos, new LayeredEntity(x, y,
-                                new Grass(x, y, Sprite.grass),
-                                new Portal(x, y, _board, Sprite.portal),
-                                new Brick(x, y, Sprite.brick)));
+                        layeredEntity = new LayeredEntity(
+                            x, y,
+                            new Grass(x, y, Sprite.grass),
+                            new Portal(x, y, _board, Sprite.portal),
+                            new Brick(x, y, Sprite.brick)
+                        );
+                        _board.getEntityManager().getTileManager().addTile(pos, layeredEntity);
                         break;
                     // Thêm brick
                     case '*':
-                        _board.addTile(x + y * _width,
-                                new LayeredEntity(x, y,
-                                        new Grass(x, y, Sprite.grass),
-                                        new Brick(x, y, Sprite.brick)
-                                )
+                        layeredEntity = new LayeredEntity(
+                            x, y,
+                            new Grass(x, y, Sprite.grass),
+                            new Brick(x, y, Sprite.brick)
                         );
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width, layeredEntity);
                         break;
                     // Thêm Bomber player
                     case 'p':
@@ -110,68 +114,87 @@ public class FileLevelLoader extends LevelLoader {
                             Game.BOMBERSPEED,
                             Game.BOMBRATE,
                             Game.BOMBRADIUS,
+                            _board.getEntityManager(),
                             _board,
-                            _board,
+                            _board.getEntityManager().getBombManager(),
                             _board
                         );
-                        _board.addCharacter(bomber);
-                        _board.setPlayer(bomber);
+                        _board.getEntityManager().getCharacterManager().addCharacter(bomber);
+                        _board.getEntityManager().getCharacterManager().setPlayer(bomber);
                         Screen.setOffset(0, 0);
-                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
 
                     // Thêm balloon
                     case '1':
-                        enemy = new Balloon(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
-                        _board.addCharacter(enemy);
-                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
+                        enemy = new Balloon(
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            _board.getEntityManager()
+                        );
+                        _board.getEntityManager().getCharacterManager().addCharacter(enemy);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy, new AILow());
                         _board.addAgent(agent);
                         break;
                     // Thêm oneal
                     case '2':
-                        enemy = new Oneal(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
-                        _board.addCharacter(enemy);
-                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
+                        enemy = new Oneal(
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            _board.getEntityManager()
+                        );
+                        _board.getEntityManager().getCharacterManager().addCharacter(enemy);
+                        _board.getEntityManager().getTileManager().addTile(pos, new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy, new AILow());
                         _board.addAgent(agent);
                         break;
                     // Thêm doll
                     case '3':
-                        enemy = new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
-                        _board.addCharacter(enemy);
-                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
-                        agent = new MovingAgent(enemy, new AIMedium(enemy, _board));
+                        enemy = new Doll(
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            _board.getEntityManager()
+                        );
+                        _board.getEntityManager().getCharacterManager().addCharacter(enemy);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy, new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
                         _board.addAgent(agent);
                         break;
                     // Thêm oneal
                     // Thêm BomItem            
                     case 'b':
-                        LayeredEntity layer = new LayeredEntity(x, y,
-                                new Grass(x, y, Sprite.grass),
-                                new BombItem(x, y, Sprite.powerup_bombs),
-                                new Brick(x, y, Sprite.brick));
-                        _board.addTile(pos, layer);
+                        layeredEntity = new LayeredEntity(
+                            x, y,
+                            new Grass(x, y, Sprite.grass),
+                            new BombItem(x, y, Sprite.powerup_bombs),
+                            new Brick(x, y, Sprite.brick)
+                        );
+                        _board.getEntityManager().getTileManager().addTile(pos, layeredEntity);
                         break;
                     // Thêm SpeedItem
                     case 's':
-                        layer = new LayeredEntity(x, y,
-                                new Grass(x, y, Sprite.grass),
-                                new SpeedItem(x, y, Sprite.powerup_speed),
-                                new Brick(x, y, Sprite.brick));
-                        _board.addTile(pos, layer);
+                        layeredEntity = new LayeredEntity(
+                            x, y,
+                            new Grass(x, y, Sprite.grass),
+                            new SpeedItem(x, y, Sprite.powerup_speed),
+                            new Brick(x, y, Sprite.brick)
+                        );
+                        _board.getEntityManager().getTileManager().addTile(pos, layeredEntity);
                         break;
                     // Thêm FlameItem
                     case 'f':
-                        layer = new LayeredEntity(x, y,
-                                new Grass(x, y, Sprite.grass),
-                                new FlameItem(x, y, Sprite.powerup_flames),
-                                new Brick(x, y, Sprite.brick));
-                        _board.addTile(pos, layer);
+                        layeredEntity = new LayeredEntity(
+                            x, y,
+                            new Grass(x, y, Sprite.grass),
+                            new FlameItem(x, y, Sprite.powerup_flames),
+                            new Brick(x, y, Sprite.brick)
+                        );
+                        _board.getEntityManager().getTileManager().addTile(pos, layeredEntity);
                         break;
 
                     default:
-                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
+                        _board.getEntityManager().getTileManager().addTile(pos, new Grass(x, y, Sprite.grass));
                         break;
 
                 }

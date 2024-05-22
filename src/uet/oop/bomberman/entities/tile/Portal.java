@@ -35,7 +35,7 @@ public class Portal extends NonDestroyableTile {
 	public boolean canBePassedThroughBy(Entity other) {
 		if (other instanceof Character && ((Character)other).isPlayer()) {
 
-			if (!_board.isEnemyCleared())
+			if (!_board.getEntityManager().isEnemyCleared())
 				return false;
 
 			if (other.getXTile() == getX() && other.getYTile() == getY()) {

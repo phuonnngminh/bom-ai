@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
@@ -20,8 +19,6 @@ import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException
 import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
-import uet.oop.bomberman.entities.tile.item.Item;
-import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.level.Coordinates;
 
@@ -203,7 +200,7 @@ public abstract class Character extends AnimatedEntitiy {
 		if(!_alive) return;
 		_alive = false;
 		// TODO: determine killer
-		entityManager.handleOnDeath(this, null);
+		entityManager.getCharacterManager().handleOnDeath(this, null);
 	}
 
 	/**

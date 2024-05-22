@@ -6,11 +6,11 @@ import uet.oop.bomberman.entities.character.Character;
 public class AIMedium extends AI {
 
 	private final Character character;
-	private final ICharacterManager entityManager;
+	private final ICharacterManager characterManager;
 	
 	public AIMedium(Character character, ICharacterManager entityManager) {
 		this.character = character;
-		this.entityManager = entityManager;
+		this.characterManager = entityManager;
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class AIMedium extends AI {
 	}
 
 	protected int calculateColDirection() {
-		Character player = entityManager.getPlayer();
+		Character player = characterManager.getPlayer();
 
 		if(player.getXTile() < character.getXTile())
 			return 3;
@@ -47,7 +47,7 @@ public class AIMedium extends AI {
 	}
 	
 	protected int calculateRowDirection() {
-		Character player = entityManager.getPlayer();
+		Character player = characterManager.getPlayer();
 
 		if(player.getYTile() < character.getYTile())
 			return 0;

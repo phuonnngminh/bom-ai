@@ -4,8 +4,9 @@ import java.util.List;
 
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
+import uet.oop.bomberman.graphics.IRender;
 
-public interface IBombManager {
+public interface IBombManager extends IRender {
 
     public List<Bomb> getBombs();
     public Bomb getBombAt(double x, double y);
