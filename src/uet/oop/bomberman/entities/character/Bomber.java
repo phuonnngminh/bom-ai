@@ -128,23 +128,6 @@ public class Bomber extends Character {
     }
 
     @Override
-    public boolean canMove(double x, double y) {
-        // TODO: kiểm tra có đối tượng tại vị trí chuẩn bị di chuyển đến và có thể di chuyển tới đó hay không
-       for (int c = 0; c < 4; c++) { //colision detection for each corner of the player
-			double xt = ((_x + x) + c % 2 * 9) / Game.TILES_SIZE; //divide with tiles size to pass to tile coordinate
-			double yt = ((_y + y) + c / 2 * 10 - 13) / Game.TILES_SIZE; //these values are the best from multiple tests
-			
-			Entity a = entityManager.getEntity(xt, yt, this);
-			
-			if(!a.canBePassedThroughBy(this))
-				return false;
-		}
-		
-		return true;
-        //return false;
-    }
-
-    @Override
     public boolean collide(Entity e) {
         if (!super.collide(e)) return false;
         return true;
@@ -155,31 +138,31 @@ public class Bomber extends Character {
         switch (_direction) {
             case 0:
                 _sprite = Sprite.player_up;
-                if (_moving) {
+                if (moving) {
                     _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2, _animate, 20);
                 }
                 break;
             case 1:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (moving) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
             case 2:
                 _sprite = Sprite.player_down;
-                if (_moving) {
+                if (moving) {
                     _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, _animate, 20);
                 }
                 break;
             case 3:
                 _sprite = Sprite.player_left;
-                if (_moving) {
+                if (moving) {
                     _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2, _animate, 20);
                 }
                 break;
             default:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (moving) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;

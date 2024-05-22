@@ -117,9 +117,6 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 			try {
 				player.performAction(actionMove);
 			} catch (CharacterActionException ignored) {}
-			player.setMoving(true);
-		} else {
-			player.setMoving(false);
 		}
 	}
 
@@ -203,6 +200,11 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	public Entity getEntity(double x, double y, Character m) {
 
 		Entity res = null;
+
+		if (x < 0) return null;
+		if (y < 0) return null;
+		if (x >= _levelLoader.getWidth()) return null;
+		if (y >= _levelLoader.getHeight()) return null;
 
 		res = getFlameSegmentAt((int) x, (int) y);
 		if (res != null)

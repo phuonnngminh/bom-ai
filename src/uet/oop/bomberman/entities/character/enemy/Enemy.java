@@ -4,10 +4,11 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
 import uet.oop.bomberman.entities.character.enemy.ai.AI;
+import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.level.Coordinates;
 
 public abstract class Enemy extends Character {
 
@@ -63,48 +64,25 @@ public abstract class Enemy extends Character {
 	
 	@Override
 	public void calculateMove() {
-		// TODO: Tính toán hướng đi và di chuyển Enemy theo _ai và cập nhật giá trị cho _direction
-		// TODO: sử dụng canMove() để kiểm tra xem có thể di chuyển tới điểm đã tính toán hay không
-		// TODO: sử dụng move() để di chuyển
-		// TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-                int xa = 0, ya = 0;
-		if(_steps <= 0){
-			_direction = _ai.calculateDirection();
-			_steps = MAX_STEPS;
-		}
-			
-		if(_direction == 0) ya--; 
-		if(_direction == 2) ya++;
-		if(_direction == 3) xa--;
-		if(_direction == 1) xa++;
+		int direction = _ai.calculateDirection();
+		try {
+			switch (direction) {
+				case 0:
+					performAction(ActionConstants.MOVE_UP);
+					break;
+				case 1:
+					performAction(ActionConstants.MOVE_DOWN);
+					break;
+				case 2:
+					performAction(ActionConstants.MOVE_LEFT);
+					break;
+				case 3:
+					performAction(ActionConstants.MOVE_RIGHT);
+					break;
+				default:
+			}
+		} catch (CharacterActionException ignored) {}
 		
-		if(canMove(xa, ya)) {
-			_steps -= 1 + rest;
-			move(xa * _speed, ya * _speed);
-			_moving = true;
-		} else {
-			_steps = 0;
-			_moving = false;
-		}
-	}
-	
-	@Override
-	public boolean canMove(double x, double y) {
-		double xr = _x, yr = _y - 16; //subtract y to get more accurate results
-		
-		//the thing is, subract 15 to 16 (sprite size), so if we add 1 tile we get the next pixel tile with this
-		//we avoid the shaking inside tiles with the help of steps
-		if(_direction == 0) { yr += _sprite.getSize() -1 ; xr += _sprite.getSize()/2; } 
-		if(_direction == 1) {yr += _sprite.getSize()/2; xr += 1;}
-		if(_direction == 2) { xr += _sprite.getSize()/2; yr += 1;}
-		if(_direction == 3) { xr += _sprite.getSize() -1; yr += _sprite.getSize()/2;}
-		
-		int xx = Coordinates.pixelToTile(xr) +(int)x;
-		int yy = Coordinates.pixelToTile(yr) +(int)y;
-		
-		Entity a = entityManager.getEntity(xx, yy, this); //entity of the position we want to go
-		
-		return a.canBePassedThroughBy(this);
 	}
 
 	@Override
