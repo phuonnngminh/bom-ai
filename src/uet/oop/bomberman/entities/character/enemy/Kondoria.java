@@ -2,7 +2,6 @@ package uet.oop.bomberman.entities.character.enemy;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.Board;
-import uet.oop.bomberman.entities.character.enemy.ai.AIMedium;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Kondoria extends Enemy {
@@ -11,9 +10,6 @@ public class Kondoria extends Enemy {
 
         _sprite = Sprite.kondoria_right1;
 
-        _ai = new AIMedium(entityManager.getPlayer(), this);
-        _direction = _ai.calculateDirection();
-        // this._speed += random.nextDouble()/2;
     }
 
     @Override
@@ -21,7 +17,7 @@ public class Kondoria extends Enemy {
         switch (_direction) {
             case 0:
             case 1:
-                if (_moving)
+                if (isMoving())
                     _sprite = Sprite.movingSprite(Sprite.kondoria_right1, Sprite.kondoria_right2,
                             Sprite.kondoria_right3, _animate, Game.TICKS_PER_SECOND);
                 else
@@ -29,7 +25,7 @@ public class Kondoria extends Enemy {
                 break;
             case 2:
             case 3:
-                if (_moving)
+                if (isMoving())
                     _sprite = Sprite.movingSprite(Sprite.kondoria_left1, Sprite.kondoria_left2, Sprite.kondoria_left3,
                             _animate, Game.TICKS_PER_SECOND);
                 else

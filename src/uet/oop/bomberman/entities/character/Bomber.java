@@ -2,18 +2,21 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
-import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.action.ActionPlaceBomb;
+import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException;
+import uet.oop.bomberman.entities.character.exceptions.BombQuotaReachedException;
+import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
+import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Iterator;
 import java.util.List;
-import uet.oop.bomberman.entities.LayeredEntity;
-import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
@@ -120,27 +123,6 @@ public class Bomber extends Character {
     }
 
     @Override
-    protected void calculateMove() {
-    }
-
-    @Override
-    public boolean canMove(double x, double y) {
-        // TODO: kiểm tra có đối tượng tại vị trí chuẩn bị di chuyển đến và có thể di chuyển tới đó hay không
-       for (int c = 0; c < 4; c++) { //colision detection for each corner of the player
-			double xt = ((_x + x) + c % 2 * 9) / Game.TILES_SIZE; //divide with tiles size to pass to tile coordinate
-			double yt = ((_y + y) + c / 2 * 10 - 13) / Game.TILES_SIZE; //these values are the best from multiple tests
-			
-			Entity a = entityManager.getEntity(xt, yt, this);
-			
-			if(!a.canBePassedThroughBy(this))
-				return false;
-		}
-		
-		return true;
-        //return false;
-    }
-
-    @Override
     public boolean collide(Entity e) {
         if (!super.collide(e)) return false;
         return true;
@@ -151,31 +133,31 @@ public class Bomber extends Character {
         switch (_direction) {
             case 0:
                 _sprite = Sprite.player_up;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2, _animate, 20);
                 }
                 break;
             case 1:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
             case 2:
                 _sprite = Sprite.player_down;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, _animate, 20);
                 }
                 break;
             case 3:
                 _sprite = Sprite.player_left;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2, _animate, 20);
                 }
                 break;
             default:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
@@ -186,4 +168,25 @@ public class Bomber extends Character {
     public int getPoints() {
         return 0;
     }
+
+    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
+        addAll(ActionConstants.LIST_ACTION_MOVE);
+        add(ActionConstants.PLACE_BOMB);
+    }};
+    @Override
+	protected List<? extends Action> getValidActions() {
+        return VALID_ACTIONS;
+	}
+
+    @Override
+    protected void performAction(Action action, boolean isDryRun)
+            throws InvalidActionException, CannotPerformActionException {
+        super.performAction(action, isDryRun);
+        if (action instanceof ActionPlaceBomb) {
+            if (getBombRemainingQuota() < 0) throw new BombQuotaReachedException();
+            if (bombCooldown > 0) throw new ActionOnCooldownException();
+            if (!isDryRun) placeBomb();
+        }
+    }
+
 }

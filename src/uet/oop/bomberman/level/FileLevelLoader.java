@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.agent.Agent;
+import uet.oop.bomberman.agent.MovingAgent;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
 import uet.oop.bomberman.entities.character.enemy.Doll;
+import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
+import uet.oop.bomberman.entities.character.enemy.ai.AILow;
+import uet.oop.bomberman.entities.character.enemy.ai.AIMedium;
 import uet.oop.bomberman.entities.tile.Grass;
 import uet.oop.bomberman.entities.tile.Portal;
 import uet.oop.bomberman.entities.tile.Wall;
@@ -66,11 +71,8 @@ public class FileLevelLoader extends LevelLoader {
 
     @Override
     public void createEntities() {
-        // TODO: tạo các Entity của màn chơi
-        // TODO: sau khi tạo xong, gọi _board.addEntity() để thêm Entity vào game
-
-        // TODO: phần code mẫu ở dưới để hướng dẫn cách thêm các loại Entity vào game
-        // TODO: hãy xóa nó khi hoàn thành chức năng load màn chơi từ tệp cấu hình
+        Enemy enemy;
+        Agent agent;
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
                 int pos = x + y * getWidth();
@@ -119,18 +121,27 @@ public class FileLevelLoader extends LevelLoader {
 
                     // Thêm balloon
                     case '1':
-                        _board.addCharacter(new Balloon(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        enemy = new Balloon(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
+                        _board.addCharacter(enemy);
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy, new AILow());
+                        _board.addAgent(agent);
                         break;
                     // Thêm oneal
                     case '2':
-                        _board.addCharacter(new Oneal(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        enemy = new Oneal(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
+                        _board.addCharacter(enemy);
                         _board.addEntity(pos, new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy, new AILow());
+                        _board.addAgent(agent);
                         break;
                     // Thêm doll
                     case '3':
-                        _board.addCharacter(new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board));
+                        enemy = new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
+                        _board.addCharacter(enemy);
                         _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy, new AIMedium(enemy, _board));
+                        _board.addAgent(agent);
                         break;
                     // Thêm oneal
                     // Thêm BomItem            

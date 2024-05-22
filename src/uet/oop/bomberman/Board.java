@@ -1,5 +1,6 @@
 package uet.oop.bomberman;
 
+import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.IMessageManager;
@@ -9,6 +10,10 @@ import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.action.ActionMove;
+import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
@@ -39,11 +44,12 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	protected List<Bomb> _bombs = new ArrayList<>();
 	private List<Message> _messages = new ArrayList<>();
 	private List<Item> _activeItems = new ArrayList<>();
+	private List<Agent> agents = new ArrayList<>();
 
 	private Character player;
 
 	@Override
-	public List<Item> getActiveItems() {
+	public List<Item> getPlayerActiveItems() {
 		return getPlayer().getActiveItems().collect(Collectors.toList());
 	}
 
@@ -77,6 +83,8 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		updateActiveItems();
 		detectEndGame();
 
+		processAgentAction();
+
 		snapCameraToPlayer();
 		processPlayerInput();
 
@@ -87,6 +95,19 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		}
 	}
 
+	public void addAgent(Agent agent) {
+		agents.add(agent);
+	}
+
+	private void processAgentAction() {
+		for (Agent agent: agents) {
+			Action action = agent.getNextAction();
+			try {
+				agent.getCharacter().performAction(action);
+			} catch (CharacterActionException ignored) {}
+		}
+	}
+
 	private void processPlayerInput() {
 		Character player = getPlayer();
 		if (!player.isAlive()) return;
@@ -94,8 +115,11 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		processPlayerInputMove(player);
 
 		if (player instanceof Bomber) {
-			Bomber bomber = (Bomber) player;
-			if(_input.space) bomber.placeBomb();
+			if(_input.space) {
+				try {
+					player.performAction(ActionConstants.PLACE_BOMB);
+				} catch (CharacterActionException ignored) {}
+			}
 		}
 	}
 
@@ -107,10 +131,10 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		if(_input.right) xa++;
 		
 		if(xa != 0 || ya != 0)  {
-			player.move(xa * player.getSpeed(), ya * player.getSpeed());
-			player.setMoving(true);
-		} else {
-			player.setMoving(false);
+			ActionMove actionMove = new ActionMove(xa, ya);
+			try {
+				player.performAction(actionMove);
+			} catch (CharacterActionException ignored) {}
 		}
 	}
 
@@ -194,6 +218,11 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	public Entity getEntity(double x, double y, Character m) {
 
 		Entity res = null;
+
+		if (x < 0) return null;
+		if (y < 0) return null;
+		if (x >= _levelLoader.getWidth()) return null;
+		if (y >= _levelLoader.getHeight()) return null;
 
 		res = getFlameSegmentAt((int) x, (int) y);
 		if (res != null)
