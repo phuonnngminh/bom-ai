@@ -71,11 +71,11 @@ public abstract class Entity implements IRender {
 	}
 	
 	public int getXTile() {
-		return Coordinates.pixelToTile(_x + _sprite.SIZE / 2);
+		return Coordinates.pixelToTile(getCenterX());
 	}
 	
 	public int getYTile() {
-		return Coordinates.pixelToTile(_y - _sprite.SIZE / 2);
+		return Coordinates.pixelToTile(getCenterY());
 	}
 
     

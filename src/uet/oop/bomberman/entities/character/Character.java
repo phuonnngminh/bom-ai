@@ -153,7 +153,10 @@ public abstract class Character extends AnimatedEntitiy {
 		} else if (ya != 0 && canMove(0, ya)) {
 			waypoints.add(waypointY);
 		} else {
-			return;
+			System.out.println(String.format(
+				"Cannot move character %s to (%s, %s)",
+				getClass().getSimpleName(), xa, ya
+			));
 		}
 	}
 

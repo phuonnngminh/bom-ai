@@ -21,11 +21,11 @@ public class MovingAgent extends Agent {
             case 0:
                 return ActionConstants.MOVE_UP;
             case 1:
-                return ActionConstants.MOVE_DOWN;
-            case 2:
-                return ActionConstants.MOVE_LEFT;
-            case 3:
                 return ActionConstants.MOVE_RIGHT;
+            case 2:
+                return ActionConstants.MOVE_DOWN;
+            case 3:
+                return ActionConstants.MOVE_LEFT;
             default:
                 return ActionConstants.DO_NOTHING;
         }
