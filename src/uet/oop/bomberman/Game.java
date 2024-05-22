@@ -42,7 +42,6 @@ public class Game extends Canvas {
 
 	private Keyboard _input;
 	private boolean _running = false;
-	private boolean _paused = true;
 	private Board _board;
 	private Screen screen;
 	private Frame _frame;
@@ -84,7 +83,7 @@ public class Game extends Canvas {
 		}
 		
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-		_board.renderMessages(g);
+		_board.getGameInfoManager().render(screen, g);
 	}
 	
 	private void renderScreen(Graphics g) {
@@ -106,7 +105,7 @@ public class Game extends Canvas {
 				_board.update();
 				if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
 					_board.setShow(3); // Hiển thị màn hình tạm dừng
-					_paused = true; // Đặt trạng thái game là tạm dừng
+					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
 				}
 				break;
@@ -128,12 +127,13 @@ public class Game extends Canvas {
 		}
 		Graphics g = bs.getDrawGraphics();
 
+		IGameInfoManager gameInfoManager = _board.getGameInfoManager();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
-				if (_paused) {
+				if (gameInfoManager.isPaused()) {
 					if (_screenDelay <= 0) {
 						_board.setShow(-1);
-						_paused = false;
+						gameInfoManager.unpause();
 					}
 
 					renderScreen(g);
@@ -142,13 +142,13 @@ public class Game extends Canvas {
 				}
 
 				if (_input.resume) {
-					_paused = false;
+					gameInfoManager.unpause();
 					_board.setShow(-1);
-					}
+				}
 				frames++;
 				if (System.currentTimeMillis() - timer > 1000) {
-					_frame.setTime(_board.subtractTime());
-					_frame.setPoints(_board.getPoints());
+					_frame.setTime(gameInfoManager.subtractTime());
+					_frame.setPoints(gameInfoManager.getPoints());
 					_frame.renderItemTime();
 					timer += 1000;
 					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
@@ -208,15 +208,8 @@ public class Game extends Canvas {
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
 	}
-	public boolean isPaused() {
-		return _paused;
-	}
 
-	public void pause() {
-		_paused = !_paused;
-	}
-
-	public IGameInfoManager getGameInfoManager() {
+	public Board getBoard() {
 		return _board;
 	}
 
