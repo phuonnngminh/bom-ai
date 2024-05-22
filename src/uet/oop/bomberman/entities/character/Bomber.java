@@ -138,31 +138,31 @@ public class Bomber extends Character {
         switch (_direction) {
             case 0:
                 _sprite = Sprite.player_up;
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2, _animate, 20);
                 }
                 break;
             case 1:
                 _sprite = Sprite.player_right;
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
             case 2:
                 _sprite = Sprite.player_down;
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, _animate, 20);
                 }
                 break;
             case 3:
                 _sprite = Sprite.player_left;
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2, _animate, 20);
                 }
                 break;
             default:
                 _sprite = Sprite.player_right;
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;

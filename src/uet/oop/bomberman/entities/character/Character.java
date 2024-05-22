@@ -33,7 +33,6 @@ public abstract class Character extends AnimatedEntitiy {
 	protected final IEntityManager entityManager;
 	protected int _direction = -1;
 	protected boolean _alive = true;
-	protected boolean moving = false;
 	protected int timerDeathAnimation = 40;
 
 	private final double baseSpeed;
@@ -108,7 +107,7 @@ public abstract class Character extends AnimatedEntitiy {
 			ActionMove actionMove = (ActionMove) action;
 			double dx = actionMove.getDx();
 			double dy = actionMove.getDy();
-			if (!waypoints.isEmpty()) throw new ActionOnCooldownException();
+			if (isMoving()) throw new ActionOnCooldownException();
 			if (!isDryRun) move(dx, dy);
 		}
 	};
@@ -159,14 +158,10 @@ public abstract class Character extends AnimatedEntitiy {
 		} else {
 			return;
 		}
-		moving = true;
 	}
 
 	private void updateMove() {
-		if (waypoints.isEmpty()) {
-			moving = false;
-			return;
-		}
+		if (waypoints.isEmpty()) return;
 		Waypoint waypoint = waypoints.peek();
 		if (!waypoint.started) {
 			waypoint.started = true;
@@ -252,8 +247,8 @@ public abstract class Character extends AnimatedEntitiy {
 		return _alive;
 	}
 
-	public void setMoving(boolean moving) {
-		this.moving = moving;
+	public boolean isMoving() {
+		return waypoints.size() > 0;
 	}
 
 	public Stream<Item> getActiveItems() {

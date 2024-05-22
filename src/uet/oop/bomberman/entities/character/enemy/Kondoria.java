@@ -21,7 +21,7 @@ public class Kondoria extends Enemy {
         switch (_direction) {
             case 0:
             case 1:
-                if (moving)
+                if (isMoving())
                     _sprite = Sprite.movingSprite(Sprite.kondoria_right1, Sprite.kondoria_right2,
                             Sprite.kondoria_right3, _animate, Game.TICKS_PER_SECOND);
                 else
@@ -29,7 +29,7 @@ public class Kondoria extends Enemy {
                 break;
             case 2:
             case 3:
-                if (moving)
+                if (isMoving())
                     _sprite = Sprite.movingSprite(Sprite.kondoria_left1, Sprite.kondoria_left2, Sprite.kondoria_left3,
                             _animate, Game.TICKS_PER_SECOND);
                 else

@@ -32,7 +32,7 @@ public class Doll extends Enemy{
         switch (_direction) {
             case 0:
             case 1:
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, _animate, Game.TICKS_PER_SECOND);
                 } else {
                     _sprite = Sprite.doll_left1;
@@ -40,7 +40,7 @@ public class Doll extends Enemy{
                 break;
             case 2:
             case 3:
-                if (moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, _animate, Game.TICKS_PER_SECOND);
                 } else {
                     _sprite = Sprite.doll_left1;
