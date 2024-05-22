@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
+import uet.oop.bomberman.base.IActiveItemManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -17,21 +18,26 @@ import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
+import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.level.Coordinates;
 import uet.oop.bomberman.sound.Sound;
 
-public class Bomber extends Character {
+public class Bomber extends Character implements CanUseItem {
 
     private List<Bomb> _bombs;
-    public static List<Item> _items = new ArrayList<Item>();//xu li Item
+    private List<Item> activeItems = new ArrayList<>();
 
     private final int baseBombLimit;
     protected int bombCooldown = 0;
 
     private final int baseBombRadius;
+    
+    private final IActiveItemManager activeItemManager;
 
     public int getBombCooldown() {
         return bombCooldown;
@@ -39,13 +45,14 @@ public class Bomber extends Character {
 
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
         this._board = board;
         _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
+        this.activeItemManager = activeItemManager;
     }
 
     @Override
@@ -188,5 +195,28 @@ public class Bomber extends Character {
             if (!isDryRun) placeBomb();
         }
     }
+
+	@Override
+	public Stream<Item> getActiveItems() {
+		return activeItems.stream().filter(Item::isActive);
+	}
+
+	@Override
+	public void addActiveItem(Item item) {
+		this.activeItems.add(item);
+		activeItemManager.addActiveItem(item);
+	}
+
+    @Override
+	protected double getSpeedMultiplier() {
+		double speedMultiplier = 1;
+		for (Item item: activeItems) {
+			if (!item.isActive()) continue;
+			if (item instanceof SpeedItem) {
+				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
+			}
+		}
+		return speedMultiplier;
+	}
 
 }

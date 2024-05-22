@@ -58,8 +58,6 @@ public abstract class Character extends AnimatedEntitiy {
 		}
 	}
 
-	private List<Item> activeItems = new ArrayList<>();
-	
 	public Character(int x, int y, double baseSpeed, IEntityManager entityManager) {
 		_x = x;
 		_y = y;
@@ -251,24 +249,13 @@ public abstract class Character extends AnimatedEntitiy {
 		return waypoints.size() > 0;
 	}
 
-	public Stream<Item> getActiveItems() {
-		return activeItems.stream().filter(Item::isActive);
-	}
-
-	public void addActiveItem(Item item) {
-		this.activeItems.add(item);
-		entityManager.addActiveItem(item);
-	}
-
-	public double getSpeed() {
-		double speedMultiplier = 1;
-		for (Item item: activeItems) {
-			if (!item.isActive()) continue;
-			if (item instanceof SpeedItem) {
-				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
-			}
-		}
+	public final double getSpeed() {
+		double speedMultiplier = getSpeedMultiplier();
 		return speedMultiplier * this.baseSpeed;
+	}
+
+	protected double getSpeedMultiplier() {
+		return 1;
 	}
 
 	public abstract int getPoints();

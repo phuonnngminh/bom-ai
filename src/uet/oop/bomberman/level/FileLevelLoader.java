@@ -111,6 +111,7 @@ public class FileLevelLoader extends LevelLoader {
                             Game.BOMBRATE,
                             Game.BOMBRADIUS,
                             _board,
+                            _board,
                             _board
                         );
                         _board.addCharacter(bomber);

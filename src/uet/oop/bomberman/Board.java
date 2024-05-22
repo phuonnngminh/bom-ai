@@ -10,6 +10,7 @@ import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.action.ActionConstants;
@@ -52,7 +53,8 @@ public class Board implements Copyable, IRender, IEntityManager, IMessageManager
 
 	@Override
 	public List<Item> getPlayerActiveItems() {
-		return getPlayer().getActiveItems().collect(Collectors.toList());
+		if (!(getPlayer() instanceof CanUseItem)) return new ArrayList<>();
+		return ((CanUseItem)getPlayer()).getActiveItems().collect(Collectors.toList());
 	}
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
