@@ -1,12 +1,12 @@
 package uet.oop.bomberman.entities.character.enemy;
 
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.Board;
+import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Kondoria extends Enemy {
-    public Kondoria(int x, int y, Board board) {
-        super(x, y, board, Sprite.balloom_dead, Game.BOMBERSPEED / 4, 1000);
+    public Kondoria(int x, int y, IEntityManager entityManager) {
+        super(x, y, entityManager, Sprite.balloom_dead, Game.BOMBERSPEED / 4, 1000);
 
         _sprite = Sprite.kondoria_right1;
 

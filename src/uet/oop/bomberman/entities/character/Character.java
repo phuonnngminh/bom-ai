@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
@@ -20,8 +19,6 @@ import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException
 import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
-import uet.oop.bomberman.entities.tile.item.Item;
-import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.level.Coordinates;
 
@@ -58,8 +55,6 @@ public abstract class Character extends AnimatedEntitiy {
 		}
 	}
 
-	private List<Item> activeItems = new ArrayList<>();
-	
 	public Character(int x, int y, double baseSpeed, IEntityManager entityManager) {
 		_x = x;
 		_y = y;
@@ -187,7 +182,7 @@ public abstract class Character extends AnimatedEntitiy {
 		if(waypoint.moveDy > 0) _direction = 2;
 		if(waypoint.moveDy < 0) _direction = 0;
 
-        Entity collidingEntity = entityManager.getEntity(
+        Entity collidingEntity = entityManager.getEntityAtExcluding(
             Coordinates.pixelToTile(getCenterX()),
             Coordinates.pixelToTile(getCenterY()),
             this
@@ -205,7 +200,7 @@ public abstract class Character extends AnimatedEntitiy {
 		if(!_alive) return;
 		_alive = false;
 		// TODO: determine killer
-		entityManager.handleOnDeath(this, null);
+		entityManager.getCharacterManager().handleOnDeath(this, null);
 	}
 
 	/**
@@ -222,7 +217,7 @@ public abstract class Character extends AnimatedEntitiy {
 	public boolean canMove(double dx, double dy) {
 		double x = getCenterX() + dx;
 		double y = getCenterY() + dy;
-		Entity a = entityManager.getEntity(
+		Entity a = entityManager.getEntityAtExcluding(
 			Coordinates.pixelToTile(x),
 			Coordinates.pixelToTile(y),
 			this
@@ -251,24 +246,13 @@ public abstract class Character extends AnimatedEntitiy {
 		return waypoints.size() > 0;
 	}
 
-	public Stream<Item> getActiveItems() {
-		return activeItems.stream().filter(Item::isActive);
-	}
-
-	public void addActiveItem(Item item) {
-		this.activeItems.add(item);
-		entityManager.addActiveItem(item);
-	}
-
-	public double getSpeed() {
-		double speedMultiplier = 1;
-		for (Item item: activeItems) {
-			if (!item.isActive()) continue;
-			if (item instanceof SpeedItem) {
-				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
-			}
-		}
+	public final double getSpeed() {
+		double speedMultiplier = getSpeedMultiplier();
 		return speedMultiplier * this.baseSpeed;
+	}
+
+	protected double getSpeedMultiplier() {
+		return 1;
 	}
 
 	public abstract int getPoints();

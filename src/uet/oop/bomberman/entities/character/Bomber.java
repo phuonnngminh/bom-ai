@@ -2,6 +2,8 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
+import uet.oop.bomberman.base.IActiveItemManager;
+import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -17,35 +19,39 @@ import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
+import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.level.Coordinates;
 import uet.oop.bomberman.sound.Sound;
 
-public class Bomber extends Character {
+public class Bomber extends Character implements CanUseItem {
 
-    private List<Bomb> _bombs;
-    public static List<Item> _items = new ArrayList<Item>();//xu li Item
+    private List<Bomb> _bombs = new ArrayList<>();
+    private List<Item> activeItems = new ArrayList<>();
 
     private final int baseBombLimit;
     protected int bombCooldown = 0;
 
     private final int baseBombRadius;
-
-    public int getBombCooldown() {
-        return bombCooldown;
-    }
-
+    
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
+    private final IActiveItemManager activeItemManager;
+    private final IBombManager bombManager;
+
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, IBombManager bombManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
         this._board = board;
-        _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
+        this.activeItemManager = activeItemManager;
+        this.bombManager = bombManager;
     }
 
     @Override
@@ -83,6 +89,10 @@ public class Bomber extends Character {
         return this.baseBombRadius + bombRadiusBonus;
     }
 
+    public int getBombCooldown() {
+        return bombCooldown;
+    }
+
     public boolean placeBomb() {
         if(getBombRemainingQuota() > 0 && bombCooldown < 0) {
 			
@@ -100,21 +110,15 @@ public class Bomber extends Character {
     public void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
         Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
-        entityManager.addBomb(b);
+        this._bombs.add(b);
+        bombManager.addBomb(b);
         Sound.play("BOM_SET");
     }
 
     private void clearExpiredBombs() {
-        Iterator<Bomb> bs = _bombs.iterator();
-
-        Bomb b;
-        while (bs.hasNext()) {
-            b = bs.next();
-            if (b.isRemoved()) {
-                bs.remove();
-            }
-        }
-
+        _bombs = _bombs.stream()
+            .filter(bomb -> !bomb.isRemoved())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -188,5 +192,28 @@ public class Bomber extends Character {
             if (!isDryRun) placeBomb();
         }
     }
+
+	@Override
+	public Stream<Item> getActiveItems() {
+		return activeItems.stream().filter(Item::isActive);
+	}
+
+	@Override
+	public void addActiveItem(Item item) {
+		this.activeItems.add(item);
+		activeItemManager.addActiveItem(item);
+	}
+
+    @Override
+	protected double getSpeedMultiplier() {
+		double speedMultiplier = 1;
+		for (Item item: activeItems) {
+			if (!item.isActive()) continue;
+			if (item instanceof SpeedItem) {
+				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
+			}
+		}
+		return speedMultiplier;
+	}
 
 }

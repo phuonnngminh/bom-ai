@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.tile.item;
 
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.NonDestroyableTile;
 import uet.oop.bomberman.graphics.Sprite;
@@ -24,8 +25,8 @@ public abstract class Item extends NonDestroyableTile {
 	@Override
 	public boolean collide(Entity e) {
 		if (isRemoved()) return false;
-		if (e instanceof Character && ((Character)e).isPlayer()) {
-			Character player = (Character) e;
+		if (e instanceof CanUseItem) {
+			CanUseItem player = (CanUseItem) e;
 			Sound.play("Item");
 			handleItemActive();
 			_active = true;
