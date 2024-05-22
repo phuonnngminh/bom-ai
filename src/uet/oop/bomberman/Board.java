@@ -41,6 +41,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	private List<Item> _activeItems = new ArrayList<>();
 
 	private Character player;
+	private Character player2;
 
 	@Override
 	public List<Item> getActiveItems() {
@@ -61,9 +62,9 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	}
 
 	private void snapCameraToPlayer() {
-        int xScroll = Screen.calculateXOffset(this, getPlayer());
-        Screen.setOffset(xScroll, 0);
-    }
+		int xScroll = Screen.calculateXOffset(this, getPlayer());
+		Screen.setOffset(xScroll, 0);
+	}
 
 	@Override
 	public void update() {
@@ -79,6 +80,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 
 		snapCameraToPlayer();
 		processPlayerInput();
+		processPlayer2Input();
 
 		for (int i = 0; i < _characters.size(); i++) {
 			Character a = _characters.get(i);
@@ -89,28 +91,67 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 
 	private void processPlayerInput() {
 		Character player = getPlayer();
-		if (!player.isAlive()) return;
+		if (!player.isAlive())
+			return;
 
 		processPlayerInputMove(player);
 
 		if (player instanceof Bomber) {
 			Bomber bomber = (Bomber) player;
-			if(_input.space) bomber.placeBomb();
+			if (_input.player1_space)
+				bomber.placeBomb();
+		}
+	}
+
+	private void processPlayer2Input() {
+		Character player2 = getPlayer2();
+		if (!player2.isAlive())
+			return;
+
+		processPlayer2InputMove(player2);
+
+		if (player2 instanceof Bomber) {
+			Bomber bomber2 = (Bomber) player2;
+			if (_input.player2_space)
+				bomber2.placeBomb();
 		}
 	}
 
 	private void processPlayerInputMove(Character player) {
 		int xa = 0, ya = 0;
-		if(_input.up) ya--;
-		if(_input.down) ya++;
-		if(_input.left) xa--;
-		if(_input.right) xa++;
-		
-		if(xa != 0 || ya != 0)  {
+		if (_input.player1_up)
+			ya--;
+		if (_input.player1_down)
+			ya++;
+		if (_input.player1_left)
+			xa--;
+		if (_input.player1_right)
+			xa++;
+
+		if (xa != 0 || ya != 0) {
 			player.move(xa * player.getSpeed(), ya * player.getSpeed());
 			player.setMoving(true);
 		} else {
 			player.setMoving(false);
+		}
+	}
+
+	private void processPlayer2InputMove(Character player2) {
+		int xa = 0, ya = 0;
+		if (_input.player2_up)
+			ya--;
+		if (_input.player2_down)
+			ya++;
+		if (_input.player2_left)
+			xa--;
+		if (_input.player2_right)
+			xa++;
+
+		if (xa != 0 || ya != 0) {
+			player2.move(xa * player2.getSpeed(), ya * player2.getSpeed());
+			player2.setMoving(true);
+		} else {
+			player2.setMoving(false);
 		}
 	}
 
@@ -173,7 +214,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	@Override
 	public boolean isEnemyCleared() {
 		return !_characters.stream()
-			.anyMatch(character -> character != getPlayer());
+				.anyMatch(character -> character != getPlayer());
 	}
 
 	public void drawScreen(Graphics g) {
@@ -233,6 +274,10 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	@Override
 	public Character getPlayer() {
 		return this.player;
+	}
+
+	public Character getPlayer2() {
+		return this.player2;
 	}
 
 	@Override
@@ -431,6 +476,10 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	@Override
 	public void setPlayer(Character character) {
 		this.player = character;
+	}
+
+	public void setPlayer2(Character character2) {
+		this.player2 = character2;
 	}
 
 	@Override
