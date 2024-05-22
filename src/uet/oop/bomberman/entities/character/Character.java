@@ -187,7 +187,7 @@ public abstract class Character extends AnimatedEntitiy {
 		if(waypoint.moveDy > 0) _direction = 2;
 		if(waypoint.moveDy < 0) _direction = 0;
 
-        Entity collidingEntity = entityManager.getEntity(
+        Entity collidingEntity = entityManager.getEntityAtExcluding(
             Coordinates.pixelToTile(getCenterX()),
             Coordinates.pixelToTile(getCenterY()),
             this
@@ -222,7 +222,7 @@ public abstract class Character extends AnimatedEntitiy {
 	public boolean canMove(double dx, double dy) {
 		double x = getCenterX() + dx;
 		double y = getCenterY() + dy;
-		Entity a = entityManager.getEntity(
+		Entity a = entityManager.getEntityAtExcluding(
 			Coordinates.pixelToTile(x),
 			Coordinates.pixelToTile(y),
 			this

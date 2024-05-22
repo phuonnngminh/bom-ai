@@ -80,22 +80,22 @@ public class FileLevelLoader extends LevelLoader {
                 switch (c) {
                     // Thêm grass
                     case ' ':
-                        _board.addEntity(pos, new Grass(x, y, Sprite.grass));
+                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
                         break;
                     // Thêm Wall
                     case '#':
-                        _board.addEntity(pos, new Wall(x, y, Sprite.wall));
+                        _board.addTile(pos, new Wall(x, y, Sprite.wall));
                         break;
                     // Thêm Portal
                     case 'x':
-                        _board.addEntity(pos, new LayeredEntity(x, y,
+                        _board.addTile(pos, new LayeredEntity(x, y,
                                 new Grass(x, y, Sprite.grass),
                                 new Portal(x, y, _board, Sprite.portal),
                                 new Brick(x, y, Sprite.brick)));
                         break;
                     // Thêm brick
                     case '*':
-                        _board.addEntity(x + y * _width,
+                        _board.addTile(x + y * _width,
                                 new LayeredEntity(x, y,
                                         new Grass(x, y, Sprite.grass),
                                         new Brick(x, y, Sprite.brick)
@@ -116,14 +116,14 @@ public class FileLevelLoader extends LevelLoader {
                         _board.addCharacter(bomber);
                         _board.setPlayer(bomber);
                         Screen.setOffset(0, 0);
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         break;
 
                     // Thêm balloon
                     case '1':
                         enemy = new Balloon(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
                         _board.addCharacter(enemy);
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy, new AILow());
                         _board.addAgent(agent);
                         break;
@@ -131,7 +131,7 @@ public class FileLevelLoader extends LevelLoader {
                     case '2':
                         enemy = new Oneal(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
                         _board.addCharacter(enemy);
-                        _board.addEntity(pos, new Grass(x, y, Sprite.grass));
+                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy, new AILow());
                         _board.addAgent(agent);
                         break;
@@ -139,7 +139,7 @@ public class FileLevelLoader extends LevelLoader {
                     case '3':
                         enemy = new Doll(Coordinates.tileToPixel(x), Coordinates.tileToPixel(y) + Game.TILES_SIZE, _board);
                         _board.addCharacter(enemy);
-                        _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
+                        _board.addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy, new AIMedium(enemy, _board));
                         _board.addAgent(agent);
                         break;
@@ -150,7 +150,7 @@ public class FileLevelLoader extends LevelLoader {
                                 new Grass(x, y, Sprite.grass),
                                 new BombItem(x, y, Sprite.powerup_bombs),
                                 new Brick(x, y, Sprite.brick));
-                        _board.addEntity(pos, layer);
+                        _board.addTile(pos, layer);
                         break;
                     // Thêm SpeedItem
                     case 's':
@@ -158,7 +158,7 @@ public class FileLevelLoader extends LevelLoader {
                                 new Grass(x, y, Sprite.grass),
                                 new SpeedItem(x, y, Sprite.powerup_speed),
                                 new Brick(x, y, Sprite.brick));
-                        _board.addEntity(pos, layer);
+                        _board.addTile(pos, layer);
                         break;
                     // Thêm FlameItem
                     case 'f':
@@ -166,11 +166,11 @@ public class FileLevelLoader extends LevelLoader {
                                 new Grass(x, y, Sprite.grass),
                                 new FlameItem(x, y, Sprite.powerup_flames),
                                 new Brick(x, y, Sprite.brick));
-                        _board.addEntity(pos, layer);
+                        _board.addTile(pos, layer);
                         break;
 
                     default:
-                        _board.addEntity(pos, new Grass(x, y, Sprite.grass));
+                        _board.addTile(pos, new Grass(x, y, Sprite.grass));
                         break;
 
                 }

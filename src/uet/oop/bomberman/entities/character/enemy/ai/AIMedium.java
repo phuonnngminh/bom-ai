@@ -1,14 +1,14 @@
 package uet.oop.bomberman.entities.character.enemy.ai;
 
-import uet.oop.bomberman.base.IEntityManager;
+import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.entities.character.Character;
 
 public class AIMedium extends AI {
 
 	private final Character character;
-	private final IEntityManager entityManager;
+	private final ICharacterManager entityManager;
 	
-	public AIMedium(Character character, IEntityManager entityManager) {
+	public AIMedium(Character character, ICharacterManager entityManager) {
 		this.character = character;
 		this.entityManager = entityManager;
 	}

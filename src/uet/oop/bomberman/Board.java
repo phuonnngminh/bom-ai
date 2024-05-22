@@ -1,6 +1,7 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.agent.Agent;
+import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.IMessageManager;
@@ -14,6 +15,7 @@ import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.action.ActionConstants;
 import uet.oop.bomberman.entities.character.action.ActionMove;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
+import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
@@ -33,13 +35,13 @@ import java.util.stream.Collectors;
 /**
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
-public class Board implements IRender, IEntityManager, IMessageManager, IGameInfoManager {
+public class Board implements Copyable, IRender, IEntityManager, IMessageManager, IGameInfoManager {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Keyboard _input;
 	protected Screen _screen;
 
-	public Entity[] _entities;
+	public Tile[] tiles;
 	public List<Character> _characters = new ArrayList<>();
 	protected List<Bomb> _bombs = new ArrayList<>();
 	private List<Message> _messages = new ArrayList<>();
@@ -151,7 +153,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 
 		for (int y = y0; y < y1; y++) {
 			for (int x = x0; x < x1; x++) {
-				_entities[x + y * _levelLoader.getWidth()].render(screen);
+				tiles[x + y * _levelLoader.getWidth()].render(screen);
 			}
 		}
 
@@ -175,7 +177,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 
 		try {
 			_levelLoader = new FileLevelLoader(this, level);
-			_entities = new Entity[_levelLoader.getHeight() * _levelLoader.getWidth()];
+			tiles = new Tile[_levelLoader.getHeight() * _levelLoader.getWidth()];
 
 			_levelLoader.createEntities();
 		} catch (LoadLevelException e) {
@@ -215,7 +217,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	}
 
 	@Override
-	public Entity getEntity(double x, double y, Character m) {
+	public Entity getEntityAtExcluding(double x, double y, Character m) {
 
 		Entity res = null;
 
@@ -236,7 +238,7 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 		if (res != null)
 			return res;
 
-		res = getEntityAt((int) x, (int) y);
+		res = getTileAt((int) x, (int) y);
 
 		return res;
 	}
@@ -301,8 +303,8 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	}
 
 	@Override
-	public Entity getEntityAt(double x, double y) {
-		return _entities[(int) x + (int) y * _levelLoader.getWidth()];
+	public Tile getTileAt(double x, double y) {
+		return tiles[(int) x + (int) y * _levelLoader.getWidth()];
 	}
 
 	@Override
@@ -311,8 +313,8 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	}
 
 	@Override
-	public void addEntity(int pos, Entity e) {
-		_entities[pos] = e;
+	public void addTile(int pos, Tile e) {
+		tiles[pos] = e;
 	}
 
 	@Override
@@ -358,8 +360,8 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 	protected void updateEntities() {
 		if (_game.isPaused())
 			return;
-		for (int i = 0; i < _entities.length; i++) {
-			_entities[i].update();
+		for (int i = 0; i < tiles.length; i++) {
+			tiles[i].update();
 		}
 	}
 
@@ -477,6 +479,12 @@ public class Board implements IRender, IEntityManager, IMessageManager, IGameInf
 			addMessage(msg);
 			Sound.play("AA126_11");
 		}
+	}
+
+	@Override
+	public Board copy() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
