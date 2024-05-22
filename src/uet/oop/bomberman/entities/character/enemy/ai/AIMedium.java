@@ -1,23 +1,21 @@
 package uet.oop.bomberman.entities.character.enemy.ai;
 
+import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.character.Character;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 
 public class AIMedium extends AI {
-	Character player;
-	Enemy _e;
+
+	private final Character character;
+	private final IEntityManager entityManager;
 	
-	public AIMedium(Character player, Enemy e) {
-		this.player = player;
-		_e = e;
+	public AIMedium(Character character, IEntityManager entityManager) {
+		this.character = character;
+		this.entityManager = entityManager;
 	}
 
 	@Override
 	public int calculateDirection() {
-		// TODO: cài đặt thuật toán tìm đường đi
-                if(player == null)
-			return random.nextInt(4);
-		
+
 		int vertical = random.nextInt(2);
 		
 		if(vertical == 1) {
@@ -36,19 +34,24 @@ public class AIMedium extends AI {
 				return calculateRowDirection();
 		}
 	}
-        protected int calculateColDirection() {
-		if(player.getXTile() < _e.getXTile())
+
+	protected int calculateColDirection() {
+		Character player = entityManager.getPlayer();
+
+		if(player.getXTile() < character.getXTile())
 			return 3;
-		else if(player.getXTile() > _e.getXTile())
+		else if(player.getXTile() > character.getXTile())
 			return 1;
 		
 		return -1;
 	}
 	
 	protected int calculateRowDirection() {
-		if(player.getYTile() < _e.getYTile())
+		Character player = entityManager.getPlayer();
+
+		if(player.getYTile() < character.getYTile())
 			return 0;
-		else if(player.getYTile() > _e.getYTile())
+		else if(player.getYTile() > character.getYTile())
 			return 2;
 		return -1;
 	}

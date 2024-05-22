@@ -86,12 +86,11 @@ public abstract class Character extends AnimatedEntitiy {
 	@Override
 	public abstract void render(Screen screen);
 
-	/**
-	 * Tính toán hướng đi
-	 */
-	protected abstract void calculateMove();
-
-	protected List<? extends Action> getValidActions() { return ActionConstants.LIST_ACTION_MOVE; }
+	private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
+		addAll(ActionConstants.LIST_ACTION_MOVE);
+		add(ActionConstants.DO_NOTHING);
+	}};
+	protected List<? extends Action> getValidActions() { return VALID_ACTIONS; }
 
 	public boolean isValidAction(Action action) {
 		return getValidActions().contains(action);

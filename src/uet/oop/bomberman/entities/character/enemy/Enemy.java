@@ -4,9 +4,6 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
-import uet.oop.bomberman.entities.character.action.ActionConstants;
-import uet.oop.bomberman.entities.character.enemy.ai.AI;
-import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -15,7 +12,6 @@ public abstract class Enemy extends Character {
 	protected int _points;
 	
 	protected double _speed;
-	protected AI _ai;
 
 	protected final double MAX_STEPS;
 	protected final double rest;
@@ -41,7 +37,6 @@ public abstract class Enemy extends Character {
 	@Override
 	public void handleUpdate() {
 		animate();
-		calculateMove();
 	}
 	
 	@Override
@@ -62,29 +57,6 @@ public abstract class Enemy extends Character {
 		screen.renderEntity((int)_x, (int)_y - _sprite.SIZE, this);
 	}
 	
-	@Override
-	public void calculateMove() {
-		int direction = _ai.calculateDirection();
-		try {
-			switch (direction) {
-				case 0:
-					performAction(ActionConstants.MOVE_UP);
-					break;
-				case 1:
-					performAction(ActionConstants.MOVE_DOWN);
-					break;
-				case 2:
-					performAction(ActionConstants.MOVE_LEFT);
-					break;
-				case 3:
-					performAction(ActionConstants.MOVE_RIGHT);
-					break;
-				default:
-			}
-		} catch (CharacterActionException ignored) {}
-		
-	}
-
 	@Override
 	public boolean collide(Entity e) {
 		if (!super.collide(e)) return false;

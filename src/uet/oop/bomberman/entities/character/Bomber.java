@@ -2,7 +2,6 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
-import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -121,10 +120,6 @@ public class Bomber extends Character {
     @Override
     protected void handleAfterDeath() {
         _board.endGame();
-    }
-
-    @Override
-    protected void calculateMove() {
     }
 
     @Override

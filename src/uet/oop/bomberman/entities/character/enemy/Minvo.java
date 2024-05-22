@@ -2,19 +2,12 @@ package uet.oop.bomberman.entities.character.enemy;
 
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.entities.character.enemy.ai.AIMedium;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Minvo extends Enemy {
-    private Board _board;
-
     public Minvo(int x, int y, Board board) {
         super(x, y, board, Sprite.minvo_dead, Game.BOMBERSPEED * 1.5, 800);
-        _board = board;
         _sprite = Sprite.minvo_right1;
-
-        _ai = new AIMedium(_board.getPlayer(), this);
-        _direction = _ai.calculateDirection();
     }
 
     @Override

@@ -27,5 +27,6 @@ public interface ActionConstants {
     });
 
     public static final ActionPlaceBomb PLACE_BOMB = new ActionPlaceBomb();
+    public static final Action DO_NOTHING = new ActionNoop();
 
 }
