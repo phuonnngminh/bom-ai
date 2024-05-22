@@ -2,7 +2,7 @@ package uet.oop.bomberman.utils;
 
 public enum EGameMode {
     ONE_PLAYER("1 Player"),
-    TWO_PLAYER("2 Players");
+    TWO_PLAYER("2 Player");
 
     private final String mode;
 
