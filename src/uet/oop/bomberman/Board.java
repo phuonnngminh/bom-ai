@@ -4,11 +4,7 @@ import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
-import uet.oop.bomberman.entities.character.Bomber;
-import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
-import uet.oop.bomberman.entities.character.action.ActionConstants;
-import uet.oop.bomberman.entities.character.action.ActionMove;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
@@ -65,7 +61,6 @@ public class Board implements Copyable, IRender {
 		processAgentAction();
 
 		snapCameraToPlayer();
-		processPlayerInput();
 	}
 
 	public void addAgent(Agent agent) {
@@ -74,40 +69,12 @@ public class Board implements Copyable, IRender {
 
 	private void processAgentAction() {
 		for (Agent agent: agents) {
-			Action action = agent.getNextAction();
-			try {
-				agent.getCharacter().performAction(action);
-			} catch (CharacterActionException ignored) {}
-		}
-	}
-
-	private void processPlayerInput() {
-		Character player = entityManager.getPlayer();
-		if (!player.isAlive()) return;
-
-		processPlayerInputMove(player);
-
-		if (player instanceof Bomber) {
-			if(_input.space) {
+			List<Action> actions = agent.getNextActions();
+			for (Action action: actions) {
 				try {
-					player.performAction(ActionConstants.PLACE_BOMB);
+					agent.getCharacter().performAction(action);
 				} catch (CharacterActionException ignored) {}
 			}
-		}
-	}
-
-	private void processPlayerInputMove(Character player) {
-		int xa = 0, ya = 0;
-		if(_input.up) ya--;
-		if(_input.down) ya++;
-		if(_input.left) xa--;
-		if(_input.right) xa++;
-		
-		if(xa != 0 || ya != 0)  {
-			ActionMove actionMove = new ActionMove(xa, ya);
-			try {
-				player.performAction(actionMove);
-			} catch (CharacterActionException ignored) {}
 		}
 	}
 

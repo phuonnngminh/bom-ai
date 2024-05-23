@@ -4,7 +4,7 @@ import uet.oop.bomberman.entities.character.Character;
 
 public abstract class Agent implements IAgent {
     
-    private Character character;
+    protected Character character;
 
     public Agent(Character character) {
         this.character = character;
