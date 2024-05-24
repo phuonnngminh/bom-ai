@@ -9,7 +9,6 @@ import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
 import uet.oop.bomberman.graphics.Screen;
-import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
 import uet.oop.bomberman.manager.EntityManager;
@@ -26,7 +25,6 @@ import java.util.List;
 public class Board implements Copyable, IRender {
 	protected LevelLoader _levelLoader;
 	protected Game _game;
-	protected Keyboard _input;
 	protected Screen _screen;
 
 	private List<Agent> agents = new ArrayList<>();
@@ -36,9 +34,8 @@ public class Board implements Copyable, IRender {
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 
-	public Board(Game game, Keyboard input, Screen screen) {
+	public Board(Game game, Screen screen) {
 		_game = game;
-		_input = input;
 		_screen = screen;
 
 		loadLevel(Global.gameLevel); // start in level 1
@@ -130,10 +127,6 @@ public class Board implements Copyable, IRender {
 				_screen.drawPaused(g);
 				break;
 		}
-	}
-
-	public Keyboard getInput() {
-		return _input;
 	}
 
 	public LevelLoader getLevel() {

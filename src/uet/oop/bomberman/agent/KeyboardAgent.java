@@ -12,11 +12,8 @@ import uet.oop.bomberman.input.Keyboard;
 
 public class KeyboardAgent extends Agent {
 
-    private Keyboard keyboard;
-
-	public KeyboardAgent(Character character, Keyboard keyboard) {
+	public KeyboardAgent(Character character) {
 		super(character);
-        this.keyboard = keyboard;
 	}
 
 	@Override
@@ -24,7 +21,7 @@ public class KeyboardAgent extends Agent {
 		List<Action> actions = getMoveActions();
 
 		if (character instanceof Bomber) {
-			if(keyboard.space) {
+			if(Keyboard.i().space) {
                 actions.add(ActionConstants.PLACE_BOMB);
 			}
 		}
@@ -33,10 +30,10 @@ public class KeyboardAgent extends Agent {
 
 	private List<Action> getMoveActions() {
 		int xa = 0, ya = 0;
-		if(keyboard.up) ya--;
-		if(keyboard.down) ya++;
-		if(keyboard.left) xa--;
-		if(keyboard.right) xa++;
+		if(Keyboard.i().up) ya--;
+		if(Keyboard.i().down) ya++;
+		if(Keyboard.i().left) xa--;
+		if(Keyboard.i().right) xa++;
 		
         List<Action> actions = new ArrayList<>();
 		if(xa != 0 || ya != 0)  {

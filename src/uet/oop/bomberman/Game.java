@@ -40,7 +40,6 @@ public class Game extends Canvas {
 
 	protected int _screenDelay = SCREENDELAY;
 
-	private Keyboard _input;
 	private boolean _running = false;
 	private Board _board;
 	private Screen screen;
@@ -63,10 +62,9 @@ public class Game extends Canvas {
 		_frame.setTitle(TITLE);
 
 		screen = new Screen(WIDTH, HEIGHT);
-		_input = new Keyboard();
 
-		_board = new Board(this, _input, screen);
-		addKeyListener(_input);
+		_board = new Board(this, screen);
+		addKeyListener(Keyboard.i());
 
 		initScreen();
 	
@@ -99,11 +97,11 @@ public class Game extends Canvas {
 	}
 
 	private void update() {
-		_input.update();
+		Keyboard.i().update();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
 				_board.update();
-				if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+				if (Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
 					_board.setShow(3); // Hiển thị màn hình tạm dừng
 					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
@@ -141,7 +139,7 @@ public class Game extends Canvas {
 					renderGame(g);
 				}
 
-				if (_input.resume) {
+				if (Keyboard.i().resume) {
 					gameInfoManager.unpause();
 					_board.setShow(-1);
 				}
@@ -162,13 +160,13 @@ public class Game extends Canvas {
 			case SELECT_LEVEL_SCREEN:
 				// TODO: render select level screen
 				if (Global.currentScreen != Global.previousScreen) {
-					selectLevelScreen.setInput(_input);
+					selectLevelScreen.setInput(Keyboard.i());
 				}
 				selectLevelScreen.drawScreen(g);
 				break;
 			case SELECT_GAME_MODE:
 				if (Global.currentScreen != Global.previousScreen) {
-					selectGameModeScreen.setInput(_input);
+					selectGameModeScreen.setInput(Keyboard.i());
 				}
 				selectGameModeScreen.drawScreen(g);
 		}

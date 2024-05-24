@@ -124,7 +124,7 @@ public class FileLevelLoader extends LevelLoader {
                         _board.getEntityManager().getCharacterManager().setPlayer(bomber);
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
-                        agent = new KeyboardAgent(bomber, _board.getInput());
+                        agent = new KeyboardAgent(bomber);
                         _board.addAgent(agent);
                         break;
 
