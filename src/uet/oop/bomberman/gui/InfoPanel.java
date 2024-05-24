@@ -15,16 +15,16 @@ public class InfoPanel extends JPanel {
 	private JLabel pointsLabel;
 	private JLabel itemTimeLabel;
 	
-	private final IGameInfoManager gameInfoManager;
+	private final Game game;
 
-	public InfoPanel(IGameInfoManager gameInfoManager) {
-		this.gameInfoManager = gameInfoManager;
+	public InfoPanel(Game game) {
+		this.game = game;
 		setLayout(new GridLayout());
-		timeLabel = new JLabel("Time: " + gameInfoManager.getTime());
+		timeLabel = new JLabel("Time: " + game.getBoard().getGameInfoManager().getTime());
 		timeLabel.setForeground(Color.white);
 		timeLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		pointsLabel = new JLabel("Points: " + gameInfoManager.getPoints());
+		pointsLabel = new JLabel("Points: " + game.getBoard().getGameInfoManager().getPoints());
 		pointsLabel.setForeground(Color.white);
 		pointsLabel.setHorizontalAlignment(JLabel.CENTER);
 
@@ -50,7 +50,7 @@ public class InfoPanel extends JPanel {
 
 	public void renderItemTime() {
 		String label = "";
-		List<Item> items = gameInfoManager.getPlayerActiveItems();
+		List<Item> items = game.getBoard().getGameInfoManager().getPlayerActiveItems();
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 			if ((item.getDuration()) == 0) {

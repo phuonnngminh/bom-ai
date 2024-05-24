@@ -60,6 +60,10 @@ public class Board implements Copyable, IRender {
 		snapCameraToPlayer();
 	}
 
+	private void clearAgents() {
+		agents.clear();
+	}
+
 	public void addAgent(Agent agent) {
 		agents.add(agent);
 	}
@@ -91,6 +95,7 @@ public class Board implements Copyable, IRender {
 		_game.resetScreenDelay();
 		
 		try {
+			clearAgents();
 			_levelLoader = new FileLevelLoader(this, level);
 			gameInfoManager = new GameInfoManager();
 			entityManager = new EntityManager(_levelLoader, gameInfoManager);
@@ -127,14 +132,6 @@ public class Board implements Copyable, IRender {
 				_screen.drawPaused(g);
 				break;
 		}
-	}
-
-	public LevelLoader getLevel() {
-		return _levelLoader;
-	}
-
-	public Game getGame() {
-		return _game;
 	}
 
 	public int getShow() {
