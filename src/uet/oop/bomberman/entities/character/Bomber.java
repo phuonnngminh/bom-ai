@@ -17,7 +17,6 @@ import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

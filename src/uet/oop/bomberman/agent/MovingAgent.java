@@ -1,5 +1,8 @@
 package uet.oop.bomberman.agent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.action.ActionConstants;
@@ -14,7 +17,6 @@ public class MovingAgent extends Agent {
         this.ai = ai;
     }
 
-    @Override
     public Action getNextAction() {
         int direction = ai.calculateDirection();
         switch (direction) {
@@ -30,5 +32,12 @@ public class MovingAgent extends Agent {
                 return ActionConstants.DO_NOTHING;
         }
     }
+
+	@Override
+	public List<Action> getNextActions() {
+        List<Action> actions = new ArrayList<>();
+        actions.add(getNextAction());
+        return actions;
+	}
     
 }
