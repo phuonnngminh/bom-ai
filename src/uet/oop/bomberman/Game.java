@@ -142,6 +142,7 @@ public class Game extends Canvas {
 				if (Keyboard.i().resume) {
 					gameInfoManager.unpause();
 					_board.setShow(-1);
+					_screenDelay = 0;
 				}
 				frames++;
 				if (System.currentTimeMillis() - timer > 1000) {
@@ -194,12 +195,16 @@ public class Game extends Canvas {
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			while (delta >= 1) {
-				update();
+				synchronized (_board) {
+					update();
+				}
 				updates++;
 				delta--;
 			}
-
-			showScreen();
+			
+			synchronized (_board) {
+				showScreen();
+			}
 		}
 	}
 
