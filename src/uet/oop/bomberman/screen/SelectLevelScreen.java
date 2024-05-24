@@ -123,6 +123,6 @@ public class SelectLevelScreen extends GameScreen {
 
     @Override
     public void onDestroy() {
-        this._input = null;
+        this._input.get().keyboardInputCallback = Optional.ofNullable(null);;
     }
 }

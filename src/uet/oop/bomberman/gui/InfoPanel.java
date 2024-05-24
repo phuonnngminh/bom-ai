@@ -50,7 +50,7 @@ public class InfoPanel extends JPanel {
 
 	public void renderItemTime() {
 		String label = "";
-		List<Item> items = gameInfoManager.getActiveItems();
+		List<Item> items = gameInfoManager.getPlayerActiveItems();
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 			if ((item.getDuration()) == 0) {

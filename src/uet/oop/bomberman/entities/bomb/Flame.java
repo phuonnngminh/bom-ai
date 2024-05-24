@@ -61,7 +61,7 @@ public class Flame extends Entity {
 				case 3: x--; break;
 			}
 			_flameSegments[i] = new FlameSegment(x, y, _direction, last);
-			Entity entity = entityManager.getEntity(x, y, null);
+			Entity entity = entityManager.getEntityAt(x, y);
 			if (entity!=null) {
 				entity.collide(this);
 			}
@@ -83,7 +83,7 @@ public class Flame extends Entity {
 			if(_direction == 2) y++;
 			if(_direction == 3) x--;
 			
-			Entity a = entityManager.getEntity(x, y, null);
+			Entity a = entityManager.getEntityAt(x, y);
 			
 			if(a instanceof Bomb) ++radius; //explosion has to be below the bom
 			

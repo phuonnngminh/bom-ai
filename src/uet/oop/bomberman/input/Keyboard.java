@@ -17,8 +17,6 @@ public class Keyboard implements KeyListener {
 
 	private boolean[] keys = new boolean[65536];
 	public boolean up, down, left, right, space, pause, resume;
-	public boolean player1_up, player2_up, player1_down, player2_down, player1_left, player2_left, player1_right,
-			player2_right, player1_space, player2_space;
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 
 	public void update() {
@@ -27,18 +25,6 @@ public class Keyboard implements KeyListener {
 		left = keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A];
 		right = keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];
 		space = keys[KeyEvent.VK_SPACE] || keys[KeyEvent.VK_X];
-
-		player1_up = keys[KeyEvent.VK_UP];
-		player1_down = keys[KeyEvent.VK_DOWN];
-		player1_left = keys[KeyEvent.VK_LEFT];
-		player1_right = keys[KeyEvent.VK_RIGHT];
-		player1_space = keys[KeyEvent.VK_SPACE];
-
-		player2_up = keys[KeyEvent.VK_W];
-		player2_down = keys[KeyEvent.VK_S];
-		player2_left = keys[KeyEvent.VK_A];
-		player2_right = keys[KeyEvent.VK_D];
-		player2_space = keys[KeyEvent.VK_X];
 
 		pause = keys[KeyEvent.VK_ESCAPE];
 		resume = keys[KeyEvent.VK_ENTER];
