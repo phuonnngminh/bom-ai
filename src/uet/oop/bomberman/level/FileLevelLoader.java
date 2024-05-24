@@ -7,6 +7,7 @@ import java.util.List;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.agent.Agent;
+import uet.oop.bomberman.agent.KeyboardAgent;
 import uet.oop.bomberman.agent.MovingAgent;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
@@ -107,6 +108,7 @@ public class FileLevelLoader extends LevelLoader {
                     // Thêm Bomber player
                     case 'p':
                         Bomber bomber = new Bomber(
+<<<<<<< HEAD
                                 Coordinates.tileToPixel(x),
                                 Coordinates.tileToPixel(y) + Game.TILES_SIZE,
                                 Game.BOMBERSPEED,
@@ -121,6 +123,24 @@ public class FileLevelLoader extends LevelLoader {
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
+=======
+                            Coordinates.tileToPixel(x),
+                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                            Game.BOMBERSPEED,
+                            Game.BOMBRATE,
+                            Game.BOMBRADIUS,
+                            _board.getEntityManager(),
+                            _board.getGameInfoManager(),
+                            _board.getEntityManager().getBombManager(),
+                            _board
+                        );
+                        _board.getEntityManager().getCharacterManager().addCharacter(bomber);
+                        _board.getEntityManager().getCharacterManager().setPlayer(bomber);
+                        Screen.setOffset(0, 0);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
+                        agent = new KeyboardAgent(bomber);
+                        _board.addAgent(agent);
+>>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
                         break;
                     // case 'a':
                     // Bomber bomber2 = new Bomber(

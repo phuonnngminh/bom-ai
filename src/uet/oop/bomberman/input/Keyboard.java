@@ -11,6 +11,15 @@ import java.util.Optional;
  */
 public class Keyboard implements KeyListener {
 
+	private static Keyboard INST = null;
+	public static Keyboard i() {
+		if (INST == null) {
+			INST = new Keyboard();
+		}
+		return INST;
+	}
+	private Keyboard() {}
+
 	public interface KeyboardInputCallback {
 		void onKeyPressed(EGameControl gameControl);
 	}

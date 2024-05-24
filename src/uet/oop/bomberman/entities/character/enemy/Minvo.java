@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities.character.enemy;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.graphics.Sprite;

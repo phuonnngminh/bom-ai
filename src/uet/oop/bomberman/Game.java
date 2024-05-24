@@ -40,9 +40,7 @@ public class Game extends Canvas {
 
 	protected int _screenDelay = SCREENDELAY;
 
-	private Keyboard _input;
 	private boolean _running = false;
-	private boolean _paused = true;
 	private Board _board;
 	private Screen screen;
 	private Frame _frame;
@@ -64,10 +62,9 @@ public class Game extends Canvas {
 		_frame.setTitle(TITLE);
 
 		screen = new Screen(WIDTH, HEIGHT);
-		_input = new Keyboard();
 
-		_board = new Board(this, _input, screen);
-		addKeyListener(_input);
+		_board = new Board(this, screen);
+		addKeyListener(Keyboard.i());
 
 		initScreen();
 	
@@ -84,7 +81,7 @@ public class Game extends Canvas {
 		}
 		
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-		_board.renderMessages(g);
+		_board.getGameInfoManager().render(screen, g);
 	}
 	
 	private void renderScreen(Graphics g) {
@@ -100,13 +97,13 @@ public class Game extends Canvas {
 	}
 
 	private void update() {
-		_input.update();
+		Keyboard.i().update();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
 				_board.update();
-				if (_input.pause) { // Kiểm tra nếu phím "p" được nhấn
+				if (Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
 					_board.setShow(3); // Hiển thị màn hình tạm dừng
-					_paused = true; // Đặt trạng thái game là tạm dừng
+					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
 				}
 				break;
@@ -128,12 +125,13 @@ public class Game extends Canvas {
 		}
 		Graphics g = bs.getDrawGraphics();
 
+		IGameInfoManager gameInfoManager = _board.getGameInfoManager();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
-				if (_paused) {
+				if (gameInfoManager.isPaused()) {
 					if (_screenDelay <= 0) {
 						_board.setShow(-1);
-						_paused = false;
+						gameInfoManager.unpause();
 					}
 
 					renderScreen(g);
@@ -141,14 +139,14 @@ public class Game extends Canvas {
 					renderGame(g);
 				}
 
-				if (_input.resume) {
-					_paused = false;
+				if (Keyboard.i().resume) {
+					gameInfoManager.unpause();
 					_board.setShow(-1);
-					}
+				}
 				frames++;
 				if (System.currentTimeMillis() - timer > 1000) {
-					_frame.setTime(_board.subtractTime());
-					_frame.setPoints(_board.getPoints());
+					_frame.setTime(gameInfoManager.subtractTime());
+					_frame.setPoints(gameInfoManager.getPoints());
 					_frame.renderItemTime();
 					timer += 1000;
 					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
@@ -162,13 +160,13 @@ public class Game extends Canvas {
 			case SELECT_LEVEL_SCREEN:
 				// TODO: render select level screen
 				if (Global.currentScreen != Global.previousScreen) {
-					selectLevelScreen.setInput(_input);
+					selectLevelScreen.setInput(Keyboard.i());
 				}
 				selectLevelScreen.drawScreen(g);
 				break;
 			case SELECT_GAME_MODE:
 				if (Global.currentScreen != Global.previousScreen) {
-					selectGameModeScreen.setInput(_input);
+					selectGameModeScreen.setInput(Keyboard.i());
 				}
 				selectGameModeScreen.drawScreen(g);
 		}
@@ -208,15 +206,8 @@ public class Game extends Canvas {
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;
 	}
-	public boolean isPaused() {
-		return _paused;
-	}
 
-	public void pause() {
-		_paused = !_paused;
-	}
-
-	public IGameInfoManager getGameInfoManager() {
+	public Board getBoard() {
 		return _board;
 	}
 
