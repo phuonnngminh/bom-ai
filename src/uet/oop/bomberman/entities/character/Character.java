@@ -42,7 +42,7 @@ public abstract class Character extends AnimatedEntitiy {
 		this.entityManager = entityManager;
 		this.baseSpeed = baseSpeed;
 	}
-	
+
 	@Override
 	public final void update() {
         if (!alive) {

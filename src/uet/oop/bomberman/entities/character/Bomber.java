@@ -2,8 +2,6 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
-import uet.oop.bomberman.base.IActiveItemManager;
-import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -40,17 +38,12 @@ public class Bomber extends Character implements CanUseItem {
     
     private Board _board;
 
-    private final IActiveItemManager activeItemManager;
-    private final IBombManager bombManager;
-
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, IBombManager bombManager, Board board) {
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
         this._board = board;
         _sprite = Sprite.player_right;
-        this.activeItemManager = activeItemManager;
-        this.bombManager = bombManager;
     }
 
     @Override
@@ -110,7 +103,7 @@ public class Bomber extends Character implements CanUseItem {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
         Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
         this._bombs.add(b);
-        bombManager.addBomb(b);
+        entityManager.getBombManager().addBomb(b);
         Sound.play("BOM_SET");
     }
 
@@ -200,7 +193,6 @@ public class Bomber extends Character implements CanUseItem {
 	@Override
 	public void addActiveItem(Item item) {
 		this.activeItems.add(item);
-		activeItemManager.addActiveItem(item);
 	}
 
     @Override
