@@ -42,11 +42,11 @@ public class SelectLevelScreen extends GameScreen {
                         selectorIndex++;
                         break;
                     case ENTER:
-                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
-                        Global.gameLevel = selectorIndex + 1;
                         synchronized (_board) {
                             _board.loadLevel(Global.gameLevel);
                         }
+                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        Global.gameLevel = selectorIndex + 1;
                         onDestroy();
                         break;
                 }

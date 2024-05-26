@@ -2,9 +2,7 @@ package uet.oop.bomberman.screen;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
-import uet.oop.bomberman.sound.Sound;
 import uet.oop.bomberman.utils.EGameControl;
-import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,6 +35,9 @@ public class DeadScreen extends GameScreen {
             e.printStackTrace();
         }
 
+    }
+
+    public void setInput() {
         Keyboard.i().keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
             @Override
             public void onKeyPressed(EGameControl gameControl) {

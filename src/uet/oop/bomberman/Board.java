@@ -87,9 +87,6 @@ public class Board implements Copyable, IRender {
 	}
 
 	public void loadLevel(int level) {
-		_game.setScreenToShow(2);
-		_game.resetScreenDelay();
-		
 		try {
 			clearAgents();
 			_levelLoader = new FileLevelLoader(this, level);
@@ -102,6 +99,9 @@ public class Board implements Copyable, IRender {
 		} catch (LoadLevelException e) {
 			e.printStackTrace();
 		}
+
+		_game.setScreenToShow(2);
+		_game.resetScreenDelay();
 	}
 
 	public int getWidth() {

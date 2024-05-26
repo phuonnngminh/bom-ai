@@ -58,7 +58,7 @@ public class Game extends Canvas {
     public SelectLevelScreen selectLevelScreen;
 	private SelectGameModeScreen selectGameModeScreen;
 	public DeadScreen deadScreen;
-	
+
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 	
 	public Game(Frame frame) {
@@ -132,7 +132,7 @@ public class Game extends Canvas {
 				selectGameModeScreen.update();
 				break;
             case END_GAME_SCREEN:
-            deadScreen.update();
+				deadScreen.update();
                 break;
         }
     
@@ -191,7 +191,11 @@ public class Game extends Canvas {
 					selectGameModeScreen.setInput(Keyboard.i());
 				}
 				selectGameModeScreen.drawScreen(g);
+				break;
             case END_GAME_SCREEN:
+				if (Global.currentScreen != Global.previousScreen) {
+					deadScreen.setInput();
+				}
                 deadScreen.drawScreen(g);
                 break;
         }
@@ -242,15 +246,15 @@ public class Game extends Canvas {
 
 
 	public void restartGame() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'restartGame'");
+		Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+		_board.loadLevel(_board._levelLoader.getLevel());
 	}
 
 
     public void startNewGame() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'startNewGame'");
+		Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
     }
+
 	public int getScreenToShow() {
 		return _screenToShow;
 	}

@@ -14,6 +14,8 @@ import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
+import uet.oop.bomberman.utils.EScreenName;
+import uet.oop.bomberman.utils.Global;
 
 public class GameInfoManager implements IGameInfoManager {
 
@@ -125,6 +127,7 @@ public class GameInfoManager implements IGameInfoManager {
 
 	@Override
 	public void endGame() {
+		Global.currentScreen = EScreenName.END_GAME_SCREEN;
 		game.setScreenToShow(1);
 		game.resetScreenDelay();
 		pause();
