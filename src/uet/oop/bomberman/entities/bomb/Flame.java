@@ -87,10 +87,16 @@ public class Flame extends Entity {
 			
 			if(a instanceof Bomb) ++radius; //explosion has to be below the bom
 			
-			if(!canSpawnFlameOn(a))
+			if(!canSpawnFlameOn(a)) {
 				break;
+			}
 			
 			++radius;
+
+			// Stop if encounter brick
+			if (!a.canBePassedThroughBy(this)) {
+				break;
+			}
 		}
 		return radius;
 	}
