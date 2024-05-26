@@ -64,7 +64,7 @@ public class Bomber extends Character implements CanUseItem {
 
     @Override
     public void render(Screen screen) {
-        if (_alive)
+        if (isAlive())
             chooseSprite();
         else
             _sprite = Sprite.player_dead1;
@@ -133,7 +133,7 @@ public class Bomber extends Character implements CanUseItem {
 
     //sprite
     private void chooseSprite() {
-        switch (_direction) {
+        switch (getDirection()) {
             case 0:
                 _sprite = Sprite.player_up;
                 if (isMoving()) {
