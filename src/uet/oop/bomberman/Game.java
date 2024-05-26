@@ -57,12 +57,13 @@ public class Game extends Canvas {
     // game screens
     public SelectLevelScreen selectLevelScreen;
 	private SelectGameModeScreen selectGameModeScreen;
-    public DeadScreen deadScreen;
-
-
-    public Game(Frame frame) {
-        _frame = frame;
-        _frame.setTitle(TITLE);
+	public DeadScreen deadScreen;
+	
+	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
+	
+	public Game(Frame frame) {
+		_frame = frame;
+		_frame.setTitle(TITLE);
 
 		screen = new Screen(WIDTH, HEIGHT);
 
@@ -89,7 +90,21 @@ public class Game extends Canvas {
 	
 	private void renderScreen(Graphics g) {
 		screen.clear();
-		_board.drawScreen(g);
+		drawScreen(g);
+	}
+
+	private void drawScreen(Graphics g) {
+		switch (getScreenToShow()) {
+			case 1:
+				screen.drawEndGame(g, _board.getGameInfoManager().getPoints());
+				break;
+			case 2:
+				screen.drawChangeLevel(g, _board._levelLoader.getLevel());
+				break;
+			case 3:
+				screen.drawPaused(g);
+				break;
+		}
 	}
 
     private void initScreen() {
@@ -105,7 +120,7 @@ public class Game extends Canvas {
             case GAME_PLAY_SCREEN:
                 _board.update();
 				if (Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
-					_board.setShow(3); // Hiển thị màn hình tạm dừng
+					_screenToShow = 3; // Hiển thị màn hình tạm dừng
 					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
 				}
@@ -136,7 +151,7 @@ public class Game extends Canvas {
 			case GAME_PLAY_SCREEN:
 				if (gameInfoManager.isPaused()) {
 					if (_screenDelay <= 0) {
-						_board.setShow(-1);
+						_screenToShow = -1;
 						gameInfoManager.unpause();
 					}
 
@@ -147,7 +162,7 @@ public class Game extends Canvas {
 
 				if (Keyboard.i().resume) {
 					gameInfoManager.unpause();
-					_board.setShow(-1);
+					_screenToShow = -1;
 					_screenDelay = 0;
 				}
 				frames++;
@@ -160,12 +175,12 @@ public class Game extends Canvas {
 					updates = 0;
 					frames = 0;
 
-                    if  (_board.getShow() == 2)
-                        --_screenDelay;
-                }
-                break;
-            case SELECT_LEVEL_SCREEN:
-                // TODO: render select level screen
+					if (_screenToShow == 2)
+						--_screenDelay;
+				}
+				break;
+			case SELECT_LEVEL_SCREEN:
+				// TODO: render select level screen
 				if (Global.currentScreen != Global.previousScreen) {
 					selectLevelScreen.setInput(Keyboard.i());
 				}
@@ -236,5 +251,12 @@ public class Game extends Canvas {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'startNewGame'");
     }
+	public int getScreenToShow() {
+		return _screenToShow;
+	}
+
+	public void setScreenToShow(int screenToShow) {
+		this._screenToShow = screenToShow;
+	}
 
 }

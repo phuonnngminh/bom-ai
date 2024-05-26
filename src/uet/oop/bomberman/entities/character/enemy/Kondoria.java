@@ -14,7 +14,7 @@ public class Kondoria extends Enemy {
 
     @Override
     protected void chooseSprite() {
-        switch (_direction) {
+        switch (getDirection()) {
             case 0:
             case 1:
                 if (isMoving())

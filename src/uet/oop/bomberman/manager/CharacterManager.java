@@ -10,7 +10,9 @@ import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.entities.Message;
+import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
+import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.sound.Sound;
 
@@ -77,9 +79,22 @@ public class CharacterManager implements ICharacterManager {
 		}
 	}
 
+	@Override
+	public void handleAfterDeath(Character character) {
+		if (character.isPlayer()) {
+			gameInfoManager.endGame();
+		}
+	}
+
     @Override
     public void update() {
-        characters.forEach(Character::update);
+		for (Character character: characters) {
+			character.update();
+			if (character instanceof CanUseItem) {
+				CanUseItem characterCanUseItem = ((CanUseItem) character);
+				characterCanUseItem.getActiveItems().forEach(Item::update);
+			}
+		}
         characters = characters.stream()
             .filter(character -> !character.isRemoved())
             .collect(Collectors.toList());

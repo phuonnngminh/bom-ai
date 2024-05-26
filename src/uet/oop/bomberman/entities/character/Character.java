@@ -27,33 +27,14 @@ import uet.oop.bomberman.level.Coordinates;
  */
 public abstract class Character extends AnimatedEntitiy {
 	
-	protected final IEntityManager entityManager;
-	protected int _direction = -1;
-	protected boolean _alive = true;
-	protected int timerDeathAnimation = 40;
+	protected IEntityManager entityManager;
+
+	private int direction = -1;
+	private boolean alive = true;
+	private int timerDeathAnimation = 40;
 
 	private final double baseSpeed;
 	private Queue<Waypoint> waypoints = new LinkedList<>();
-
-	private class Waypoint {
-		private double moveX;
-		private double moveY;
-		private double moveDuration;
-		private double moveDx;
-		private double moveDy;
-		
-		public boolean started = false;
-		public double moveDestX;
-		public double moveDestY;
-
-		public Waypoint(double moveX, double moveY, double moveDuration) {
-			this.moveX = moveX;
-			this.moveY = moveY;
-			this.moveDuration = moveDuration;
-			this.moveDx = moveX / moveDuration;
-			this.moveDy = moveY / moveDuration;
-		}
-	}
 
 	public Character(int x, int y, double baseSpeed, IEntityManager entityManager) {
 		_x = x;
@@ -61,10 +42,10 @@ public abstract class Character extends AnimatedEntitiy {
 		this.entityManager = entityManager;
 		this.baseSpeed = baseSpeed;
 	}
-	
+
 	@Override
 	public final void update() {
-        if (!_alive) {
+        if (!alive) {
             if (timerDeathAnimation > 0) {
                 timerDeathAnimation -= 1;
             } else {
@@ -177,10 +158,10 @@ public abstract class Character extends AnimatedEntitiy {
 		}
 		
 		// Adjust direction
-        if(waypoint.moveDx > 0) _direction = 1;
-		if(waypoint.moveDx < 0) _direction = 3;
-		if(waypoint.moveDy > 0) _direction = 2;
-		if(waypoint.moveDy < 0) _direction = 0;
+        if(waypoint.moveDx > 0) direction = 1;
+		if(waypoint.moveDx < 0) direction = 3;
+		if(waypoint.moveDy > 0) direction = 2;
+		if(waypoint.moveDy < 0) direction = 0;
 
         Entity collidingEntity = entityManager.getEntityAtExcluding(
             Coordinates.pixelToTile(getCenterX()),
@@ -197,8 +178,8 @@ public abstract class Character extends AnimatedEntitiy {
 	 * Được gọi khi đối tượng bị tiêu diệt
 	 */
 	public final void handleOnDeath() {
-		if(!_alive) return;
-		_alive = false;
+		if(!alive) return;
+		alive = false;
 		// TODO: determine killer
 		entityManager.getCharacterManager().handleOnDeath(this, null);
 	}
@@ -206,7 +187,10 @@ public abstract class Character extends AnimatedEntitiy {
 	/**
 	 * Xử lý hiệu ứng bị tiêu diệt
 	 */
-	protected abstract void handleAfterDeath();
+	private void handleAfterDeath() {
+		entityManager.getCharacterManager().handleAfterDeath(this);
+		remove();
+	}
 
 	/**
 	 * Kiểm tra xem đối tượng có di chuyển tới vị trí đã tính toán hay không
@@ -239,7 +223,7 @@ public abstract class Character extends AnimatedEntitiy {
 	}
 	
 	public boolean isAlive() {
-		return _alive;
+		return alive;
 	}
 
 	public boolean isMoving() {
@@ -256,6 +240,18 @@ public abstract class Character extends AnimatedEntitiy {
 	}
 
 	public abstract int getPoints();
+	
+	public int getDirection() {
+		return direction;
+	}
+
+	public int getTimerDeathAnimation() {
+		return timerDeathAnimation;
+	}
+
+	public void setTimerDeathAnimation(int timerDeathAnimation) {
+		this.timerDeathAnimation = timerDeathAnimation;
+	}
 
 	@Override
 	public boolean collide(Entity e) {

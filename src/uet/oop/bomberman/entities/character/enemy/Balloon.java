@@ -16,7 +16,7 @@ public class Balloon extends Enemy {
 
 	@Override
 	protected void chooseSprite() {
-		switch(_direction) {
+		switch(getDirection()) {
 			case 0:
 			case 1:
 					_sprite = Sprite.movingSprite(Sprite.balloom_right1, Sprite.balloom_right2, Sprite.balloom_right3, _animate, Game.TICKS_PER_SECOND);
