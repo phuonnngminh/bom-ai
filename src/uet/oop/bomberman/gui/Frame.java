@@ -46,8 +46,8 @@ public class Frame extends JFrame {
 		_infopanel.setPoints(points);
 	}
 
-	public void setItemTime(int itemTime) {
-		_infopanel.setItemTime(itemTime);
+	public void renderItemTime() {
+		_infopanel.renderItemTime();
 	}
 	
 }

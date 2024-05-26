@@ -1,5 +1,6 @@
 package uet.oop.bomberman.screen;
 
+import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
@@ -10,22 +11,27 @@ import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class SelectLevelScreen extends GameScreen {
     ArrayList<String> levels = new ArrayList<String>();
     int selectorIndex = 0;
-    private Keyboard _input;
+    private Optional<Keyboard> _input;
+    private Board _board;
 
-    public SelectLevelScreen(Keyboard input) {
-        _input = input;
+    public SelectLevelScreen(Board board) {
+        _board = board;
 
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
         levels.add(EGameLevel.HARD.getStringLevel());
+    }
 
-        _input.keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
+    public void setInput(Keyboard input) {
+        _input = Optional.ofNullable(input);
+
+        _input.get().keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
             @Override
             public void onKeyPressed(EGameControl gameControl) {
                 switch (gameControl) {
@@ -37,6 +43,11 @@ public class SelectLevelScreen extends GameScreen {
                         break;
                     case ENTER:
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        Global.gameLevel = selectorIndex + 1;
+                        synchronized (_board) {
+                            _board.loadLevel(Global.gameLevel);
+                        }
+                        onDestroy();
                         break;
                 }
 
@@ -111,4 +122,9 @@ public class SelectLevelScreen extends GameScreen {
 
     @Override
     public void update() {}
+
+    @Override
+    public void onDestroy() {
+        this._input.get().keyboardInputCallback = Optional.ofNullable(null);;
+    }
 }

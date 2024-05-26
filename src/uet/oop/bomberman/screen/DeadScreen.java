@@ -16,13 +16,11 @@ public class DeadScreen extends GameScreen {
     ArrayList<String> options = new ArrayList<>();
     int selectorIndex = 0;
     private Game game;
-    private Keyboard _input;
     private BufferedImage restartIcon;
     private BufferedImage homeIcon;
     private BufferedImage backgroundImage;
     private BufferedImage gameover;
-    public DeadScreen(Keyboard input, Game game) {
-        _input = input;
+    public DeadScreen(Game game) {
         this.game = game;   
         options.add("Restart");
         options.add("Back Home");
@@ -39,7 +37,7 @@ public class DeadScreen extends GameScreen {
             e.printStackTrace();
         }
 
-        _input.keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
+        Keyboard.i().keyboardInputCallback = java.util.Optional.of(new Keyboard.KeyboardInputCallback() {
             @Override
             public void onKeyPressed(EGameControl gameControl) {
                 switch (gameControl) {
@@ -99,8 +97,8 @@ public class DeadScreen extends GameScreen {
             g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
         }
         drawTitle(g);
-        drawPOINTS(g, game.getBoard().getPoints());
-        drawTIMES(g, game.getBoard().getTime());
+        drawPOINTS(g, game.getBoard().getGameInfoManager().getPoints());
+        drawTIMES(g, game.getBoard().getGameInfoManager().getTime());
         drawOptions(g);
         drawSelector(g);
         g.drawImage(gameover, Global.screenWidth/3 + 40, Global.screenHeight/2 + 80, 50*Game.SCALE, 50*Game.SCALE, null);
@@ -188,5 +186,8 @@ public class DeadScreen extends GameScreen {
 
     @Override
     public void update() {
+    }
+    @Override
+    public void onDestroy() {
     }
 }

@@ -13,12 +13,10 @@ public class SpeedItem extends Item {
 
 	@Override
 	protected void handleItemActive() {
-		Game.addBomberSpeed(0.5);
 	}
 
 	@Override
 	protected void handleItemInactive() {
-		Game.addBomberSpeed(-0.5);
 	}
 
 	@Override

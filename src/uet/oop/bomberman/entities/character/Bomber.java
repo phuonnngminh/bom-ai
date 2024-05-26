@@ -2,61 +2,62 @@ package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
 import uet.oop.bomberman.Board;
-import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IActiveItemManager;
+import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.action.ActionPlaceBomb;
+import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException;
+import uet.oop.bomberman.entities.character.exceptions.BombQuotaReachedException;
+import uet.oop.bomberman.entities.character.exceptions.CannotPerformActionException;
+import uet.oop.bomberman.entities.character.exceptions.InvalidActionException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.util.Iterator;
 import java.util.List;
-import uet.oop.bomberman.entities.LayeredEntity;
-import uet.oop.bomberman.entities.bomb.Flame;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import uet.oop.bomberman.entities.tile.item.BombItem;
 import uet.oop.bomberman.entities.tile.item.FlameItem;
 import uet.oop.bomberman.entities.tile.item.Item;
+import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.level.Coordinates;
 import uet.oop.bomberman.sound.Sound;
 
-public class Bomber extends Character {
+public class Bomber extends Character implements CanUseItem {
 
-    private List<Bomb> _bombs;
-    public static List<Item> _items = new ArrayList<Item>();//xu li Item
+    private List<Bomb> _bombs = new ArrayList<>();
+    private List<Item> activeItems = new ArrayList<>();
 
     private final int baseBombLimit;
     protected int bombCooldown = 0;
 
     private final int baseBombRadius;
-    private int bombRadius;
-
-    public int getBombCooldown() {
-        return bombCooldown;
-    }
-
+    
     private Board _board;
 
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
+    private final IActiveItemManager activeItemManager;
+    private final IBombManager bombManager;
+
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, IActiveItemManager activeItemManager, IBombManager bombManager, Board board) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
         this._board = board;
-        _bombs = entityManager.getBombs();
         _sprite = Sprite.player_right;
+        this.activeItemManager = activeItemManager;
+        this.bombManager = bombManager;
     }
 
     @Override
-    public void update() {
-        clearBombs();
-        if (!_alive) {
-            afterKill();
-            return;
-        }
-
+    public void handleUpdate() {
+        clearExpiredBombs();
         if (bombCooldown < -7500) bombCooldown = 0;
         else bombCooldown--;
-
         animate();
 
     }
@@ -87,6 +88,10 @@ public class Bomber extends Character {
         return this.baseBombRadius + bombRadiusBonus;
     }
 
+    public int getBombCooldown() {
+        return bombCooldown;
+    }
+
     public boolean placeBomb() {
         if(getBombRemainingQuota() > 0 && bombCooldown < 0) {
 			
@@ -104,90 +109,25 @@ public class Bomber extends Character {
     public void placeBomb(int x, int y) {
         // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
         Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
-        entityManager.addBomb(b);
+        this._bombs.add(b);
+        bombManager.addBomb(b);
         Sound.play("BOM_SET");
     }
 
-    private void clearBombs() {
-        Iterator<Bomb> bs = _bombs.iterator();
-
-        Bomb b;
-        while (bs.hasNext()) {
-            b = bs.next();
-            if (b.isRemoved()) {
-                bs.remove();
-            }
-        }
-
+    private void clearExpiredBombs() {
+        _bombs = _bombs.stream()
+            .filter(bomb -> !bomb.isRemoved())
+            .collect(Collectors.toList());
     }
 
     @Override
-    public void kill() {
-        if (!_alive) return;
-        _alive = false;
-        Sound.play("endgame3");
-    }
-
-    @Override
-    protected void afterKill() {
-        if (_timeAfter > 0) --_timeAfter;
-        else {
-            _board.endGame();
-        }
-    }
-
-    @Override
-    protected void calculateMove() {
-    }
-
-    @Override
-    public boolean canMove(double x, double y) {
-        // TODO: kiểm tra có đối tượng tại vị trí chuẩn bị di chuyển đến và có thể di chuyển tới đó hay không
-       for (int c = 0; c < 4; c++) { //colision detection for each corner of the player
-			double xt = ((_x + x) + c % 2 * 9) / Game.TILES_SIZE; //divide with tiles size to pass to tile coordinate
-			double yt = ((_y + y) + c / 2 * 10 - 13) / Game.TILES_SIZE; //these values are the best from multiple tests
-			
-			Entity a = entityManager.getEntity(xt, yt, this);
-			
-			if(!a.collide(this))
-				return false;
-		}
-		
-		return true;
-        //return false;
-    }
-
-    @Override
-    public void move(double xa, double ya) {
-        // TODO: sử dụng canMove() để kiểm tra xem có thể di chuyển tới điểm đã tính toán hay không và thực hiện thay đổi tọa độ _x, _y
-        // TODO: nhớ cập nhật giá trị _direction sau khi di chuyển
-        if(xa > 0) _direction = 1;
-		if(xa < 0) _direction = 3;
-		if(ya > 0) _direction = 2;
-		if(ya < 0) _direction = 0;
-		
-		if(canMove(0, ya)) { //separate the moves for the player can slide when is colliding
-			_y += ya;
-		}
-		
-		if(canMove(xa, 0)) {
-			_x += xa;
-		}
+    protected void handleAfterDeath() {
+        _board.endGame();
     }
 
     @Override
     public boolean collide(Entity e) {
-        // TODO: xử lý va chạm với Flame
-        // TODO: xử lý va chạm với Enemy
-        if(e instanceof Flame){
-            this.kill();
-            return false;
-        }
-        if(e instanceof Enemy){
-            this.kill();
-            return true;
-        }
-        if( e instanceof LayeredEntity) return(e.collide(this));
+        if (!super.collide(e)) return false;
         return true;
     }
     //sprite
@@ -195,34 +135,83 @@ public class Bomber extends Character {
         switch (_direction) {
             case 0:
                 _sprite = Sprite.player_up;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_up_1, Sprite.player_up_2, _animate, 20);
                 }
                 break;
             case 1:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
             case 2:
                 _sprite = Sprite.player_down;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_down_1, Sprite.player_down_2, _animate, 20);
                 }
                 break;
             case 3:
                 _sprite = Sprite.player_left;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_left_1, Sprite.player_left_2, _animate, 20);
                 }
                 break;
             default:
                 _sprite = Sprite.player_right;
-                if (_moving) {
+                if (isMoving()) {
                     _sprite = Sprite.movingSprite(Sprite.player_right_1, Sprite.player_right_2, _animate, 20);
                 }
                 break;
         }
     }
+
+    @Override
+    public int getPoints() {
+        return 0;
+    }
+
+    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
+        addAll(ActionConstants.LIST_ACTION_MOVE);
+        add(ActionConstants.PLACE_BOMB);
+    }};
+    @Override
+	protected List<? extends Action> getValidActions() {
+        return VALID_ACTIONS;
+	}
+
+    @Override
+    protected void performAction(Action action, boolean isDryRun)
+            throws InvalidActionException, CannotPerformActionException {
+        super.performAction(action, isDryRun);
+        if (action instanceof ActionPlaceBomb) {
+            if (getBombRemainingQuota() < 0) throw new BombQuotaReachedException();
+            if (bombCooldown > 0) throw new ActionOnCooldownException();
+            if (!isDryRun) placeBomb();
+        }
+    }
+
+	@Override
+	public Stream<Item> getActiveItems() {
+		return activeItems.stream().filter(Item::isActive);
+	}
+
+	@Override
+	public void addActiveItem(Item item) {
+		this.activeItems.add(item);
+		activeItemManager.addActiveItem(item);
+	}
+
+    @Override
+	protected double getSpeedMultiplier() {
+		double speedMultiplier = 1;
+		for (Item item: activeItems) {
+			if (!item.isActive()) continue;
+			if (item instanceof SpeedItem) {
+				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
+			}
+		}
+		return speedMultiplier;
+	}
+
 }

@@ -11,12 +11,21 @@ import java.util.Optional;
  */
 public class Keyboard implements KeyListener {
 
+	private static Keyboard INST = null;
+	public static Keyboard i() {
+		if (INST == null) {
+			INST = new Keyboard();
+		}
+		return INST;
+	}
+	private Keyboard() {}
+
 	public interface KeyboardInputCallback {
 		void onKeyPressed(EGameControl gameControl);
 	}
 
-	private boolean[] keys = new boolean[200]; //120 is enough to this game
-	public boolean up, down, left, right, space,x;
+	private boolean[] keys = new boolean[65536]; //120 is enough to this game
+	public boolean up, down, left, right, space, x, pause, resume;
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 
 	public void update() {

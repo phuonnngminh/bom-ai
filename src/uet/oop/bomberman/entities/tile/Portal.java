@@ -6,7 +6,7 @@ import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
-public class Portal extends Tile {
+public class Portal extends NonDestroyableTile {
 	protected Board _board;
 
 	public Portal(int x, int y, Board board, Sprite sprite) {
@@ -21,18 +21,28 @@ public class Portal extends Tile {
 		// TODO: xử lý khi Bomber đi vào
 		if (e instanceof Character && ((Character)e).isPlayer()) {
 
-			if (!_board.isEnemyCleared())
-				return false;
-
-			if (e.getXTile() == getX() && e.getYTile() == getY()) {
-				if (_board.isEnemyCleared()) {
-					_board.nextLevel();
-					Sound.play("CRYST_UP");
-				}
+			if (canBePassedThroughBy(e)) {
+				_board.nextLevel();
+				Sound.play("CRYST_UP");
 			}
 
 		}
 
+		return true;
+	}
+
+	@Override
+	public boolean canBePassedThroughBy(Entity other) {
+		if (other instanceof Character && ((Character)other).isPlayer()) {
+
+			if (!_board.getEntityManager().isEnemyCleared())
+				return false;
+
+			if (other.getXTile() == getX() && other.getYTile() == getY()) {
+				return true;
+			}
+
+		}
 		return true;
 	}
 

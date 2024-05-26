@@ -1,11 +1,10 @@
 package uet.oop.bomberman.gui;
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.entities.tile.item.Item;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 
 /**
@@ -15,14 +14,17 @@ public class InfoPanel extends JPanel {
 	private JLabel timeLabel;
 	private JLabel pointsLabel;
 	private JLabel itemTimeLabel;
-	private Game game;
+	
+	private final Game game;
+
 	public InfoPanel(Game game) {
+		this.game = game;
 		setLayout(new GridLayout());
-		timeLabel = new JLabel("Time: " + game.getBoard().getTime());
+		timeLabel = new JLabel("Time: " + game.getBoard().getGameInfoManager().getTime());
 		timeLabel.setForeground(Color.white);
 		timeLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		pointsLabel = new JLabel("Points: " + game.getBoard().getPoints());
+		pointsLabel = new JLabel("Points: " + game.getBoard().getGameInfoManager().getPoints());
 		pointsLabel.setForeground(Color.white);
 		pointsLabel.setHorizontalAlignment(JLabel.CENTER);
 
@@ -46,9 +48,9 @@ public class InfoPanel extends JPanel {
 		pointsLabel.setText("Score: " + t);
 	}
 
-	public void setItemTime(int t) {
+	public void renderItemTime() {
 		String label = "";
-		List<Item> items = game.getBoard().getActiveItems();
+		List<Item> items = game.getBoard().getGameInfoManager().getPlayerActiveItems();
 		for (int i = 0; i < items.size(); i++) {
 			Item item = items.get(i);
 			if ((item.getDuration()) == 0) {
