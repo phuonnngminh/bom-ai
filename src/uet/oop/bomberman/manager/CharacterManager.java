@@ -79,6 +79,13 @@ public class CharacterManager implements ICharacterManager {
 		}
 	}
 
+	@Override
+	public void handleAfterDeath(Character character) {
+		if (character.isPlayer()) {
+			gameInfoManager.endGame();
+		}
+	}
+
     @Override
     public void update() {
 		for (Character character: characters) {

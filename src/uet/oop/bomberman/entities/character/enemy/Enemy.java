@@ -62,11 +62,6 @@ public abstract class Enemy extends Character {
 		return true;
 	}
 	
-	@Override
-	protected void handleAfterDeath() {
-		remove();
-	}
-	
 	protected abstract void chooseSprite();
 
 	@Override

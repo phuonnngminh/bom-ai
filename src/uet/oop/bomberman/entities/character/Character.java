@@ -187,7 +187,10 @@ public abstract class Character extends AnimatedEntitiy {
 	/**
 	 * Xử lý hiệu ứng bị tiêu diệt
 	 */
-	protected abstract void handleAfterDeath();
+	private void handleAfterDeath() {
+		entityManager.getCharacterManager().handleAfterDeath(this);
+		remove();
+	}
 
 	/**
 	 * Kiểm tra xem đối tượng có di chuyển tới vị trí đã tính toán hay không

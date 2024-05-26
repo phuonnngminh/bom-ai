@@ -1,7 +1,6 @@
 package uet.oop.bomberman.entities.character;
 
 import java.util.ArrayList;
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.bomb.Bomb;
@@ -36,13 +35,10 @@ public class Bomber extends Character implements CanUseItem {
 
     private final int baseBombRadius;
     
-    private Board _board;
-
-    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager, Board board) {
+    public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
         this.baseBombRadius = baseBombRadius;
-        this._board = board;
         _sprite = Sprite.player_right;
     }
 
@@ -100,7 +96,6 @@ public class Bomber extends Character implements CanUseItem {
     }
 
     public void placeBomb(int x, int y) {
-        // TODO: thực hiện tạo đối tượng bom, đặt vào vị trí (x, y)
         Bomb b = new Bomb(x, y, getBombRadius(), entityManager);
         this._bombs.add(b);
         entityManager.getBombManager().addBomb(b);
@@ -111,11 +106,6 @@ public class Bomber extends Character implements CanUseItem {
         _bombs = _bombs.stream()
             .filter(bomb -> !bomb.isRemoved())
             .collect(Collectors.toList());
-    }
-
-    @Override
-    protected void handleAfterDeath() {
-        _board.endGame();
     }
 
     @Override

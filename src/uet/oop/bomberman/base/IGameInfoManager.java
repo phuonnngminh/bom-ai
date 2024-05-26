@@ -18,6 +18,7 @@ public interface IGameInfoManager extends IMessageManager, IRender {
     public boolean isPaused();
     public void pause();
     public void unpause();
+    public void endGame();
 
     public List<Item> getPlayerActiveItems();
 

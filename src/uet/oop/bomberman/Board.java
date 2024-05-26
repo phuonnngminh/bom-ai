@@ -15,7 +15,6 @@ import uet.oop.bomberman.manager.EntityManager;
 import uet.oop.bomberman.manager.GameInfoManager;
 import uet.oop.bomberman.utils.Global;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,6 @@ public class Board implements Copyable, IRender {
 
 	private IEntityManager entityManager;
 	private IGameInfoManager gameInfoManager;
-
-	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 
 	public Board(Game game, Screen screen) {
 		_game = game;
@@ -53,7 +50,6 @@ public class Board implements Copyable, IRender {
 
 		entityManager.update();
 		gameInfoManager.update();
-		detectEndGame();
 
 		processAgentAction();
 
@@ -91,55 +87,21 @@ public class Board implements Copyable, IRender {
 	}
 
 	public void loadLevel(int level) {
-		_screenToShow = 2;
+		_game.setScreenToShow(2);
 		_game.resetScreenDelay();
 		
 		try {
 			clearAgents();
 			_levelLoader = new FileLevelLoader(this, level);
-			gameInfoManager = new GameInfoManager();
+			gameInfoManager = new GameInfoManager(_game);
 			entityManager = new EntityManager(_levelLoader, gameInfoManager);
 			gameInfoManager.setEntityManager(entityManager);
 			gameInfoManager.pause();
 
 			_levelLoader.createEntities();
 		} catch (LoadLevelException e) {
-			endGame();
+			e.printStackTrace();
 		}
-	}
-
-	protected void detectEndGame() {
-		if (gameInfoManager.getTime() <= 0) {
-			endGame();
-		}
-	}
-
-	public void endGame() {
-		_screenToShow = 1;
-		_game.resetScreenDelay();
-		gameInfoManager.pause();
-	}
-
-	public void drawScreen(Graphics g) {
-		switch (_screenToShow) {
-			case 1:
-				_screen.drawEndGame(g, gameInfoManager.getPoints());
-				break;
-			case 2:
-				_screen.drawChangeLevel(g, _levelLoader.getLevel());
-				break;
-			case 3:
-				_screen.drawPaused(g);
-				break;
-		}
-	}
-
-	public int getShow() {
-		return _screenToShow;
-	}
-
-	public void setShow(int i) {
-		_screenToShow = i;
 	}
 
 	public int getWidth() {
