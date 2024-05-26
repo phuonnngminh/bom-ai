@@ -49,7 +49,7 @@ public class FileLevelLoader extends LevelLoader {
             FileReader fr = new FileReader("res/levels/Level" + level + ".txt");//doc tep luu map
             BufferedReader br = new BufferedReader(fr);
             String line = br.readLine();
-            while (!line.equals("")) {
+            while (line != null && !line.isEmpty()) {
                 list.add(line);
                 line = br.readLine();
                 //doc file txt luu vao list
