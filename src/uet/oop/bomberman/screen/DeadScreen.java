@@ -19,17 +19,22 @@ public class DeadScreen extends GameScreen {
     private Keyboard _input;
     private BufferedImage restartIcon;
     private BufferedImage homeIcon;
-
+    private BufferedImage backgroundImage;
+    private BufferedImage gameover;
     public DeadScreen(Keyboard input, Game game) {
         _input = input;
-        this.game = game;
+        this.game = game;   
         options.add("Restart");
         options.add("Back Home");
         try {
-            restartIcon = ImageIO.read(getClass().getResource("/menu/icons8-restart-50.png"));
-            homeIcon = ImageIO.read(getClass().getResource("/menu/icons8-menu-50.png"));
-            restartIcon = colorizeIcon(restartIcon, Color.YELLOW);
-            homeIcon = colorizeIcon(homeIcon, Color.YELLOW);
+            gameover = ImageIO.read(getClass().getResource("/menu/gameover.png"));
+            restartIcon = ImageIO.read(getClass().getResource("/menu/restart.png"));
+            homeIcon = ImageIO.read(getClass().getResource("/menu/9165683_home_house_icon.png"));
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/forest_by_forheksed_d9q4k94-fullview 1.png"));
+            homeIcon = resizeImage(homeIcon, 11 * Game.SCALE, 11 * Game.SCALE);
+            restartIcon = resizeImage(restartIcon, 11 * Game.SCALE, 11 * Game.SCALE);
+            restartIcon = colorizeIcon(restartIcon, Color.black);
+            homeIcon = colorizeIcon(homeIcon, Color.black);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,7 +66,13 @@ public class DeadScreen extends GameScreen {
             }
         });
     }
-    
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        g2d.dispose();
+        return resizedImage;
+    }
     // Rest of the class remains unchanged
     private BufferedImage colorizeIcon(BufferedImage icon, Color color) {
         BufferedImage newIcon = new BufferedImage(icon.getWidth(), icon.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -80,24 +91,30 @@ public class DeadScreen extends GameScreen {
 
     @Override
     public void drawScreen(Graphics g) {
-        g.setColor(Color.black);
-        g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, Global.screenWidth, Global.screenHeight, null);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        }
         drawTitle(g);
         drawPOINTS(g, game.getBoard().getPoints());
         drawTIMES(g, game.getBoard().getTime());
         drawOptions(g);
         drawSelector(g);
+        g.drawImage(gameover, Global.screenWidth/3 + 40, Global.screenHeight/2 + 80, 50*Game.SCALE, 50*Game.SCALE, null);
     }
 
     private void drawTitle(Graphics g) {
         String title = "GAME OVER";
-        Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
+        Font font = new Font("Arial", Font.BOLD, 22 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.white);
+        g.setColor(Color.BLACK);
 
         FontMetrics fm = g.getFontMetrics();
         int x = (Global.screenWidth - fm.stringWidth(title)) / 2;
-        int marginTop = 100;
+        int marginTop = 180;
         int y = marginTop + fm.getAscent();
 
         g.drawString(title, x, y);
@@ -105,14 +122,14 @@ public class DeadScreen extends GameScreen {
     private void drawPOINTS(Graphics g,int points)
     {
        String Point = "POINTS: " + points;
-        Font font = new Font("Arial", Font.BOLD, 10 * Game.SCALE);
+        Font font = new Font("Arial", Font.BOLD, 6 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.yellow);
+        g.setColor(Color.BLACK);
 
         FontMetrics fm = g.getFontMetrics();
         int textWidth = fm.stringWidth(Point);
         int x = (Global.screenWidth - textWidth) / 2; // Vị trí x để chuỗi ở giữa màn hình
-        int marginTop = 190;
+        int marginTop = 255;
         int y = marginTop + fm.getAscent();
 
         g.drawString(Point, x, y);
@@ -121,14 +138,14 @@ public class DeadScreen extends GameScreen {
     private void drawTIMES(Graphics g,int times)
     {
        String Point = "TIME : " + times;
-        Font font = new Font("Arial", Font.BOLD, 10 * Game.SCALE);
+        Font font = new Font("Arial", Font.BOLD, 6 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.yellow);
+        g.setColor(Color.BLACK);
 
         FontMetrics fm = g.getFontMetrics();
         int textWidth = fm.stringWidth(Point);
         int x = (Global.screenWidth - textWidth) / 2; // Vị trí x để chuỗi ở giữa màn hình
-        int marginTop = 230;
+        int marginTop = 280;
         int y = marginTop + fm.getAscent();
 
         g.drawString(Point, x, y);
@@ -138,9 +155,9 @@ public class DeadScreen extends GameScreen {
         int w = Global.screenWidth;
         int h = Global.screenHeight;
         int iconHeight = restartIcon.getHeight();
-        int marginTop = (h - iconHeight) / 2; 
+        int marginTop = (h - iconHeight + 50) / (2); 
     
-        int spacing = 100; 
+        int spacing = 70; 
         int totalOptionsWidth = restartIcon.getWidth() + spacing + homeIcon.getWidth();
     
         int startX = (w - totalOptionsWidth) / 2;
@@ -157,13 +174,13 @@ public class DeadScreen extends GameScreen {
         int iconHeight = restartIcon.getHeight();
         int marginTop = (h - iconHeight) / 2; 
     
-        int spacing = 90; 
+        int spacing = 80; 
         int totalOptionsWidth = restartIcon.getWidth() + spacing + homeIcon.getWidth();
     
         int startX = (w - totalOptionsWidth) / 2;
     
-        int selectorX = selectorIndex == 0 ? startX - 40 : startX + restartIcon.getWidth() + spacing - 40;
-        int y = marginTop + (iconHeight / 2)  + 10;
+        int selectorX = selectorIndex == 0 ? startX - 20 : startX + restartIcon.getWidth() + spacing - 30;
+        int y = marginTop + (iconHeight / 2)  + 35;
     
         g.drawString(">", selectorX, y);
     }
