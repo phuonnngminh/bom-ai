@@ -3,7 +3,6 @@ package uet.oop.bomberman.manager;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,8 @@ import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
+import uet.oop.bomberman.utils.EScreenName;
+import uet.oop.bomberman.utils.Global;
 
 public class GameInfoManager implements IGameInfoManager {
 
@@ -22,11 +23,12 @@ public class GameInfoManager implements IGameInfoManager {
     private int points;
     private boolean paused;
     private List<Message> messages = new ArrayList<>();
-	private List<Item> activeItems = new ArrayList<>();
 
+	private Game game;
     private IEntityManager entityManager;
 
-	public GameInfoManager() {
+	public GameInfoManager(Game game) {
+		this.game = game;
         this.time = Game.TIME;
         this.points = Game.POINTS;
     }
@@ -40,11 +42,6 @@ public class GameInfoManager implements IGameInfoManager {
 		Character player = entityManager.getPlayer();
 		if (!(player instanceof CanUseItem)) return new ArrayList<>();
 		return ((CanUseItem)player).getActiveItems().collect(Collectors.toList());
-	}
-
-	@Override
-	public void addActiveItem(Item item) {
-		activeItems.add(item);
 	}
 
 	@Override
@@ -77,19 +74,12 @@ public class GameInfoManager implements IGameInfoManager {
 
     @Override
     public void update() {
-        updateActiveItems();
         updateMessages();
+		if (getTime() <= 0) endGame();
     }
 
     @Override
     public void render(Screen screen) {}
-
-	private void updateActiveItems() {
-		Iterator<Item> itr = activeItems.iterator();
-
-		while (itr.hasNext())
-			itr.next().update();
-	}
 
 	private void updateMessages() {
 		Message m;
@@ -134,5 +124,13 @@ public class GameInfoManager implements IGameInfoManager {
     public void unpause() {
         paused = false;
     }
+
+	@Override
+	public void endGame() {
+		Global.currentScreen = EScreenName.END_GAME_SCREEN;
+		game.setScreenToShow(1);
+		game.resetScreenDelay();
+		pause();
+	}
     
 }

@@ -4,7 +4,6 @@ import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.Tile;
-import uet.oop.bomberman.entities.tile.destroyable.DestroyableTile;
 import uet.oop.bomberman.graphics.Screen;
 
 public class Flame extends Entity {

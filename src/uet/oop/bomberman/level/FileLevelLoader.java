@@ -115,10 +115,7 @@ public class FileLevelLoader extends LevelLoader {
                             Game.BOMBERSPEED,
                             Game.BOMBRATE,
                             Game.BOMBRADIUS,
-                            _board.getEntityManager(),
-                            _board.getGameInfoManager(),
-                            _board.getEntityManager().getBombManager(),
-                            _board
+                            _board.getEntityManager()
                         );
                         _board.getEntityManager().getCharacterManager().addCharacter(bomber);
                         _board.getEntityManager().getCharacterManager().setPlayer(bomber);

@@ -5,6 +5,7 @@ import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.screen.SelectGameModeScreen;
+import uet.oop.bomberman.screen.DeadScreen;
 import uet.oop.bomberman.screen.SelectLevelScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
@@ -20,11 +21,11 @@ import java.awt.image.DataBufferInt;
  */
 public class Game extends Canvas {
 
-	public static final int TILES_SIZE = 16,
-			WIDTH = TILES_SIZE * (31 / 2),
-			HEIGHT = 13 * TILES_SIZE;
+    public static final int TILES_SIZE = 16,
+            WIDTH = TILES_SIZE * (31 / 2),
+            HEIGHT = 13 * TILES_SIZE;
 
-	public static int SCALE = 3;
+    public static int SCALE = 3;
 
 	public static final String TITLE = "BombermanGame";
 	public static final int TICKS_PER_SECOND = 60;
@@ -48,14 +49,17 @@ public class Game extends Canvas {
 	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 	private int[] pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 
-	// game variable
-	private int frames;
-	private int updates;
-	private long timer;
+    // game variable
+    private int frames;
+    private int updates;
+    private long timer;
 
-	// game screens
-	private SelectLevelScreen selectLevelScreen;
+    // game screens
+    public SelectLevelScreen selectLevelScreen;
 	private SelectGameModeScreen selectGameModeScreen;
+	public DeadScreen deadScreen;
+
+	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 	
 	public Game(Frame frame) {
 		_frame = frame;
@@ -74,7 +78,7 @@ public class Game extends Canvas {
 	private void renderGame(Graphics g) {
 		screen.clear();
 
-		_board.render(screen);
+        _board.render(screen);
 
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = screen._pixels[i];
@@ -86,51 +90,68 @@ public class Game extends Canvas {
 	
 	private void renderScreen(Graphics g) {
 		screen.clear();
-		_board.drawScreen(g);
+		drawScreen(g);
 	}
 
-	private void initScreen() {
-		Global.currentScreen = EScreenName.SELECT_GAME_MODE;
+	private void drawScreen(Graphics g) {
+		switch (getScreenToShow()) {
+			case 1:
+				screen.drawEndGame(g, _board.getGameInfoManager().getPoints());
+				break;
+			case 2:
+				screen.drawChangeLevel(g, _board._levelLoader.getLevel());
+				break;
+			case 3:
+				screen.drawPaused(g);
+				break;
+		}
+	}
 
+    private void initScreen() {
+        Global.currentScreen = EScreenName.SELECT_GAME_MODE;
 		this.selectGameModeScreen = new SelectGameModeScreen();
-		this.selectLevelScreen = new SelectLevelScreen(_board);
-	}
+        this.selectLevelScreen = new SelectLevelScreen(_board);
+		this.deadScreen = new DeadScreen(this);
+    }
 
-	private void update() {
-		Keyboard.i().update();
-		switch (Global.currentScreen) {
-			case GAME_PLAY_SCREEN:
-				_board.update();
+    private void update() {
+        Keyboard.i().update();
+        switch (Global.currentScreen) {
+            case GAME_PLAY_SCREEN:
+                _board.update();
 				if (Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
-					_board.setShow(3); // Hiển thị màn hình tạm dừng
+					_screenToShow = 3; // Hiển thị màn hình tạm dừng
 					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
 				}
-				break;
-			case SELECT_LEVEL_SCREEN:
-				// TODO: call select level screen update
-				selectLevelScreen.update();
-				break;
+                break;
+            case SELECT_LEVEL_SCREEN:
+                selectLevelScreen.update();
+                break;
 			case SELECT_GAME_MODE:
 				selectGameModeScreen.update();
 				break;
-		}
-	}
+            case END_GAME_SCREEN:
+				deadScreen.update();
+                break;
+        }
+    
+    }
 
-	private void showScreen() {
-		BufferStrategy bs = getBufferStrategy();
-		if (bs == null) {
-			createBufferStrategy(3);
-			return;
-		}
-		Graphics g = bs.getDrawGraphics();
+    private void showScreen() {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(3);
+            return;
+        }
+        Graphics g = bs.getDrawGraphics();
 
 		IGameInfoManager gameInfoManager = _board.getGameInfoManager();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
 				if (gameInfoManager.isPaused()) {
 					if (_screenDelay <= 0) {
-						_board.setShow(-1);
+						_screenToShow = -1;
 						gameInfoManager.unpause();
 					}
 
@@ -141,7 +162,7 @@ public class Game extends Canvas {
 
 				if (Keyboard.i().resume) {
 					gameInfoManager.unpause();
-					_board.setShow(-1);
+					_screenToShow = -1;
 					_screenDelay = 0;
 				}
 				frames++;
@@ -154,7 +175,7 @@ public class Game extends Canvas {
 					updates = 0;
 					frames = 0;
 
-					if (_board.getShow() == 2)
+					if (_screenToShow == 2)
 						--_screenDelay;
 				}
 				break;
@@ -163,18 +184,25 @@ public class Game extends Canvas {
 				if (Global.currentScreen != Global.previousScreen) {
 					selectLevelScreen.setInput(Keyboard.i());
 				}
-				selectLevelScreen.drawScreen(g);
-				break;
+                selectLevelScreen.drawScreen(g);
+                break;
 			case SELECT_GAME_MODE:
 				if (Global.currentScreen != Global.previousScreen) {
 					selectGameModeScreen.setInput(Keyboard.i());
 				}
 				selectGameModeScreen.drawScreen(g);
-		}
+				break;
+            case END_GAME_SCREEN:
+				if (Global.currentScreen != Global.previousScreen) {
+					deadScreen.setInput();
+				}
+                deadScreen.drawScreen(g);
+                break;
+        }
 
-		g.dispose();
-		bs.show();
-	}
+        g.dispose();
+        bs.show();
+    }
 
 	private void initGame() {
 		this.timer = System.currentTimeMillis();
@@ -214,6 +242,25 @@ public class Game extends Canvas {
 
 	public Board getBoard() {
 		return _board;
+	}
+
+
+	public void restartGame() {
+		Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+		_board.loadLevel(_board._levelLoader.getLevel());
+	}
+
+
+    public void startNewGame() {
+		Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
+    }
+
+	public int getScreenToShow() {
+		return _screenToShow;
+	}
+
+	public void setScreenToShow(int screenToShow) {
+		this._screenToShow = screenToShow;
 	}
 
 }
