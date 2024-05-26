@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.Optional;
 
 /**
  * Tạo vòng lặp cho game, lưu trữ một vài tham số cấu hình toàn cục,
@@ -149,6 +150,7 @@ public class Game extends Canvas {
 		IGameInfoManager gameInfoManager = _board.getGameInfoManager();
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
+				Keyboard.i().keyboardInputCallback = Optional.empty();
 				if (gameInfoManager.isPaused()) {
 					if (_screenDelay <= 0) {
 						_screenToShow = -1;
@@ -181,21 +183,15 @@ public class Game extends Canvas {
 				break;
 			case SELECT_LEVEL_SCREEN:
 				// TODO: render select level screen
-				if (Global.currentScreen != Global.previousScreen) {
-					selectLevelScreen.setInput(Keyboard.i());
-				}
+				selectLevelScreen.setInput(Keyboard.i());
                 selectLevelScreen.drawScreen(g);
                 break;
 			case SELECT_GAME_MODE:
-				if (Global.currentScreen != Global.previousScreen) {
-					selectGameModeScreen.setInput(Keyboard.i());
-				}
+				selectGameModeScreen.setInput(Keyboard.i());
 				selectGameModeScreen.drawScreen(g);
 				break;
             case END_GAME_SCREEN:
-				if (Global.currentScreen != Global.previousScreen) {
-					deadScreen.setInput();
-				}
+				deadScreen.setInput();
                 deadScreen.drawScreen(g);
                 break;
         }
@@ -247,7 +243,9 @@ public class Game extends Canvas {
 
 	public void restartGame() {
 		Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
-		_board.loadLevel(_board._levelLoader.getLevel());
+		synchronized (_board) {
+			_board.loadLevel(_board._levelLoader.getLevel());
+		}
 	}
 
 
