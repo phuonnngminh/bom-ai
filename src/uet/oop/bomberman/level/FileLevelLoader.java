@@ -53,9 +53,9 @@ public class FileLevelLoader extends LevelLoader {
         try {
             String filePath;
             if (Global.gameMode == EGameMode.ONE_PLAYER) {
-                filePath = "res/levels/Level" + level + ".txt";
+                filePath = "res/levels/Level1P_" + level + ".txt";
             } else {
-                filePath = "res/levels/Level" + (level + 3) + ".txt";
+                filePath = "res/levels/Level2P_" + level + ".txt";
             }
 
             FileReader fr = new FileReader(filePath); // Đọc tệp lưu map
@@ -140,7 +140,7 @@ public class FileLevelLoader extends LevelLoader {
                         }
                         _board.addAgent(agent);
                         break;
-                    // Thêm player 1:
+                    // Thêm player 2:
                     case 'a':
                         Bomber bomber2 = new Bomber2(
                                 Coordinates.tileToPixel(x),

@@ -39,7 +39,6 @@ public class SelectGameModeScreen extends GameScreen {
                         } else {
                             Global.gameMode = EGameMode.ONE_PLAYER;
                         }
-                        Global.currentScreen = EScreenName.SELECT_LEVEL_SCREEN;
                         break;
                 }
 

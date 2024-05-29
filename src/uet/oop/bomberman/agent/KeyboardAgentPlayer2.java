@@ -22,7 +22,7 @@ public class KeyboardAgentPlayer2 extends KeyboardAgent {
         List<Action> actions = getMoveActions();
 
         if (character instanceof Bomber) {
-            if (Keyboard.i().player2_space) {
+            if (Keyboard.i().player2_bomb) {
                 actions.add(ActionConstants.PLACE_BOMB);
             }
         }

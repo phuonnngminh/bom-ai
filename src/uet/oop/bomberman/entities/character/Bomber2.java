@@ -11,12 +11,12 @@ public class Bomber2 extends Bomber {
         super(x, y, baseSpeed, baseBombLimit, baseBombRadius, entityManager);
     }
 
-    @Override
-    public boolean collide(Entity e) {
-        if (!super.collide(e))
-            return false;
-        return true;
-    }
+    // @Override
+    // public boolean collide(Entity e) {
+    // if (!super.collide(e))
+    // return false;
+    // return true;
+    // }
 
     @Override
     protected void chooseSprite() {

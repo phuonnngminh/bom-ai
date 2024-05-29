@@ -26,7 +26,7 @@ import uet.oop.bomberman.level.Coordinates;
  * Bao gồm Bomber và Enemy
  */
 public abstract class Character extends AnimatedEntitiy {
-	
+
 	protected IEntityManager entityManager;
 
 	private int direction = -1;
@@ -45,28 +45,33 @@ public abstract class Character extends AnimatedEntitiy {
 
 	@Override
 	public final void update() {
-        if (!alive) {
-            if (timerDeathAnimation > 0) {
-                timerDeathAnimation -= 1;
-            } else {
-                handleAfterDeath();
-            }
-            return;
-        }
+		if (!alive) {
+			if (timerDeathAnimation > 0) {
+				timerDeathAnimation -= 1;
+			} else {
+				handleAfterDeath();
+			}
+			return;
+		}
 		updateMove();
 		handleUpdate();
 	};
 
 	protected abstract void handleUpdate();
-	
+
 	@Override
 	public abstract void render(Screen screen);
 
-	private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
-		addAll(ActionConstants.LIST_ACTION_MOVE);
-		add(ActionConstants.DO_NOTHING);
-	}};
-	protected List<? extends Action> getValidActions() { return VALID_ACTIONS; }
+	private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>() {
+		{
+			addAll(ActionConstants.LIST_ACTION_MOVE);
+			add(ActionConstants.DO_NOTHING);
+		}
+	};
+
+	protected List<? extends Action> getValidActions() {
+		return VALID_ACTIONS;
+	}
 
 	public boolean isValidAction(Action action) {
 		return getValidActions().contains(action);
@@ -76,14 +81,18 @@ public abstract class Character extends AnimatedEntitiy {
 		performAction(action, false);
 	}
 
-	protected void performAction(Action action, boolean isDryRun) throws InvalidActionException, CannotPerformActionException {
-		if (!isValidAction(action)) throw new InvalidActionException();
+	protected void performAction(Action action, boolean isDryRun)
+			throws InvalidActionException, CannotPerformActionException {
+		if (!isValidAction(action))
+			throw new InvalidActionException();
 		if (action instanceof ActionMove) {
 			ActionMove actionMove = (ActionMove) action;
 			double dx = actionMove.getDx() * Game.TILES_SIZE;
 			double dy = actionMove.getDy() * Game.TILES_SIZE;
-			if (isMoving()) throw new ActionOnCooldownException();
-			if (!isDryRun) move(dx, dy);
+			if (isMoving())
+				throw new ActionOnCooldownException();
+			if (!isDryRun)
+				move(dx, dy);
 		}
 	};
 
@@ -98,26 +107,26 @@ public abstract class Character extends AnimatedEntitiy {
 
 	public List<? extends Action> getPerformableActions() {
 		return getValidActions().stream()
-			.filter(this::canPerformAction)
-			.collect(Collectors.toList());
+				.filter(this::canPerformAction)
+				.collect(Collectors.toList());
 	}
 
-	/** Check if can be moved with vector (xa, ya).
+	/**
+	 * Check if can be moved with vector (xa, ya).
+	 * 
 	 * @param xa
 	 * @param ya
 	 */
 	public void move(double xa, double ya) {
 		double moveDurationBase = Game.TICKS_PER_SECOND / getSpeed();
 		Waypoint waypointX = new Waypoint(
-			xa,
-			0,
-			moveDurationBase
-		);
+				xa,
+				0,
+				moveDurationBase);
 		Waypoint waypointY = new Waypoint(
-			0,
-			ya,
-			moveDurationBase
-		);
+				0,
+				ya,
+				moveDurationBase);
 		if (xa != 0 && ya != 0 && canMove(xa, ya) && canMove(xa, 0)) {
 			waypoints.add(waypointX);
 			waypoints.add(waypointY);
@@ -130,14 +139,14 @@ public abstract class Character extends AnimatedEntitiy {
 			waypoints.add(waypointY);
 		} else {
 			System.out.println(String.format(
-				"Cannot move character %s to (%s, %s)",
-				getClass().getSimpleName(), xa, ya
-			));
+					"Cannot move character %s to (%s, %s)",
+					getClass().getSimpleName(), xa, ya));
 		}
 	}
 
 	private void updateMove() {
-		if (waypoints.isEmpty()) return;
+		if (waypoints.isEmpty())
+			return;
 		Waypoint waypoint = waypoints.peek();
 		if (!waypoint.started) {
 			waypoint.started = true;
@@ -156,29 +165,33 @@ public abstract class Character extends AnimatedEntitiy {
 			// Remove waypoint
 			waypoints.poll();
 		}
-		
-		// Adjust direction
-        if(waypoint.moveDx > 0) direction = 1;
-		if(waypoint.moveDx < 0) direction = 3;
-		if(waypoint.moveDy > 0) direction = 2;
-		if(waypoint.moveDy < 0) direction = 0;
 
-        Entity collidingEntity = entityManager.getEntityAtExcluding(
-            Coordinates.pixelToTile(getCenterX()),
-            Coordinates.pixelToTile(getCenterY()),
-            this
-        );
-        if (collidingEntity != null) {
-            this.collide(collidingEntity);
-            collidingEntity.collide(this);
-        }
+		// Adjust direction
+		if (waypoint.moveDx > 0)
+			direction = 1;
+		if (waypoint.moveDx < 0)
+			direction = 3;
+		if (waypoint.moveDy > 0)
+			direction = 2;
+		if (waypoint.moveDy < 0)
+			direction = 0;
+
+		Entity collidingEntity = entityManager.getEntityAtExcluding(
+				Coordinates.pixelToTile(getCenterX()),
+				Coordinates.pixelToTile(getCenterY()),
+				this);
+		if (collidingEntity != null) {
+			this.collide(collidingEntity);
+			collidingEntity.collide(this);
+		}
 	}
 
 	/**
 	 * Được gọi khi đối tượng bị tiêu diệt
 	 */
 	public final void handleOnDeath() {
-		if(!alive) return;
+		if (!alive)
+			return;
 		alive = false;
 		// TODO: determine killer
 		entityManager.getCharacterManager().handleOnDeath(this, null);
@@ -194,6 +207,7 @@ public abstract class Character extends AnimatedEntitiy {
 
 	/**
 	 * Kiểm tra xem đối tượng có di chuyển tới vị trí đã tính toán hay không
+	 * 
 	 * @param x
 	 * @param y
 	 * @return
@@ -202,26 +216,26 @@ public abstract class Character extends AnimatedEntitiy {
 		double x = getCenterX() + dx;
 		double y = getCenterY() + dy;
 		Entity a = entityManager.getEntityAtExcluding(
-			Coordinates.pixelToTile(x),
-			Coordinates.pixelToTile(y),
-			this
-		);
-		if (a==null) return true;
+				Coordinates.pixelToTile(x),
+				Coordinates.pixelToTile(y),
+				this);
+		if (a == null)
+			return true;
 		return a.canBePassedThroughBy(this);
 	}
 
 	protected double getXMessage() {
 		return (_x * Game.SCALE) + (_sprite.SIZE / 2 * Game.SCALE);
 	}
-	
+
 	protected double getYMessage() {
-		return (_y* Game.SCALE) - (_sprite.SIZE / 2 * Game.SCALE);
+		return (_y * Game.SCALE) - (_sprite.SIZE / 2 * Game.SCALE);
 	}
 
 	public boolean isPlayer() {
 		return entityManager.getPlayer() == this;
 	}
-	
+
 	public boolean isAlive() {
 		return alive;
 	}
@@ -240,7 +254,7 @@ public abstract class Character extends AnimatedEntitiy {
 	}
 
 	public abstract int getPoints();
-	
+
 	public int getDirection() {
 		return direction;
 	}
@@ -255,7 +269,7 @@ public abstract class Character extends AnimatedEntitiy {
 
 	@Override
 	public boolean collide(Entity e) {
-		if(e instanceof Flame){
+		if (e instanceof Flame) {
 			this.handleOnDeath();
 			return false;
 		}
@@ -270,7 +284,8 @@ public abstract class Character extends AnimatedEntitiy {
 				return false;
 			}
 		}
-		if( e instanceof LayeredEntity) return(e.collide(this));
+		if (e instanceof LayeredEntity)
+			return (e.collide(this));
 		return true;
 	}
 

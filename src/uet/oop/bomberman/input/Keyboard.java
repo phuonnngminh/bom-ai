@@ -32,8 +32,8 @@ public class Keyboard implements KeyListener {
 	public boolean up, down, left, right, space, x, pause, resume;
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 
-	public boolean player1_up, player1_down, player1_left, player1_right, player1_space;
-	public boolean player2_up, player2_down, player2_left, player2_right, player2_space;
+	public boolean player1_up, player1_down, player1_left, player1_right, player1_bomb;
+	public boolean player2_up, player2_down, player2_left, player2_right, player2_bomb;
 
 	public void update() {
 		up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
@@ -49,14 +49,14 @@ public class Keyboard implements KeyListener {
 		player1_down = keys[KeyEvent.VK_S];
 		player1_left = keys[KeyEvent.VK_A];
 		player1_right = keys[KeyEvent.VK_D];
-		player1_space = keys[KeyEvent.VK_X];
+		player1_bomb = keys[KeyEvent.VK_X];
 
 		// Player 2
 		player2_up = keys[KeyEvent.VK_UP];
 		player2_down = keys[KeyEvent.VK_DOWN];
 		player2_left = keys[KeyEvent.VK_LEFT];
 		player2_right = keys[KeyEvent.VK_RIGHT];
-		player2_space = keys[KeyEvent.VK_SPACE];
+		player2_bomb = keys[KeyEvent.VK_SPACE];
 
 	}
 
