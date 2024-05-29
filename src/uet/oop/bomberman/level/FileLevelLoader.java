@@ -8,9 +8,12 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.agent.KeyboardAgent;
+import uet.oop.bomberman.agent.KeyboardAgentPlayer1;
+import uet.oop.bomberman.agent.KeyboardAgentPlayer2;
 import uet.oop.bomberman.agent.MovingAgent;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
+import uet.oop.bomberman.entities.character.Bomber2;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
 import uet.oop.bomberman.entities.character.enemy.Doll;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
@@ -29,6 +32,8 @@ import uet.oop.bomberman.entities.tile.item.SpeedItem;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.utils.EGameMode;
+import uet.oop.bomberman.utils.Global;
 
 public class FileLevelLoader extends LevelLoader {
 
@@ -44,32 +49,38 @@ public class FileLevelLoader extends LevelLoader {
 
     @Override
     public void loadLevel(int level) {
-        // TODO: đọc dữ liệu từ tệp cấu hình /levels/Level{level}.txt
-        // TODO: cập nhật các giá trị đọc được vào _width, _height, _level, _map
         List<String> list = new ArrayList<>();
         try {
-            FileReader fr = new FileReader("res/levels/Level" + level + ".txt");// doc tep luu map
+            String filePath;
+            if (Global.gameMode == EGameMode.ONE_PLAYER) {
+                filePath = "res/levels/Level" + level + ".txt";
+            } else {
+                filePath = "res/levels/Level" + (level + 3) + ".txt";
+            }
+
+            FileReader fr = new FileReader(filePath); // Đọc tệp lưu map
             BufferedReader br = new BufferedReader(fr);
             String line = br.readLine();
             while (line != null && !line.isEmpty()) {
                 list.add(line);
                 line = br.readLine();
-                // doc file txt luu vao list
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String[] arrays = list.get(0).trim().split(" ");
-        _level = Integer.parseInt(arrays[0]);
-        _height = Integer.parseInt(arrays[1]);
-        _width = Integer.parseInt(arrays[2]);
-        _map = new char[_height][_width];
-        for (int i = 0; i < _height; i++) {
-            for (int j = 0; j < _width; j++) {
-                _map[i][j] = list.get(i + 1).charAt(j);
+
+        if (!list.isEmpty()) {
+            String[] arrays = list.get(0).trim().split(" ");
+            _level = Integer.parseInt(arrays[0]);
+            _height = Integer.parseInt(arrays[1]);
+            _width = Integer.parseInt(arrays[2]);
+            _map = new char[_height][_width];
+            for (int i = 0; i < _height; i++) {
+                for (int j = 0; j < _width; j++) {
+                    _map[i][j] = list.get(i + 1).charAt(j);
+                }
             }
         }
-        // gan cac phan tu cho mang
     }
 
     @Override
@@ -121,24 +132,31 @@ public class FileLevelLoader extends LevelLoader {
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
-                        agent = new KeyboardAgent(bomber);
+                        // if
+                        if (Global.gameMode == EGameMode.TWO_PLAYER) {
+                            agent = new KeyboardAgentPlayer1(bomber);
+                        } else {
+                            agent = new KeyboardAgent(bomber);
+                        }
                         _board.addAgent(agent);
                         break;
-
-                    // case 'a':
-                    // Bomber bomber2 = new Bomber(
-                    // Coordinates.tileToPixel(x),
-                    // Coordinates.tileToPixel(y) + Game.TILES_SIZE,
-                    // Game.BOMBERSPEED,
-                    // Game.BOMBRATE,
-                    // Game.BOMBRADIUS,
-                    // _board,
-                    // _board);
-                    // _board.addCharacter(bomber2);
-                    // _board.setPlayer2(bomber2);
-                    // Screen.setOffset(0, 0);
-                    // _board.addEntity(x + y * _width, new Grass(x, y, Sprite.grass));
-                    // break;
+                    // Thêm player 1:
+                    case 'a':
+                        Bomber bomber2 = new Bomber2(
+                                Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                                Game.BOMBERSPEED,
+                                Game.BOMBRATE,
+                                Game.BOMBRADIUS,
+                                _board.getEntityManager());
+                        _board.getEntityManager().getCharacterManager().addCharacter(bomber2);
+                        _board.getEntityManager().getCharacterManager().setPlayer(bomber2);
+                        Screen.setOffset(0, 0);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width,
+                                new Grass(x, y, Sprite.grass));
+                        agent = new KeyboardAgentPlayer2(bomber2);
+                        _board.addAgent(agent);
+                        break;
                     // Thêm balloon
                     case '1':
                         enemy = new Balloon(

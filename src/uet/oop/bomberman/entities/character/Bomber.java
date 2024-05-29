@@ -34,7 +34,7 @@ public class Bomber extends Character implements CanUseItem {
     protected int bombCooldown = 0;
 
     private final int baseBombRadius;
-    
+
     public Bomber(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius, IEntityManager entityManager) {
         super(x, y, baseSpeed, entityManager);
         this.baseBombLimit = baseBombLimit;
@@ -45,8 +45,10 @@ public class Bomber extends Character implements CanUseItem {
     @Override
     public void handleUpdate() {
         clearExpiredBombs();
-        if (bombCooldown < -7500) bombCooldown = 0;
-        else bombCooldown--;
+        if (bombCooldown < -7500)
+            bombCooldown = 0;
+        else
+            bombCooldown--;
         animate();
 
     }
@@ -82,16 +84,18 @@ public class Bomber extends Character implements CanUseItem {
     }
 
     public boolean placeBomb() {
-        if(getBombRemainingQuota() > 0 && bombCooldown < 0) {
-			
-			int xt = Coordinates.pixelToTile(_x + _sprite.getSize() / 2);
-			int yt = Coordinates.pixelToTile( (_y + _sprite.getSize() / 2) - _sprite.getSize() ); //subtract half player height and minus 1 y position
-			
-			placeBomb(xt,yt);
-			
-			bombCooldown = 30;
+        if (getBombRemainingQuota() > 0 && bombCooldown < 0) {
+
+            int xt = Coordinates.pixelToTile(_x + _sprite.getSize() / 2);
+            int yt = Coordinates.pixelToTile((_y + _sprite.getSize() / 2) - _sprite.getSize()); // subtract half player
+                                                                                                // height and minus 1 y
+                                                                                                // position
+
+            placeBomb(xt, yt);
+
+            bombCooldown = 30;
             return true;
-		}
+        }
         return false;
     }
 
@@ -104,17 +108,20 @@ public class Bomber extends Character implements CanUseItem {
 
     private void clearExpiredBombs() {
         _bombs = _bombs.stream()
-            .filter(bomb -> !bomb.isRemoved())
-            .collect(Collectors.toList());
+                .filter(bomb -> !bomb.isRemoved())
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean collide(Entity e) {
-        if (!super.collide(e)) return false;
+        if (!super.collide(e))
+            return false;
         return true;
     }
-    //sprite
-    private void chooseSprite() {
+
+    // sprite
+    // protected
+    protected void chooseSprite() {
         switch (getDirection()) {
             case 0:
                 _sprite = Sprite.player_up;
@@ -154,46 +161,53 @@ public class Bomber extends Character implements CanUseItem {
         return 0;
     }
 
-    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>(){{
-        addAll(ActionConstants.LIST_ACTION_MOVE);
-        add(ActionConstants.PLACE_BOMB);
-    }};
+    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>() {
+        {
+            addAll(ActionConstants.LIST_ACTION_MOVE);
+            add(ActionConstants.PLACE_BOMB);
+        }
+    };
+
     @Override
-	protected List<? extends Action> getValidActions() {
+    protected List<? extends Action> getValidActions() {
         return VALID_ACTIONS;
-	}
+    }
 
     @Override
     protected void performAction(Action action, boolean isDryRun)
             throws InvalidActionException, CannotPerformActionException {
         super.performAction(action, isDryRun);
         if (action instanceof ActionPlaceBomb) {
-            if (getBombRemainingQuota() < 0) throw new BombQuotaReachedException();
-            if (bombCooldown > 0) throw new ActionOnCooldownException();
-            if (!isDryRun) placeBomb();
+            if (getBombRemainingQuota() < 0)
+                throw new BombQuotaReachedException();
+            if (bombCooldown > 0)
+                throw new ActionOnCooldownException();
+            if (!isDryRun)
+                placeBomb();
         }
     }
 
-	@Override
-	public Stream<Item> getActiveItems() {
-		return activeItems.stream().filter(Item::isActive);
-	}
-
-	@Override
-	public void addActiveItem(Item item) {
-		this.activeItems.add(item);
-	}
+    @Override
+    public Stream<Item> getActiveItems() {
+        return activeItems.stream().filter(Item::isActive);
+    }
 
     @Override
-	protected double getSpeedMultiplier() {
-		double speedMultiplier = 1;
-		for (Item item: activeItems) {
-			if (!item.isActive()) continue;
-			if (item instanceof SpeedItem) {
-				speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
-			}
-		}
-		return speedMultiplier;
-	}
+    public void addActiveItem(Item item) {
+        this.activeItems.add(item);
+    }
+
+    @Override
+    protected double getSpeedMultiplier() {
+        double speedMultiplier = 1;
+        for (Item item : activeItems) {
+            if (!item.isActive())
+                continue;
+            if (item instanceof SpeedItem) {
+                speedMultiplier += SpeedItem.SPEED_MULTIPLIER;
+            }
+        }
+        return speedMultiplier;
+    }
 
 }

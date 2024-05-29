@@ -2,6 +2,7 @@ package uet.oop.bomberman.input;
 
 import uet.oop.bomberman.utils.EGameControl;
 
+import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Optional;
@@ -31,6 +32,9 @@ public class Keyboard implements KeyListener {
 	public boolean up, down, left, right, space, x, pause, resume;
 	public Optional<KeyboardInputCallback> keyboardInputCallback;
 
+	public boolean player1_up, player1_down, player1_left, player1_right, player1_space;
+	public boolean player2_up, player2_down, player2_left, player2_right, player2_space;
+
 	public void update() {
 		up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
 		down = keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];
@@ -39,6 +43,21 @@ public class Keyboard implements KeyListener {
 
 		space = keys[KeyEvent.VK_SPACE];
 		x = keys[KeyEvent.VK_X];
+
+		// Player 1
+		player1_up = keys[KeyEvent.VK_W];
+		player1_down = keys[KeyEvent.VK_S];
+		player1_left = keys[KeyEvent.VK_A];
+		player1_right = keys[KeyEvent.VK_D];
+		player1_space = keys[KeyEvent.VK_X];
+
+		// Player 2
+		player2_up = keys[KeyEvent.VK_UP];
+		player2_down = keys[KeyEvent.VK_DOWN];
+		player2_left = keys[KeyEvent.VK_LEFT];
+		player2_right = keys[KeyEvent.VK_RIGHT];
+		player2_space = keys[KeyEvent.VK_SPACE];
+
 	}
 
 	private EGameControl keyToGameControl(int keyCode) {
