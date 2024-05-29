@@ -10,7 +10,10 @@ import uet.oop.bomberman.utils.EGameLevel;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -19,6 +22,7 @@ public class SelectLevelScreen extends GameScreen {
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
     private Board _board;
+    private BufferedImage backgroundImage;
 
     public SelectLevelScreen(Board board) {
         _board = board;
@@ -26,6 +30,12 @@ public class SelectLevelScreen extends GameScreen {
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
         levels.add(EGameLevel.HARD.getStringLevel());
+
+        try {
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/forest_by_forheksed_d9q4k94-fullview 1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setInput(Keyboard input) {
@@ -63,8 +73,12 @@ public class SelectLevelScreen extends GameScreen {
     @Override
     public void drawScreen(Graphics g) {
         // set background
-        g.setColor(Color.black);
-        g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, Global.screenWidth, Global.screenHeight, null);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        }
 
         drawTitle(g);
         drawOptions(g);

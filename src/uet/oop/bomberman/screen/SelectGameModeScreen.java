@@ -5,7 +5,10 @@ import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.utils.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -13,10 +16,17 @@ public class SelectGameModeScreen extends GameScreen {
     ArrayList<String> gameModes = new ArrayList<String>();
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
+    private BufferedImage backgroundImage;
 
     public SelectGameModeScreen() {
         gameModes.add(EGameMode.ONE_PLAYER.getStringLevel());
         gameModes.add(EGameMode.TWO_PLAYER.getStringLevel());
+
+        try {
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/forest_by_forheksed_d9q4k94-fullview 1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setInput(Keyboard input) {
@@ -54,8 +64,12 @@ public class SelectGameModeScreen extends GameScreen {
     @Override
     public void drawScreen(Graphics g) {
         // set background
-        g.setColor(Color.black);
-        g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, Global.screenWidth, Global.screenHeight, null);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        }
 
         drawTitle(g);
         drawOptions(g);
