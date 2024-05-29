@@ -8,4 +8,5 @@ public enum EGameControl {
     RIGHT,
     ENTER,
     SPACE,
+    X,
 }

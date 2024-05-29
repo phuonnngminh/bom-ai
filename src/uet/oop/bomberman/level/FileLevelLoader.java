@@ -14,6 +14,8 @@ import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.enemy.Balloon;
 import uet.oop.bomberman.entities.character.enemy.Doll;
 import uet.oop.bomberman.entities.character.enemy.Enemy;
+import uet.oop.bomberman.entities.character.enemy.Kondoria;
+import uet.oop.bomberman.entities.character.enemy.Minvo;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
 import uet.oop.bomberman.entities.character.enemy.ai.AILow;
 import uet.oop.bomberman.entities.character.enemy.ai.AIMedium;
@@ -49,7 +51,7 @@ public class FileLevelLoader extends LevelLoader {
             FileReader fr = new FileReader("res/levels/Level" + level + ".txt");// doc tep luu map
             BufferedReader br = new BufferedReader(fr);
             String line = br.readLine();
-            while (!line.equals("")) {
+            while (line != null && !line.isEmpty()) {
                 list.add(line);
                 line = br.readLine();
                 // doc file txt luu vao list
@@ -108,40 +110,21 @@ public class FileLevelLoader extends LevelLoader {
                     // Thêm Bomber player
                     case 'p':
                         Bomber bomber = new Bomber(
-<<<<<<< HEAD
                                 Coordinates.tileToPixel(x),
                                 Coordinates.tileToPixel(y) + Game.TILES_SIZE,
                                 Game.BOMBERSPEED,
                                 Game.BOMBRATE,
                                 Game.BOMBRADIUS,
-                                _board.getEntityManager(),
-                                _board,
-                                _board.getEntityManager().getBombManager(),
-                                _board);
+                                _board.getEntityManager());
                         _board.getEntityManager().getCharacterManager().addCharacter(bomber);
                         _board.getEntityManager().getCharacterManager().setPlayer(bomber);
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
-=======
-                            Coordinates.tileToPixel(x),
-                            Coordinates.tileToPixel(y) + Game.TILES_SIZE,
-                            Game.BOMBERSPEED,
-                            Game.BOMBRATE,
-                            Game.BOMBRADIUS,
-                            _board.getEntityManager(),
-                            _board.getGameInfoManager(),
-                            _board.getEntityManager().getBombManager(),
-                            _board
-                        );
-                        _board.getEntityManager().getCharacterManager().addCharacter(bomber);
-                        _board.getEntityManager().getCharacterManager().setPlayer(bomber);
-                        Screen.setOffset(0, 0);
-                        _board.getEntityManager().getTileManager().addTile(x + y * _width, new Grass(x, y, Sprite.grass));
                         agent = new KeyboardAgent(bomber);
                         _board.addAgent(agent);
->>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
                         break;
+
                     // case 'a':
                     // Bomber bomber2 = new Bomber(
                     // Coordinates.tileToPixel(x),
@@ -192,7 +175,32 @@ public class FileLevelLoader extends LevelLoader {
                                 new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
                         _board.addAgent(agent);
                         break;
-                    // Thêm oneal
+                    // Thêm minvo
+                    case '4':
+                        enemy = new Minvo(
+                                Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                                _board.getEntityManager());
+                        _board.getEntityManager().getCharacterManager().addCharacter(enemy);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width,
+                                new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy,
+                                new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
+                        _board.addAgent(agent);
+                        break;
+                    // Thêm kondoria
+                    case '5':
+                        enemy = new Kondoria(
+                                Coordinates.tileToPixel(x),
+                                Coordinates.tileToPixel(y) + Game.TILES_SIZE,
+                                _board.getEntityManager());
+                        _board.getEntityManager().getCharacterManager().addCharacter(enemy);
+                        _board.getEntityManager().getTileManager().addTile(x + y * _width,
+                                new Grass(x, y, Sprite.grass));
+                        agent = new MovingAgent(enemy,
+                                new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
+                        _board.addAgent(agent);
+                        break;
                     // Thêm BomItem
                     case 'b':
                         layeredEntity = new LayeredEntity(

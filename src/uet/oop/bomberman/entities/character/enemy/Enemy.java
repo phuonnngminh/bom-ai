@@ -30,7 +30,7 @@ public abstract class Enemy extends Character {
 		rest = (MAX_STEPS - (int) MAX_STEPS) / MAX_STEPS;
 		_steps = MAX_STEPS;
 		
-		timerDeathAnimation = 20;
+		setTimerDeathAnimation(20);
 		_deadSprite = dead;
 	}
 	
@@ -41,11 +41,10 @@ public abstract class Enemy extends Character {
 	
 	@Override
 	public void render(Screen screen) {
-		
-		if(_alive)
+		if(isAlive())
 			chooseSprite();
 		else {
-			if(timerDeathAnimation > 0) {
+			if(getTimerDeathAnimation() > 0) {
 				_sprite = _deadSprite;
 				_animate = 0;
 			} else {
@@ -61,11 +60,6 @@ public abstract class Enemy extends Character {
 	public boolean collide(Entity e) {
 		if (!super.collide(e)) return false;
 		return true;
-	}
-	
-	@Override
-	protected void handleAfterDeath() {
-		remove();
 	}
 	
 	protected abstract void chooseSprite();

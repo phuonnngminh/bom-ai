@@ -15,7 +15,6 @@ import uet.oop.bomberman.manager.EntityManager;
 import uet.oop.bomberman.manager.GameInfoManager;
 import uet.oop.bomberman.utils.Global;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,22 +28,8 @@ public class Board implements Copyable, IRender {
 
 	private List<Agent> agents = new ArrayList<>();
 
-<<<<<<< HEAD
-	private EntityManager entityManager;
-
-	@Override
-	public List<Item> getPlayerActiveItems() {
-		Character player = entityManager.getPlayer();
-		if (!(player instanceof CanUseItem))
-			return new ArrayList<>();
-		return ((CanUseItem) player).getActiveItems().collect(Collectors.toList());
-	}
-=======
 	private IEntityManager entityManager;
 	private IGameInfoManager gameInfoManager;
->>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
-
-	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 
 	public Board(Game game, Screen screen) {
 		_game = game;
@@ -65,11 +50,14 @@ public class Board implements Copyable, IRender {
 
 		entityManager.update();
 		gameInfoManager.update();
-		detectEndGame();
 
 		processAgentAction();
 
 		snapCameraToPlayer();
+	}
+
+	private void clearAgents() {
+		agents.clear();
 	}
 
 	public void addAgent(Agent agent) {
@@ -77,64 +65,18 @@ public class Board implements Copyable, IRender {
 	}
 
 	private void processAgentAction() {
-<<<<<<< HEAD
+
 		for (Agent agent : agents) {
-			Action action = agent.getNextAction();
-			try {
-				agent.getCharacter().performAction(action);
-			} catch (CharacterActionException ignored) {
-			}
-		}
-	}
-
-	private void processPlayerInput() {
-		Character player = entityManager.getPlayer();
-		if (!player.isAlive())
-			return;
-
-		processPlayerInputMove(player);
-
-		if (player instanceof Bomber) {
-			if (_input.space) {
-				try {
-					player.performAction(ActionConstants.PLACE_BOMB);
-				} catch (CharacterActionException ignored) {
-				}
-=======
-		for (Agent agent: agents) {
 			List<Action> actions = agent.getNextActions();
-			for (Action action: actions) {
+			for (Action action : actions) {
 				try {
 					agent.getCharacter().performAction(action);
-				} catch (CharacterActionException ignored) {}
->>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
+				} catch (CharacterActionException ignored) {
+				}
 			}
 		}
 	}
 
-<<<<<<< HEAD
-	private void processPlayerInputMove(Character player) {
-		int xa = 0, ya = 0;
-		if (_input.up)
-			ya--;
-		if (_input.down)
-			ya++;
-		if (_input.left)
-			xa--;
-		if (_input.right)
-			xa++;
-
-		if (xa != 0 || ya != 0) {
-			ActionMove actionMove = new ActionMove(xa, ya);
-			try {
-				player.performAction(actionMove);
-			} catch (CharacterActionException ignored) {
-			}
-		}
-	}
-
-=======
->>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
 	@Override
 	public void render(Screen screen) {
 		if (gameInfoManager.isPaused())
@@ -147,67 +89,21 @@ public class Board implements Copyable, IRender {
 	}
 
 	public void loadLevel(int level) {
-		_screenToShow = 2;
-		_game.resetScreenDelay();
-<<<<<<< HEAD
-		_game.pause();
-
-=======
-		
->>>>>>> ab179389b9c2c4a18043972ca63a3276b071544d
 		try {
+			clearAgents();
 			_levelLoader = new FileLevelLoader(this, level);
-			gameInfoManager = new GameInfoManager();
+			gameInfoManager = new GameInfoManager(_game);
 			entityManager = new EntityManager(_levelLoader, gameInfoManager);
 			gameInfoManager.setEntityManager(entityManager);
 			gameInfoManager.pause();
 
 			_levelLoader.createEntities();
 		} catch (LoadLevelException e) {
-			endGame();
+			e.printStackTrace();
 		}
-	}
 
-	protected void detectEndGame() {
-		if (gameInfoManager.getTime() <= 0) {
-			endGame();
-		}
-	}
-
-	public void endGame() {
-		_screenToShow = 1;
+		_game.setScreenToShow(2);
 		_game.resetScreenDelay();
-		gameInfoManager.pause();
-	}
-
-	public void drawScreen(Graphics g) {
-		switch (_screenToShow) {
-			case 1:
-				_screen.drawEndGame(g, gameInfoManager.getPoints());
-				break;
-			case 2:
-				_screen.drawChangeLevel(g, _levelLoader.getLevel());
-				break;
-			case 3:
-				_screen.drawPaused(g);
-				break;
-		}
-	}
-
-	public LevelLoader getLevel() {
-		return _levelLoader;
-	}
-
-	public Game getGame() {
-		return _game;
-	}
-
-	public int getShow() {
-		return _screenToShow;
-	}
-
-	public void setShow(int i) {
-		_screenToShow = i;
 	}
 
 	public int getWidth() {

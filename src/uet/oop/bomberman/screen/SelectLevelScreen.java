@@ -4,6 +4,7 @@ import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
+
 import uet.oop.bomberman.utils.EGameControl;
 import uet.oop.bomberman.utils.EGameLevel;
 import uet.oop.bomberman.utils.EScreenName;
@@ -41,9 +42,11 @@ public class SelectLevelScreen extends GameScreen {
                         selectorIndex++;
                         break;
                     case ENTER:
-                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
                         Global.gameLevel = selectorIndex + 1;
-                        _board.loadLevel(Global.gameLevel);
+                        synchronized (_board) {
+                            _board.loadLevel(Global.gameLevel);
+                        }
+                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
                         onDestroy();
                         break;
                 }
@@ -67,7 +70,6 @@ public class SelectLevelScreen extends GameScreen {
         drawOptions(g);
         drawSelector(g);
     }
-
     private void drawTitle(Graphics g) {
         String title = "SELECT LEVEL";
         Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);

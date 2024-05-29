@@ -13,5 +13,6 @@ public interface ICharacterManager extends IRender {
     public void setPlayer(Character character);
     public Character getPlayer();
     public void handleOnDeath(Character character, Character killer);
+    public void handleAfterDeath(Character character);
 
 }
