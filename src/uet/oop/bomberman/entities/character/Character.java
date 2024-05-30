@@ -233,7 +233,7 @@ public abstract class Character extends AnimatedEntitiy {
 	}
 
 	public boolean isPlayer() {
-		return entityManager.getPlayer() == this;
+		return entityManager.getPlayers().contains(this);
 	}
 
 	public boolean isAlive() {

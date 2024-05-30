@@ -129,6 +129,7 @@ public class FileLevelLoader extends LevelLoader {
                                 _board.getEntityManager());
                         _board.getEntityManager().getCharacterManager().addCharacter(bomber);
                         _board.getEntityManager().getCharacterManager().setPlayer(bomber);
+                        _board.getEntityManager().getCharacterManager().addPlayer(bomber);
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
@@ -151,6 +152,7 @@ public class FileLevelLoader extends LevelLoader {
                                 _board.getEntityManager());
                         _board.getEntityManager().getCharacterManager().addCharacter(bomber2);
                         _board.getEntityManager().getCharacterManager().setPlayer(bomber2);
+                        _board.getEntityManager().getCharacterManager().addPlayer(bomber2);
                         Screen.setOffset(0, 0);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));

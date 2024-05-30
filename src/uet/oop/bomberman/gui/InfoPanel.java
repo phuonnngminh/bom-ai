@@ -1,4 +1,5 @@
 package uet.oop.bomberman.gui;
+
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.entities.tile.item.Item;
@@ -14,7 +15,7 @@ public class InfoPanel extends JPanel {
 	private JLabel timeLabel;
 	private JLabel pointsLabel;
 	private JLabel itemTimeLabel;
-	
+
 	private final Game game;
 
 	public InfoPanel(Game game) {
@@ -32,7 +33,7 @@ public class InfoPanel extends JPanel {
 		itemTimeLabel.setForeground(Color.white);
 		itemTimeLabel.setHorizontalAlignment(JLabel.LEFT);
 		itemTimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
-		
+
 		add(itemTimeLabel);
 		add(timeLabel);
 		add(pointsLabel);
