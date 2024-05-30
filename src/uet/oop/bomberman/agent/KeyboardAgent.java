@@ -21,26 +21,30 @@ public class KeyboardAgent extends Agent {
 		List<Action> actions = getMoveActions();
 
 		if (character instanceof Bomber) {
-			if(Keyboard.i().space) {
-                actions.add(ActionConstants.PLACE_BOMB);
+			if (Keyboard.i().space) {
+				actions.add(ActionConstants.PLACE_BOMB);
 			}
 		}
-        return actions;
+		return actions;
 	}
 
 	private List<Action> getMoveActions() {
 		int xa = 0, ya = 0;
-		if(Keyboard.i().up) ya--;
-		if(Keyboard.i().down) ya++;
-		if(Keyboard.i().left) xa--;
-		if(Keyboard.i().right) xa++;
-		
-        List<Action> actions = new ArrayList<>();
-		if(xa != 0 || ya != 0)  {
+		if (Keyboard.i().up)
+			ya--;
+		if (Keyboard.i().down)
+			ya++;
+		if (Keyboard.i().left)
+			xa--;
+		if (Keyboard.i().right)
+			xa++;
+
+		List<Action> actions = new ArrayList<>();
+		if (xa != 0 || ya != 0) {
 			ActionMove actionMove = new ActionMove(xa, ya);
-            actions.add(actionMove);
+			actions.add(actionMove);
 		}
-        return actions;
+		return actions;
 	}
-    
+
 }

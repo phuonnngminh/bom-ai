@@ -18,14 +18,16 @@ import uet.oop.bomberman.sound.Sound;
 
 public class CharacterManager implements ICharacterManager {
 
-    private List<Character> characters = new ArrayList<>();
-    private Character player;
+	private List<Character> characters = new ArrayList<>();
+	// list
+	private Character player;
+	private List<Character> players = new ArrayList<>();
 
-    private final IGameInfoManager gameInfoManager;
+	private final IGameInfoManager gameInfoManager;
 
-    public CharacterManager(IGameInfoManager gameInfoManager) {
-        this.gameInfoManager = gameInfoManager;
-    }
+	public CharacterManager(IGameInfoManager gameInfoManager) {
+		this.gameInfoManager = gameInfoManager;
+	}
 
 	@Override
 	public Character getCharacterAtExcluding(int x, int y, Character a) {
@@ -63,6 +65,16 @@ public class CharacterManager implements ICharacterManager {
 	}
 
 	@Override
+	public void addPlayer(Character e) {
+		players.add(e);
+	}
+
+	@Override
+	public List<Character> getPlayers() {
+		return players;
+	}
+
+	@Override
 	public void handleOnDeath(Character character, Character killer) {
 		if (character.isPlayer()) {
 			// TODO: handle player death
@@ -86,28 +98,28 @@ public class CharacterManager implements ICharacterManager {
 		}
 	}
 
-    @Override
-    public void update() {
-		for (Character character: characters) {
+	@Override
+	public void update() {
+		for (Character character : characters) {
 			character.update();
 			if (character instanceof CanUseItem) {
 				CanUseItem characterCanUseItem = ((CanUseItem) character);
 				characterCanUseItem.getActiveItems().forEach(Item::update);
 			}
 		}
-        characters = characters.stream()
-            .filter(character -> !character.isRemoved())
-            .collect(Collectors.toList());
-    }
+		characters = characters.stream()
+				.filter(character -> !character.isRemoved())
+				.collect(Collectors.toList());
+	}
 
-    @Override
-    public void render(Screen screen) {
-        characters.forEach(character -> character.render(screen));
-    }
+	@Override
+	public void render(Screen screen) {
+		characters.forEach(character -> character.render(screen));
+	}
 
-    @Override
-    public List<Character> getCharacters() {
-        return characters;
-    }
-    
+	@Override
+	public List<Character> getCharacters() {
+		return characters;
+	}
+
 }

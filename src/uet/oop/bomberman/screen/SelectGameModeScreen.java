@@ -88,10 +88,10 @@ public class SelectGameModeScreen extends GameScreen {
         int boxHeight = textHeight * this.gameModes.size();
         int marginTop = (h - boxHeight) / 2;
 
-        for (int i=0; i < this.gameModes.size(); i++) {
+        for (int i = 0; i < this.gameModes.size(); i++) {
             String level = this.gameModes.get(i);
             int x = (w - fm.stringWidth(level)) / 2;
-            int y = marginTop + fm.getAscent() + textHeight*i;
+            int y = marginTop + fm.getAscent() + textHeight * i;
 
             g.drawString(level, x, y);
         }
@@ -107,7 +107,7 @@ public class SelectGameModeScreen extends GameScreen {
         int marginTop = (h - boxHeight) / 2;
 
         int x = (w - fm.stringWidth(level)) / 2 - 30;
-        int y = marginTop + fm.getAscent() + textHeight*selectorIndex;
+        int y = marginTop + fm.getAscent() + textHeight * selectorIndex;
 
         g.drawString(">", x, y);
     }

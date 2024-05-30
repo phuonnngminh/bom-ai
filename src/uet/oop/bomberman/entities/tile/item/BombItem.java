@@ -6,7 +6,7 @@ public class BombItem extends Item {
 
 	public static final int BOMB_LIMIT_BONUS = 1;
 
-    public BombItem(int x, int y, Sprite sprite) {
+	public BombItem(int x, int y, Sprite sprite) {
 		super(x, y, sprite);
 	}
 
@@ -22,5 +22,4 @@ public class BombItem extends Item {
 	public String getDisplayActiveItem() {
 		return "Bomb:";
 	}
-
 }

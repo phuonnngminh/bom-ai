@@ -39,9 +39,9 @@ public class Board implements Copyable, IRender {
 	}
 
 	private void snapCameraToPlayer() {
-        int xScroll = Screen.calculateXOffset(this, entityManager.getPlayer());
-        Screen.setOffset(xScroll, 0);
-    }
+		int xScroll = Screen.calculateXOffset(this, entityManager.getPlayer());
+		Screen.setOffset(xScroll, 0);
+	}
 
 	@Override
 	public void update() {
@@ -65,12 +65,14 @@ public class Board implements Copyable, IRender {
 	}
 
 	private void processAgentAction() {
-		for (Agent agent: agents) {
+
+		for (Agent agent : agents) {
 			List<Action> actions = agent.getNextActions();
-			for (Action action: actions) {
+			for (Action action : actions) {
 				try {
 					agent.getCharacter().performAction(action);
-				} catch (CharacterActionException ignored) {}
+				} catch (CharacterActionException ignored) {
+				}
 			}
 		}
 	}

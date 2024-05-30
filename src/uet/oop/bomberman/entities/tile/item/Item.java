@@ -24,7 +24,8 @@ public abstract class Item extends NonDestroyableTile {
 
 	@Override
 	public boolean collide(Entity e) {
-		if (isRemoved()) return false;
+		if (isRemoved())
+			return false;
 		if (e instanceof CanUseItem) {
 			CanUseItem player = (CanUseItem) e;
 			Sound.play("Item");
@@ -38,7 +39,7 @@ public abstract class Item extends NonDestroyableTile {
 
 	@Override
 	public boolean canBePassedThroughBy(Entity e) {
-		return (e instanceof Character && ((Character)e).isPlayer());
+		return (e instanceof CanUseItem);
 	}
 
 	@Override
