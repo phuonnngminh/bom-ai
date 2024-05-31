@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities.character;
 
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Bomber2 extends Bomber {
@@ -9,6 +10,16 @@ public class Bomber2 extends Bomber {
     public Bomber2(int x, int y, double baseSpeed, int baseBombLimit, int baseBombRadius,
             IEntityManager entityManager) {
         super(x, y, baseSpeed, baseBombLimit, baseBombRadius, entityManager);
+    }
+
+    @Override
+    public void render(Screen screen) {
+        if (isAlive())
+            chooseSprite();
+        else
+            _sprite = Sprite.player_dead1;
+
+        screen.renderEntity((int) _x, (int) _y - _sprite.SIZE, this);
     }
 
     @Override
