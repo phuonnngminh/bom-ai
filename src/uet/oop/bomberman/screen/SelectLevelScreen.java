@@ -7,6 +7,7 @@ import uet.oop.bomberman.input.Keyboard;
 
 import uet.oop.bomberman.utils.EGameControl;
 import uet.oop.bomberman.utils.EGameLevel;
+import uet.oop.bomberman.utils.EGameMode;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
@@ -69,6 +70,7 @@ public class SelectLevelScreen extends GameScreen {
         drawOptions(g);
         drawSelector(g);
     }
+
     private void drawTitle(Graphics g) {
         String title = "SELECT LEVEL";
         Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
@@ -95,10 +97,10 @@ public class SelectLevelScreen extends GameScreen {
         int boxHeight = textHeight * this.levels.size();
         int marginTop = (h - boxHeight) / 2;
 
-        for (int i=0; i < this.levels.size(); i++) {
+        for (int i = 0; i < this.levels.size(); i++) {
             String level = this.levels.get(i);
             int x = (w - fm.stringWidth(level)) / 2;
-            int y = marginTop + fm.getAscent() + textHeight*i;
+            int y = marginTop + fm.getAscent() + textHeight * i;
 
             g.drawString(level, x, y);
         }
@@ -114,16 +116,18 @@ public class SelectLevelScreen extends GameScreen {
         int marginTop = (h - boxHeight) / 2;
 
         int x = (w - fm.stringWidth(level)) / 2 - 30;
-        int y = marginTop + fm.getAscent() + textHeight*selectorIndex;
+        int y = marginTop + fm.getAscent() + textHeight * selectorIndex;
 
         g.drawString(">", x, y);
     }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     @Override
     public void onDestroy() {
-        this._input.get().keyboardInputCallback = Optional.ofNullable(null);;
+        this._input.get().keyboardInputCallback = Optional.ofNullable(null);
+        ;
     }
 }

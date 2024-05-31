@@ -22,7 +22,7 @@ public class Portal extends NonDestroyableTile {
 										// true cho di qua
 										// false khong cho di qua
 		// TODO: xử lý khi Bomber đi vào
-		if (e instanceof Character && ((Character)e).isPlayer()) {
+		if (e instanceof Character && ((Character) e).isPlayer()) {
 
 			if (canBePassedThroughBy(e)) {
 				levelManager.nextLevel();
@@ -36,15 +36,12 @@ public class Portal extends NonDestroyableTile {
 
 	@Override
 	public boolean canBePassedThroughBy(Entity other) {
-		if (other instanceof Character && ((Character)other).isPlayer()) {
+		if (other instanceof Character && ((Character) other).isPlayer()) {
 
 			if (!entityManager.isEnemyCleared())
 				return false;
 
-			if (other.getXTile() == getX() && other.getYTile() == getY()) {
-				return true;
-			}
-
+			return true;
 		}
 		return true;
 	}

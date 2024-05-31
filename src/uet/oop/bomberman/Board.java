@@ -54,12 +54,14 @@ public class Board implements Copyable, IRender {
 	}
 
 	private void processAgentAction() {
-		for (Agent agent: agents) {
+
+		for (Agent agent : agents) {
 			List<Action> actions = agent.getNextActions();
-			for (Action action: actions) {
+			for (Action action : actions) {
 				try {
 					agent.getCharacter().performAction(action);
-				} catch (CharacterActionException ignored) {}
+				} catch (CharacterActionException ignored) {
+				}
 			}
 		}
 	}

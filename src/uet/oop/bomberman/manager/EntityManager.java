@@ -1,5 +1,7 @@
 package uet.oop.bomberman.manager;
 
+import java.util.List;
+
 import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IEntityManager;
@@ -27,7 +29,6 @@ public class EntityManager implements IEntityManager {
         this.bombManager = new BombManager();
     }
 
-
 	@Override
 	public Entity getEntityAtExcluding(double x, double y, Character m) {
 
@@ -38,29 +39,38 @@ public class EntityManager implements IEntityManager {
 		if (x >= boardWidth) return null;
 		if (y >= boardHeight) return null;
 
-		res = bombManager.getFlameSegmentAt((int) x, (int) y);
-		if (res != null)
-			return res;
+        res = bombManager.getFlameSegmentAt((int) x, (int) y);
+        if (res != null)
+            return res;
 
-		res = bombManager.getBombAt(x, y);
-		if (res != null)
-			return res;
+        res = bombManager.getBombAt(x, y);
+        if (res != null)
+            return res;
 
-		res = characterManager.getCharacterAtExcluding((int) x, (int) y, m);
-		if (res != null)
-			return res;
+        res = characterManager.getCharacterAtExcluding((int) x, (int) y, m);
+        if (res != null)
+            return res;
 
-		res = tileManager.getTileAt((int) x, (int) y);
+        res = tileManager.getTileAt((int) x, (int) y);
 
-		return res;
-	}
+        return res;
+    }
 
-	@Override
-	public boolean isEnemyCleared() {
-		return !characterManager.getCharacters().stream()
-			.anyMatch(character -> character != characterManager.getPlayer());
-	}
-
+    @Override
+    public boolean isEnemyCleared() {
+        // viết lại thành dòng for: kiểm tra trong list character xem có ai nằm trong
+        // list players hay không
+        // Nếu có thì chưa clear -> false
+        // Nếu không còn thì clear -> true
+        // return !characterManager.getCharacters().stream()
+        // .anyMatch(character -> characterManager.getPlayers().contains(character));
+        for (Character character : characterManager.getCharacters()) {
+            if (!characterManager.getPlayers().contains(character)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public void update() {
@@ -68,7 +78,6 @@ public class EntityManager implements IEntityManager {
         characterManager.update();
         bombManager.update();
     }
-
 
     @Override
     public void render(Screen screen) {
@@ -82,22 +91,24 @@ public class EntityManager implements IEntityManager {
         return characterManager.getPlayer();
     }
 
+    @Override
+    public List<Character> getPlayers() {
+        return characterManager.getPlayers();
+    }
 
     @Override
     public ITileManager getTileManager() {
         return tileManager;
     }
 
-
     @Override
     public ICharacterManager getCharacterManager() {
         return characterManager;
     }
 
-
     @Override
     public IBombManager getBombManager() {
         return bombManager;
     }
-    
+
 }
