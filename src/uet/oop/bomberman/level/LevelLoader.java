@@ -1,7 +1,10 @@
 package uet.oop.bomberman.level;
 
 import uet.oop.bomberman.Board;
+import uet.oop.bomberman.Game;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.exceptions.LoadLevelException;
+import uet.oop.bomberman.graphics.Screen;
 
 /**
  * Load và lưu trữ thông tin bản đồ các màn chơi

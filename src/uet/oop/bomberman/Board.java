@@ -4,16 +4,15 @@ import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.base.ILevelManager;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
-import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.graphics.IRender;
 import uet.oop.bomberman.graphics.Screen;
-import uet.oop.bomberman.level.FileLevelLoader;
-import uet.oop.bomberman.level.LevelLoader;
 import uet.oop.bomberman.manager.EntityManager;
 import uet.oop.bomberman.manager.GameInfoManager;
-import uet.oop.bomberman.utils.Global;
+import uet.oop.bomberman.manager.LevelManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.List;
  * Quản lý thao tác điều khiển, load level, render các màn hình của game
  */
 public class Board implements Copyable, IRender {
-	protected LevelLoader _levelLoader;
 	protected Game _game;
 	protected Screen _screen;
 
@@ -30,21 +28,38 @@ public class Board implements Copyable, IRender {
 
 	private IEntityManager entityManager;
 	private IGameInfoManager gameInfoManager;
+	private ILevelManager levelManager;
 
 	public Board(Game game, Screen screen) {
 		_game = game;
 		_screen = screen;
-
-		loadLevel(Global.gameLevel); // start in level 1
+		levelManager = new LevelManager(this);
+		levelManager.loadGlobalLevel();
 	}
 
 	private void snapCameraToPlayer() {
-        int xScroll = Screen.calculateXOffset(this, entityManager.getPlayer());
+        int xScroll = calculateXOffset(entityManager.getPlayer());
         Screen.setOffset(xScroll, 0);
     }
 
+    private int calculateXOffset(Entity entity) {
+    	if(entity == null) return 0;
+    	int temp = Screen.xOffset;
+    	
+    	double x = entity.getX() / 16;
+    	double complement = 0.5;
+    	int firstBreakpoint = levelManager.getBoardWidth() / 4;
+    	int lastBreakpoint = levelManager.getBoardWidth() - firstBreakpoint;
+    	
+    	if( x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
+    		temp = (int)entity.getX()  - (Game.WIDTH / 2);
+    	}
+    	
+    	return temp;
+    }
+
 	@Override
-	public void update() {
+	public synchronized void update() {
 		if (gameInfoManager.isPaused())
 			return;
 
@@ -76,40 +91,27 @@ public class Board implements Copyable, IRender {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public synchronized void render(Screen screen) {
 		if (gameInfoManager.isPaused())
 			return;
 		entityManager.render(screen);
 	}
 
-	public void nextLevel() {
-		loadLevel(_levelLoader.getLevel() + 1);
-	}
-
-	public void loadLevel(int level) {
-		try {
-			clearAgents();
-			_levelLoader = new FileLevelLoader(this, level);
-			gameInfoManager = new GameInfoManager(_game);
-			entityManager = new EntityManager(_levelLoader, gameInfoManager);
-			gameInfoManager.setEntityManager(entityManager);
-			gameInfoManager.pause();
-
-			_levelLoader.createEntities();
-		} catch (LoadLevelException e) {
-			e.printStackTrace();
-		}
-
+	public synchronized void init() {
+		gameInfoManager = new GameInfoManager(_game);
+		entityManager = new EntityManager(
+			levelManager.getBoardWidth(),
+			levelManager.getBoardHeight(),
+			gameInfoManager
+		);
+		gameInfoManager.setEntityManager(entityManager);
+		gameInfoManager.pause();
 		_game.setScreenToShow(2);
 		_game.resetScreenDelay();
 	}
 
-	public int getWidth() {
-		return _levelLoader.getWidth();
-	}
-
-	public int getHeight() {
-		return _levelLoader.getHeight();
+	public void clear() {
+		clearAgents();
 	}
 
 	public IEntityManager getEntityManager() {
@@ -118,6 +120,10 @@ public class Board implements Copyable, IRender {
 
 	public IGameInfoManager getGameInfoManager() {
 		return gameInfoManager;
+	}
+
+	public ILevelManager getLevelManager() {
+		return levelManager;
 	}
 
 	@Override

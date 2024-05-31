@@ -99,7 +99,7 @@ public class Game extends Canvas {
 				screen.drawEndGame(g, _board.getGameInfoManager().getPoints());
 				break;
 			case 2:
-				screen.drawChangeLevel(g, _board._levelLoader.getLevel());
+				screen.drawChangeLevel(g, Global.gameLevel);
 				break;
 			case 3:
 				screen.drawPaused(g);
@@ -219,16 +219,12 @@ public class Game extends Canvas {
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			while (delta >= 1) {
-				synchronized (_board) {
-					update();
-				}
+				update();
 				updates++;
 				delta--;
 			}
 
-			synchronized (_board) {
-				showScreen();
-			}
+			showScreen();
 		}
 	}
 
@@ -242,9 +238,7 @@ public class Game extends Canvas {
 
 	public void restartGame() {
 		Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
-		synchronized (_board) {
-			_board.loadLevel(_board._levelLoader.getLevel());
-		}
+		_board.getLevelManager().loadGlobalLevel();
 	}
 
 	public void startNewGame() {

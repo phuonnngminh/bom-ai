@@ -8,7 +8,6 @@ import uet.oop.bomberman.base.ITileManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.graphics.Screen;
-import uet.oop.bomberman.level.LevelLoader;
 
 public class EntityManager implements IEntityManager {
 
@@ -16,11 +15,13 @@ public class EntityManager implements IEntityManager {
     private ICharacterManager characterManager;
     private IBombManager bombManager;
 
-    private LevelLoader levelLoader;
+    private final int boardWidth;
+    private final int boardHeight;
 
-    public EntityManager(LevelLoader levelLoader, IGameInfoManager gameInfoManager) {
-        this.levelLoader = levelLoader;
-        this.tileManager = new TileManager(levelLoader.getWidth(), levelLoader.getHeight());
+    public EntityManager(int boardWidth, int boardHeight, IGameInfoManager gameInfoManager) {
+        this.boardWidth = boardWidth;
+        this.boardHeight = boardHeight;
+        this.tileManager = new TileManager(boardWidth, boardHeight);
         this.characterManager = new CharacterManager(gameInfoManager);
         this.bombManager = new BombManager();
     }
@@ -33,8 +34,8 @@ public class EntityManager implements IEntityManager {
 
 		if (x < 0) return null;
 		if (y < 0) return null;
-		if (x >= levelLoader.getWidth()) return null;
-		if (y >= levelLoader.getHeight()) return null;
+		if (x >= boardWidth) return null;
+		if (y >= boardHeight) return null;
 
 		res = bombManager.getFlameSegmentAt((int) x, (int) y);
 		if (res != null)
