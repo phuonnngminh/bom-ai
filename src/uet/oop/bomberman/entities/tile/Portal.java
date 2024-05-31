@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities.tile;
 
-import uet.oop.bomberman.Board;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.entities.Entity;

@@ -4,6 +4,7 @@ import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.base.ITileManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
@@ -18,11 +19,11 @@ public class EntityManager implements IEntityManager {
     private final int boardWidth;
     private final int boardHeight;
 
-    public EntityManager(int boardWidth, int boardHeight, IGameInfoManager gameInfoManager) {
+    public EntityManager(int boardWidth, int boardHeight, IGameInfoManager gameInfoManager, ILevelManager levelManager) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
         this.tileManager = new TileManager(boardWidth, boardHeight);
-        this.characterManager = new CharacterManager(gameInfoManager);
+        this.characterManager = new CharacterManager(gameInfoManager, levelManager);
         this.bombManager = new BombManager();
     }
 

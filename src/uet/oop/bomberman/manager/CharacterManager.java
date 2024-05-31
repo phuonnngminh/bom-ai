@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
@@ -22,9 +23,11 @@ public class CharacterManager implements ICharacterManager {
     private Character player;
 
     private final IGameInfoManager gameInfoManager;
+	private final ILevelManager levelManager;
 
-    public CharacterManager(IGameInfoManager gameInfoManager) {
+    public CharacterManager(IGameInfoManager gameInfoManager, ILevelManager levelManager) {
         this.gameInfoManager = gameInfoManager;
+		this.levelManager = levelManager;
     }
 
 	@Override
@@ -82,7 +85,7 @@ public class CharacterManager implements ICharacterManager {
 	@Override
 	public void handleAfterDeath(Character character) {
 		if (character.isPlayer()) {
-			gameInfoManager.endGame();
+			levelManager.endGame();
 		}
 	}
 

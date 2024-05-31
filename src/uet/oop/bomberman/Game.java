@@ -1,6 +1,7 @@
 package uet.oop.bomberman;
 
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.input.Keyboard;
@@ -124,6 +125,7 @@ public class Game extends Canvas {
 					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
 				}
+				snapCameraToPlayer();
 				break;
 			case SELECT_LEVEL_SCREEN:
 				selectLevelScreen.update();
@@ -227,6 +229,27 @@ public class Game extends Canvas {
 			showScreen();
 		}
 	}
+
+	private void snapCameraToPlayer() {
+        int xScroll = calculateXOffset(_board.getEntityManager().getPlayer());
+        Screen.setOffset(xScroll, 0);
+    }
+
+    private int calculateXOffset(Entity entity) {
+    	if(entity == null) return 0;
+    	int temp = Screen.xOffset;
+    	
+    	double x = entity.getX() / 16;
+    	double complement = 0.5;
+    	int firstBreakpoint = _board.getLevelManager().getBoardWidth() / 4;
+    	int lastBreakpoint = _board.getLevelManager().getBoardWidth() - firstBreakpoint;
+    	
+    	if( x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
+    		temp = (int)entity.getX()  - (Game.WIDTH / 2);
+    	}
+    	
+    	return temp;
+    }
 
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;

@@ -5,7 +5,6 @@ import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.ILevelManager;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.action.Action;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.graphics.IRender;
@@ -22,7 +21,6 @@ import java.util.List;
  */
 public class Board implements Copyable, IRender {
 	protected Game _game;
-	protected Screen _screen;
 
 	private List<Agent> agents = new ArrayList<>();
 
@@ -32,31 +30,9 @@ public class Board implements Copyable, IRender {
 
 	public Board(Game game, Screen screen) {
 		_game = game;
-		_screen = screen;
 		levelManager = new LevelManager(this);
 		levelManager.loadGlobalLevel();
 	}
-
-	private void snapCameraToPlayer() {
-        int xScroll = calculateXOffset(entityManager.getPlayer());
-        Screen.setOffset(xScroll, 0);
-    }
-
-    private int calculateXOffset(Entity entity) {
-    	if(entity == null) return 0;
-    	int temp = Screen.xOffset;
-    	
-    	double x = entity.getX() / 16;
-    	double complement = 0.5;
-    	int firstBreakpoint = levelManager.getBoardWidth() / 4;
-    	int lastBreakpoint = levelManager.getBoardWidth() - firstBreakpoint;
-    	
-    	if( x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
-    		temp = (int)entity.getX()  - (Game.WIDTH / 2);
-    	}
-    	
-    	return temp;
-    }
 
 	@Override
 	public synchronized void update() {
@@ -67,8 +43,6 @@ public class Board implements Copyable, IRender {
 		gameInfoManager.update();
 
 		processAgentAction();
-
-		snapCameraToPlayer();
 	}
 
 	private void clearAgents() {
@@ -94,15 +68,19 @@ public class Board implements Copyable, IRender {
 	public synchronized void render(Screen screen) {
 		if (gameInfoManager.isPaused())
 			return;
+		if (gameInfoManager.getTime() <= 0) {
+			levelManager.endGame();
+		}
 		entityManager.render(screen);
 	}
 
 	public synchronized void init() {
-		gameInfoManager = new GameInfoManager(_game);
+		gameInfoManager = new GameInfoManager();
 		entityManager = new EntityManager(
 			levelManager.getBoardWidth(),
 			levelManager.getBoardHeight(),
-			gameInfoManager
+			gameInfoManager,
+			levelManager
 		);
 		gameInfoManager.setEntityManager(entityManager);
 		gameInfoManager.pause();
