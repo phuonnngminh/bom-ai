@@ -17,13 +17,14 @@ public class SelectGameModeScreen extends GameScreen {
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
     private BufferedImage backgroundImage;
+    private int OFFSET = 20;
 
     public SelectGameModeScreen() {
         gameModes.add(EGameMode.ONE_PLAYER.getStringLevel());
         gameModes.add(EGameMode.TWO_PLAYER.getStringLevel());
 
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/menu/forest_by_forheksed_d9q4k94-fullview 1.png"));
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/background.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,7 +79,7 @@ public class SelectGameModeScreen extends GameScreen {
 
     private void drawTitle(Graphics g) {
         String title = "SELECT GAME MODE";
-        Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -91,7 +92,7 @@ public class SelectGameModeScreen extends GameScreen {
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Arial", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -107,11 +108,15 @@ public class SelectGameModeScreen extends GameScreen {
             int x = (w - fm.stringWidth(level)) / 2;
             int y = marginTop + fm.getAscent() + textHeight*i;
 
-            g.drawString(level, x, y);
+            g.drawString(level, x, y+ OFFSET);
         }
     }
 
     private void drawSelector(Graphics g) {
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        g.setFont(font);
+        g.setColor(Color.white);
+
         String level = this.gameModes.get(selectorIndex);
         int w = Global.screenWidth;
         int h = Global.screenHeight;
@@ -123,7 +128,7 @@ public class SelectGameModeScreen extends GameScreen {
         int x = (w - fm.stringWidth(level)) / 2 - 30;
         int y = marginTop + fm.getAscent() + textHeight*selectorIndex;
 
-        g.drawString(">", x, y);
+        g.drawString(">", x, y+ OFFSET);
     }
 
     @Override

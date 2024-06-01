@@ -32,7 +32,7 @@ public class SelectLevelScreen extends GameScreen {
         levels.add(EGameLevel.HARD.getStringLevel());
 
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/menu/forest_by_forheksed_d9q4k94-fullview 1.png"));
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/background.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -86,7 +86,7 @@ public class SelectLevelScreen extends GameScreen {
     }
     private void drawTitle(Graphics g) {
         String title = "SELECT LEVEL";
-        Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -99,7 +99,7 @@ public class SelectLevelScreen extends GameScreen {
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Arial", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -120,6 +120,10 @@ public class SelectLevelScreen extends GameScreen {
     }
 
     private void drawSelector(Graphics g) {
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        g.setFont(font);
+        g.setColor(Color.white);
+
         String level = this.levels.get(selectorIndex);
         int w = Global.screenWidth;
         int h = Global.screenHeight;
