@@ -14,8 +14,6 @@ import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
-import uet.oop.bomberman.utils.EScreenName;
-import uet.oop.bomberman.utils.Global;
 
 public class GameInfoManager implements IGameInfoManager {
 
@@ -24,11 +22,9 @@ public class GameInfoManager implements IGameInfoManager {
     private boolean paused;
     private List<Message> messages = new ArrayList<>();
 
-	private Game game;
     private IEntityManager entityManager;
 
-	public GameInfoManager(Game game) {
-		this.game = game;
+	public GameInfoManager() {
         this.time = Game.TIME;
         this.points = Game.POINTS;
     }
@@ -75,7 +71,6 @@ public class GameInfoManager implements IGameInfoManager {
     @Override
     public void update() {
         updateMessages();
-		if (getTime() <= 0) endGame();
     }
 
     @Override
@@ -124,13 +119,5 @@ public class GameInfoManager implements IGameInfoManager {
     public void unpause() {
         paused = false;
     }
-
-	@Override
-	public void endGame() {
-		Global.currentScreen = EScreenName.END_GAME_SCREEN;
-		game.setScreenToShow(1);
-		game.resetScreenDelay();
-		pause();
-	}
     
 }
