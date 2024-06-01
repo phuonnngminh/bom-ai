@@ -5,7 +5,10 @@ import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.utils.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -13,10 +16,18 @@ public class SelectGameModeScreen extends GameScreen {
     ArrayList<String> gameModes = new ArrayList<String>();
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
+    private BufferedImage backgroundImage;
+    private int OFFSET = 20;
 
     public SelectGameModeScreen() {
         gameModes.add(EGameMode.ONE_PLAYER.getStringLevel());
         gameModes.add(EGameMode.TWO_PLAYER.getStringLevel());
+
+        try {
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/background.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setInput(Keyboard input) {
@@ -54,8 +65,12 @@ public class SelectGameModeScreen extends GameScreen {
     @Override
     public void drawScreen(Graphics g) {
         // set background
-        g.setColor(Color.black);
-        g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, Global.screenWidth, Global.screenHeight, null);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
+        }
 
         drawTitle(g);
         drawOptions(g);
@@ -64,7 +79,7 @@ public class SelectGameModeScreen extends GameScreen {
 
     private void drawTitle(Graphics g) {
         String title = "SELECT GAME MODE";
-        Font font = new Font("Arial", Font.BOLD, 20 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -77,7 +92,7 @@ public class SelectGameModeScreen extends GameScreen {
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Arial", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -93,11 +108,15 @@ public class SelectGameModeScreen extends GameScreen {
             int x = (w - fm.stringWidth(level)) / 2;
             int y = marginTop + fm.getAscent() + textHeight * i;
 
-            g.drawString(level, x, y);
+            g.drawString(level, x, y+ OFFSET);
         }
     }
 
     private void drawSelector(Graphics g) {
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        g.setFont(font);
+        g.setColor(Color.white);
+
         String level = this.gameModes.get(selectorIndex);
         int w = Global.screenWidth;
         int h = Global.screenHeight;
@@ -109,7 +128,7 @@ public class SelectGameModeScreen extends GameScreen {
         int x = (w - fm.stringWidth(level)) / 2 - 30;
         int y = marginTop + fm.getAscent() + textHeight * selectorIndex;
 
-        g.drawString(">", x, y);
+        g.drawString(">", x, y+ OFFSET);
     }
 
     @Override
