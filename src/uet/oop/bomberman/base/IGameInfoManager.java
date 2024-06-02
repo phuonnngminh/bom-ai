@@ -23,8 +23,6 @@ public interface IGameInfoManager extends IMessageManager, IRender {
 
     public void unpause();
 
-    public void endGame();
-
     public List<Item> getPlayerActiveItems();
 
     public void setEntityManager(IEntityManager entityManager);

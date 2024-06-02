@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.entities.Message;
 import uet.oop.bomberman.entities.character.CanUseItem;
 import uet.oop.bomberman.entities.character.Character;
@@ -23,11 +24,13 @@ public class CharacterManager implements ICharacterManager {
 	private Character player;
 	private List<Character> players = new ArrayList<>();
 
-	private final IGameInfoManager gameInfoManager;
+    private final IGameInfoManager gameInfoManager;
+	private final ILevelManager levelManager;
 
-	public CharacterManager(IGameInfoManager gameInfoManager) {
-		this.gameInfoManager = gameInfoManager;
-	}
+    public CharacterManager(IGameInfoManager gameInfoManager, ILevelManager levelManager) {
+        this.gameInfoManager = gameInfoManager;
+		this.levelManager = levelManager;
+    }
 
 	@Override
 	public Character getCharacterAtExcluding(int x, int y, Character a) {
@@ -77,10 +80,8 @@ public class CharacterManager implements ICharacterManager {
 	@Override
 	public void handleOnDeath(Character character, Character killer) {
 		if (character.isPlayer()) {
-			// TODO: handle player death
 			Sound.play("endgame3");
 		} else {
-			// TODO: document how to calculate message coord
 			double messageX = (character.getX() * Game.SCALE) + (character.getSprite().SIZE / 2 * Game.SCALE);
 			double messageY = (character.getY() * Game.SCALE) - (character.getSprite().SIZE / 2 * Game.SCALE);
 			int points = character.getPoints();
@@ -94,7 +95,7 @@ public class CharacterManager implements ICharacterManager {
 	@Override
 	public void handleAfterDeath(Character character) {
 		if (character.isPlayer()) {
-			gameInfoManager.endGame();
+			levelManager.endGame();
 		}
 	}
 

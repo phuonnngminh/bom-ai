@@ -106,7 +106,7 @@ public class FileLevelLoader extends LevelLoader {
                         layeredEntity = new LayeredEntity(
                                 x, y,
                                 new Grass(x, y, Sprite.grass),
-                                new Portal(x, y, _board, Sprite.portal),
+                                new Portal(x, y, _board.getLevelManager(), _board.getEntityManager(), Sprite.portal),
                                 new Brick(x, y, Sprite.brick));
                         _board.getEntityManager().getTileManager().addTile(pos, layeredEntity);
                         break;

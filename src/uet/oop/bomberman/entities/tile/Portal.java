@@ -1,17 +1,20 @@
 package uet.oop.bomberman.entities.tile;
 
-import uet.oop.bomberman.Board;
+import uet.oop.bomberman.base.IEntityManager;
+import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.sound.Sound;
 
 public class Portal extends NonDestroyableTile {
-	protected Board _board;
+	protected ILevelManager levelManager;
+	protected IEntityManager entityManager;
 
-	public Portal(int x, int y, Board board, Sprite sprite) {
+	public Portal(int x, int y, ILevelManager levelManager, IEntityManager entityManager, Sprite sprite) {
 		super(x, y, sprite);
-		_board = board;
+		this.levelManager = levelManager;
+		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -22,7 +25,7 @@ public class Portal extends NonDestroyableTile {
 		if (e instanceof Character && ((Character) e).isPlayer()) {
 
 			if (canBePassedThroughBy(e)) {
-				_board.nextLevel();
+				levelManager.nextLevel();
 				Sound.play("CRYST_UP");
 			}
 
@@ -35,7 +38,7 @@ public class Portal extends NonDestroyableTile {
 	public boolean canBePassedThroughBy(Entity other) {
 		if (other instanceof Character && ((Character) other).isPlayer()) {
 
-			if (!_board.getEntityManager().isEnemyCleared())
+			if (!entityManager.isEnemyCleared())
 				return false;
 
 			return true;

@@ -6,12 +6,11 @@ import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
+import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.base.ITileManager;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.character.Character;
-import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.graphics.Screen;
-import uet.oop.bomberman.level.LevelLoader;
 
 public class EntityManager implements IEntityManager {
 
@@ -19,28 +18,26 @@ public class EntityManager implements IEntityManager {
     private ICharacterManager characterManager;
     private IBombManager bombManager;
 
-    private LevelLoader levelLoader;
+    private final int boardWidth;
+    private final int boardHeight;
 
-    public EntityManager(LevelLoader levelLoader, IGameInfoManager gameInfoManager) {
-        this.levelLoader = levelLoader;
-        this.tileManager = new TileManager(levelLoader.getWidth(), levelLoader.getHeight());
-        this.characterManager = new CharacterManager(gameInfoManager);
+    public EntityManager(int boardWidth, int boardHeight, IGameInfoManager gameInfoManager, ILevelManager levelManager) {
+        this.boardWidth = boardWidth;
+        this.boardHeight = boardHeight;
+        this.tileManager = new TileManager(boardWidth, boardHeight);
+        this.characterManager = new CharacterManager(gameInfoManager, levelManager);
         this.bombManager = new BombManager();
     }
 
-    @Override
-    public Entity getEntityAtExcluding(double x, double y, Character m) {
+	@Override
+	public Entity getEntityAtExcluding(double x, double y, Character m) {
 
-        Entity res = null;
+		Entity res = null;
 
-        if (x < 0)
-            return null;
-        if (y < 0)
-            return null;
-        if (x >= levelLoader.getWidth())
-            return null;
-        if (y >= levelLoader.getHeight())
-            return null;
+		if (x < 0) return null;
+		if (y < 0) return null;
+		if (x >= boardWidth) return null;
+		if (y >= boardHeight) return null;
 
         res = bombManager.getFlameSegmentAt((int) x, (int) y);
         if (res != null)
