@@ -91,12 +91,12 @@ public class SelectGameModeScreen extends GameScreen {
         GradientText gradientText = new GradientText(font, color1, color2, color3);
 
         // Vẽ văn bản gradient bằng cách sử dụng GradientText
-        gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 14,
+        gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 15,
                 190);
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
         g.setFont(font);
 
         // Position of Options
@@ -142,7 +142,7 @@ public class SelectGameModeScreen extends GameScreen {
         int marginTop = (h - boxHeight) / 2 + 15;
 
         int spacing = 10 * Game.SCALE;
-        int x = (w - fm.stringWidth(level)) / 2 - 60;
+        int x = (w - fm.stringWidth(level)) / 2 - 50;
         int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex;
 
         g.drawImage(pointerImage, x, y - fm.getAscent(), null);

@@ -59,7 +59,8 @@ public class SelectLevelScreen extends GameScreen {
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
                         onDestroy();
                         break;
-                    default: break;
+                    default:
+                        break;
                 }
 
                 if (selectorIndex < 0) {
@@ -94,11 +95,11 @@ public class SelectLevelScreen extends GameScreen {
 
         GradientText gradientText = new GradientText(font, color1, color2, color3);
         gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 5,
-                100);
+                130);
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
         g.setFont(font);
 
         // Position of Options
@@ -143,9 +144,9 @@ public class SelectLevelScreen extends GameScreen {
         int boxHeight = textHeight * this.levels.size();
         int marginTop = (h - boxHeight) / 2;
 
-        int spacing = 10 * Game.SCALE; // Khoảng cách giống như trong drawOptions
-        int x = (w - fm.stringWidth(level)) / 2 - 70; // Đặt vị trí mũi tên ở bên trái văn bản
-        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex - 32;
+        int spacing = 9 * Game.SCALE; // Khoảng cách giống như trong drawOptions
+        int x = (w - fm.stringWidth(level)) / 2 - 50; // Đặt vị trí mũi tên ở bên trái văn bản
+        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex - 28;
 
         g.drawImage(pointerImage, x, y - fm.getAscent(), null);
     }
