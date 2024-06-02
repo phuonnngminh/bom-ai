@@ -17,14 +17,16 @@ public class SelectGameModeScreen extends GameScreen {
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
     private BufferedImage backgroundImage;
-    private int OFFSET = 20;
+    private int OFFSET = 40;
+    private BufferedImage pointerImage;
 
     public SelectGameModeScreen() {
         gameModes.add(EGameMode.ONE_PLAYER.getStringLevel());
         gameModes.add(EGameMode.TWO_PLAYER.getStringLevel());
 
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/menu/background.jpg"));
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/bgBombman.png"));
+            pointerImage = ImageIO.read(getClass().getResource("/menu/pointer.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,48 +74,62 @@ public class SelectGameModeScreen extends GameScreen {
             g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
         }
 
-        drawTitle(g);
+        drawTitle(g, "SELECT GAME MODE");
         drawOptions(g);
         drawSelector(g);
     }
 
-    private void drawTitle(Graphics g) {
-        String title = "SELECT GAME MODE";
+    private void drawTitle(Graphics g, String title) {
         Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
-        g.setFont(font);
-        g.setColor(Color.white);
 
-        FontMetrics fm = g.getFontMetrics();
-        int x = (Global.screenWidth - fm.stringWidth(title)) / 2;
-        int marginTop = 20;
-        int y = marginTop + fm.getAscent();
+        // Tạo màu gradient với 3 màu
+        Color color1 = Color.RED;
+        Color color2 = Color.ORANGE;
+        Color color3 = Color.YELLOW;
 
-        g.drawString(title, x, y);
+        // Tạo đối tượng GradientText
+        GradientText gradientText = new GradientText(font, color1, color2, color3);
+
+        // Vẽ văn bản gradient bằng cách sử dụng GradientText
+        gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 14,
+                190);
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.white);
 
+        // Position of Options
         int w = Global.screenWidth;
         int h = Global.screenHeight;
         FontMetrics fm = g.getFontMetrics();
         int textHeight = fm.getAscent() + fm.getDescent();
-        int boxHeight = textHeight * this.gameModes.size();
+
+        // Khoảng cách giữa các lựa chọn
+        int spacing = 10 * Game.SCALE;
+
+        // Tính toán tổng chiều cao của các lựa chọn cộng với khoảng cách giữa chúng
+        int boxHeight = (textHeight) * this.gameModes.size() - spacing;
         int marginTop = (h - boxHeight) / 2;
 
-        for (int i = 0; i < this.gameModes.size(); i++) {
-            String level = this.gameModes.get(i);
-            int x = (w - fm.stringWidth(level)) / 2;
-            int y = marginTop + fm.getAscent() + textHeight * i;
+        for (int i = 0; i < gameModes.size(); i++) {
+            String mode = gameModes.get(i);
 
-            g.drawString(level, x, y+ OFFSET);
+            int x = (w - fm.stringWidth(mode)) / 2;
+            int y = marginTop + fm.getAscent() + (textHeight + spacing) * i;
+
+            if (i == selectorIndex) {
+                g.setColor(Color.YELLOW);
+            } else {
+                g.setColor(Color.WHITE);
+            }
+
+            g.drawString(mode, x, y);
         }
     }
 
     private void drawSelector(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.white);
 
@@ -123,12 +139,13 @@ public class SelectGameModeScreen extends GameScreen {
         FontMetrics fm = g.getFontMetrics();
         int textHeight = fm.getAscent() + fm.getDescent();
         int boxHeight = textHeight * this.gameModes.size();
-        int marginTop = (h - boxHeight) / 2;
+        int marginTop = (h - boxHeight) / 2 + 15;
 
-        int x = (w - fm.stringWidth(level)) / 2 - 30;
-        int y = marginTop + fm.getAscent() + textHeight * selectorIndex;
+        int spacing = 10 * Game.SCALE;
+        int x = (w - fm.stringWidth(level)) / 2 - 60;
+        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex;
 
-        g.drawString(">", x, y+ OFFSET);
+        g.drawImage(pointerImage, x, y - fm.getAscent(), null);
     }
 
     @Override

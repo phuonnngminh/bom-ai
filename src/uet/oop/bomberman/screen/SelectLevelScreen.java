@@ -7,7 +7,6 @@ import uet.oop.bomberman.input.Keyboard;
 
 import uet.oop.bomberman.utils.EGameControl;
 import uet.oop.bomberman.utils.EGameLevel;
-import uet.oop.bomberman.utils.EGameMode;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
@@ -24,6 +23,7 @@ public class SelectLevelScreen extends GameScreen {
     private Optional<Keyboard> _input;
     private Board _board;
     private BufferedImage backgroundImage;
+    private BufferedImage pointerImage;
 
     public SelectLevelScreen(Board board) {
         _board = board;
@@ -33,7 +33,8 @@ public class SelectLevelScreen extends GameScreen {
         levels.add(EGameLevel.HARD.getStringLevel());
 
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/menu/background.jpg"));
+            backgroundImage = ImageIO.read(getClass().getResource("/menu/bgBombman.png"));
+            pointerImage = ImageIO.read(getClass().getResource("/menu/pointer.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,50 +82,59 @@ public class SelectLevelScreen extends GameScreen {
             g.fillRect(0, 0, Global.screenWidth, Global.screenHeight);
         }
 
-        drawTitle(g);
+        drawTitle(g, "SELECT LEVEL");
         drawOptions(g);
         drawSelector(g);
     }
 
-    private void drawTitle(Graphics g) {
-        String title = "SELECT LEVEL";
+    private void drawTitle(Graphics g, String title) {
         Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
-        g.setFont(font);
-        g.setColor(Color.white);
+        Color color1 = Color.RED;
+        Color color2 = Color.ORANGE;
+        Color color3 = Color.YELLOW;
 
-        FontMetrics fm = g.getFontMetrics();
-        int x = (Global.screenWidth - fm.stringWidth(title)) / 2;
-        int marginTop = 20;
-        int y = marginTop + fm.getAscent();
-
-        g.drawString(title, x, y);
+        GradientText gradientText = new GradientText(font, color1, color2, color3);
+        gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 5,
+                100);
     }
 
     private void drawOptions(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.white);
 
+        // Position of Options
         int w = Global.screenWidth;
         int h = Global.screenHeight;
         FontMetrics fm = g.getFontMetrics();
         int textHeight = fm.getAscent() + fm.getDescent();
-        int boxHeight = textHeight * this.levels.size();
+
+        // Khoảng cách giữa các lựa chọn
+        int spacing = 10 * Game.SCALE;
+
+        // Tính toán tổng chiều cao của các lựa chọn cộng với khoảng cách giữa chúng
+        int boxHeight = (textHeight) * this.levels.size() - spacing;
         int marginTop = (h - boxHeight) / 2;
 
-        for (int i = 0; i < this.levels.size(); i++) {
-            String level = this.levels.get(i);
-            int x = (w - fm.stringWidth(level)) / 2;
-            int y = marginTop + fm.getAscent() + textHeight * i;
+        for (int i = 0; i < levels.size(); i++) {
+            String mode = levels.get(i);
 
-            g.drawString(level, x, y);
+            int x = (w - fm.stringWidth(mode)) / 2;
+            int y = marginTop + (textHeight + spacing) * i - 20;
+
+            if (i == selectorIndex) {
+                g.setColor(Color.YELLOW);
+            } else {
+                g.setColor(Color.WHITE);
+            }
+
+            g.drawString(mode, x, y);
         }
     }
 
     private void drawSelector(Graphics g) {
-        Font font = new Font("Minecraft", Font.PLAIN, 10 * Game.SCALE);
+        Font font = new Font("Minecraft", Font.PLAIN, 12 * Game.SCALE);
         g.setFont(font);
-        g.setColor(Color.white);
+        g.setColor(Color.WHITE);
 
         String level = this.levels.get(selectorIndex);
         int w = Global.screenWidth;
@@ -134,10 +144,11 @@ public class SelectLevelScreen extends GameScreen {
         int boxHeight = textHeight * this.levels.size();
         int marginTop = (h - boxHeight) / 2;
 
-        int x = (w - fm.stringWidth(level)) / 2 - 30;
-        int y = marginTop + fm.getAscent() + textHeight * selectorIndex;
+        int spacing = 10 * Game.SCALE; // Khoảng cách giống như trong drawOptions
+        int x = (w - fm.stringWidth(level)) / 2 - 70; // Đặt vị trí mũi tên ở bên trái văn bản
+        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex - 32;
 
-        g.drawString(">", x, y);
+        g.drawImage(pointerImage, x, y - fm.getAscent(), null);
     }
 
     @Override
