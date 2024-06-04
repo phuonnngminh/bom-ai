@@ -28,12 +28,12 @@ public class CharacterManager implements ICharacterManager {
 
 	private final IGameInfoManager gameInfoManager;
 	private final ILevelManager levelManager;
-	private int numberOfPlayersAlive;
+	private int numberOfPlayers;
 
 	public CharacterManager(IGameInfoManager gameInfoManager, ILevelManager levelManager) {
 		this.gameInfoManager = gameInfoManager;
 		this.levelManager = levelManager;
-		initializeNumberOfPlayers(2);
+		// initializeNumberOfPlayers(0);
 	}
 
 	@Override
@@ -74,6 +74,7 @@ public class CharacterManager implements ICharacterManager {
 	@Override
 	public void addPlayer(Character e) {
 		players.add(e);
+		numberOfPlayers += 1;
 	}
 
 	@Override
@@ -96,28 +97,15 @@ public class CharacterManager implements ICharacterManager {
 		}
 	}
 
-	public void initializeNumberOfPlayers(int numberOfPlayers) {
-		this.numberOfPlayersAlive = numberOfPlayers;
-	}
-
 	@Override
 	public void handleAfterDeath(Character character) {
-		if (Global.gameMode == EGameMode.TWO_PLAYER && character.isPlayer()) {
-			numberOfPlayersAlive--;
-			if (numberOfPlayersAlive <= 0) {
+		if (character.isPlayer()) {
+			numberOfPlayers--;
+			if (numberOfPlayers == 0) {
 				levelManager.endGame();
 			}
-		} else if (Global.gameMode == EGameMode.ONE_PLAYER && character.isPlayer()) {
-			levelManager.endGame();
 		}
 	}
-
-	// @Override
-	// public void handleAfterDeath(Character character) {
-	// if (character.isPlayer()) {
-	// levelManager.endGame();
-	// }
-	// }
 
 	@Override
 	public void update() {
