@@ -16,6 +16,8 @@ import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.sound.Sound;
+import uet.oop.bomberman.utils.EGameMode;
+import uet.oop.bomberman.utils.Global;
 
 public class CharacterManager implements ICharacterManager {
 
@@ -24,13 +26,15 @@ public class CharacterManager implements ICharacterManager {
 	private Character player;
 	private List<Character> players = new ArrayList<>();
 
-    private final IGameInfoManager gameInfoManager;
+	private final IGameInfoManager gameInfoManager;
 	private final ILevelManager levelManager;
+	private int numberOfPlayersAlive;
 
-    public CharacterManager(IGameInfoManager gameInfoManager, ILevelManager levelManager) {
-        this.gameInfoManager = gameInfoManager;
+	public CharacterManager(IGameInfoManager gameInfoManager, ILevelManager levelManager) {
+		this.gameInfoManager = gameInfoManager;
 		this.levelManager = levelManager;
-    }
+		initializeNumberOfPlayers(2);
+	}
 
 	@Override
 	public Character getCharacterAtExcluding(int x, int y, Character a) {
@@ -92,12 +96,28 @@ public class CharacterManager implements ICharacterManager {
 		}
 	}
 
+	public void initializeNumberOfPlayers(int numberOfPlayers) {
+		this.numberOfPlayersAlive = numberOfPlayers;
+	}
+
 	@Override
 	public void handleAfterDeath(Character character) {
-		if (character.isPlayer()) {
+		if (Global.gameMode == EGameMode.TWO_PLAYER && character.isPlayer()) {
+			numberOfPlayersAlive--;
+			if (numberOfPlayersAlive <= 0) {
+				levelManager.endGame();
+			}
+		} else if (Global.gameMode == EGameMode.ONE_PLAYER && character.isPlayer()) {
 			levelManager.endGame();
 		}
 	}
+
+	// @Override
+	// public void handleAfterDeath(Character character) {
+	// if (character.isPlayer()) {
+	// levelManager.endGame();
+	// }
+	// }
 
 	@Override
 	public void update() {
