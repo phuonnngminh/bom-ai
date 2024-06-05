@@ -8,6 +8,7 @@ import uet.oop.bomberman.input.Keyboard;
 import uet.oop.bomberman.screen.SelectGameModeScreen;
 import uet.oop.bomberman.screen.DeadScreen;
 import uet.oop.bomberman.screen.SelectLevelScreen;
+import uet.oop.bomberman.screen.WinScreen;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
@@ -60,6 +61,7 @@ public class Game extends Canvas {
 	public SelectLevelScreen selectLevelScreen;
 	private SelectGameModeScreen selectGameModeScreen;
 	public DeadScreen deadScreen;
+	public WinScreen winScreen;
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 
@@ -105,6 +107,9 @@ public class Game extends Canvas {
 			case 3:
 				screen.drawPaused(g);
 				break;
+			case 4:
+				screen.drawWinScreen(g, _board.getGameInfoManager().getPoints());
+				break;
 		}
 	}
 
@@ -113,6 +118,7 @@ public class Game extends Canvas {
 		this.selectGameModeScreen = new SelectGameModeScreen();
 		this.selectLevelScreen = new SelectLevelScreen(_board);
 		this.deadScreen = new DeadScreen(this);
+		this.winScreen = new WinScreen(_board);
 	}
 
 	private void update() {
@@ -135,6 +141,9 @@ public class Game extends Canvas {
 				break;
 			case END_GAME_SCREEN:
 				deadScreen.update();
+				break;
+			case WIN_GAME_SCREEN:
+				winScreen.update();
 				break;
 		}
 
@@ -195,6 +204,9 @@ public class Game extends Canvas {
 				deadScreen.setInput();
 				deadScreen.drawScreen(g);
 				break;
+			case WIN_GAME_SCREEN:
+				winScreen.setInput();
+				winScreen.drawScreen(g);
 		}
 
 		g.dispose();
@@ -231,25 +243,26 @@ public class Game extends Canvas {
 	}
 
 	private void snapCameraToPlayer() {
-        int xScroll = calculateXOffset(_board.getEntityManager().getPlayer());
-        Screen.setOffset(xScroll, 0);
-    }
+		int xScroll = calculateXOffset(_board.getEntityManager().getPlayer());
+		Screen.setOffset(xScroll, 0);
+	}
 
-    private int calculateXOffset(Entity entity) {
-    	if(entity == null) return 0;
-    	int temp = Screen.xOffset;
-    	
-    	double x = entity.getX() / 16;
-    	double complement = 0.5;
-    	int firstBreakpoint = _board.getLevelManager().getBoardWidth() / 4;
-    	int lastBreakpoint = _board.getLevelManager().getBoardWidth() - firstBreakpoint;
-    	
-    	if( x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
-    		temp = (int)entity.getX()  - (Game.WIDTH / 2);
-    	}
-    	
-    	return temp;
-    }
+	private int calculateXOffset(Entity entity) {
+		if (entity == null)
+			return 0;
+		int temp = Screen.xOffset;
+
+		double x = entity.getX() / 16;
+		double complement = 0.5;
+		int firstBreakpoint = _board.getLevelManager().getBoardWidth() / 4;
+		int lastBreakpoint = _board.getLevelManager().getBoardWidth() - firstBreakpoint;
+
+		if (x > firstBreakpoint + complement && x < lastBreakpoint - complement) {
+			temp = (int) entity.getX() - (Game.WIDTH / 2);
+		}
+
+		return temp;
+	}
 
 	public void resetScreenDelay() {
 		_screenDelay = SCREENDELAY;

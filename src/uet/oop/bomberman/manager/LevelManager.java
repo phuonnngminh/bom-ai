@@ -48,6 +48,12 @@ public class LevelManager implements ILevelManager {
     }
 
     @Override
+    public void winGame() {
+        Global.currentScreen = EScreenName.WIN_GAME_SCREEN;
+        board.getGameInfoManager().pause();
+    }
+
+    @Override
     public int getBoardWidth() {
         return levelLoader.getWidth();
     }

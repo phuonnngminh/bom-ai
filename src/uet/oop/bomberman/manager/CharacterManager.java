@@ -108,6 +108,15 @@ public class CharacterManager implements ICharacterManager {
 	}
 
 	@Override
+	public void handleWin(Character character) {
+		// Kiểm tra điều kiện xem người chơi đã ở màn 3 chưa và hàm canPassThrough có
+		// true không
+		if (character.isPlayer()) {
+			levelManager.winGame();
+		}
+	}
+
+	@Override
 	public void update() {
 		for (Character character : characters) {
 			character.update();
