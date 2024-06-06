@@ -56,5 +56,5 @@ public class LevelManager implements ILevelManager {
     public int getBoardHeight() {
         return levelLoader.getHeight();
     }
-    
+
 }
