@@ -35,7 +35,22 @@ public class GameInfoManager implements IGameInfoManager {
 
     @Override
 	public List<Item> getPlayerActiveItems() {
-		Character player = entityManager.getPlayer();
+		List<Character> players = entityManager.getPlayers();
+		if (players.size() < 1) {
+			return new ArrayList<>();
+		}
+		Character player = players.get(0);
+		if (!(player instanceof CanUseItem)) return new ArrayList<>();
+		return ((CanUseItem)player).getActiveItems().collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Item> getPlayer2ActiveItems() {
+		List<Character> players = entityManager.getPlayers();
+		if (players.size() < 2) {
+			return new ArrayList<>();
+		}
+		Character player = players.get(1);
 		if (!(player instanceof CanUseItem)) return new ArrayList<>();
 		return ((CanUseItem)player).getActiveItems().collect(Collectors.toList());
 	}

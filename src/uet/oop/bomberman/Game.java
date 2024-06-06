@@ -111,7 +111,7 @@ public class Game extends Canvas {
 	private void initScreen() {
 		Global.currentScreen = EScreenName.SELECT_GAME_MODE;
 		this.selectGameModeScreen = new SelectGameModeScreen();
-		this.selectLevelScreen = new SelectLevelScreen(_board);
+		this.selectLevelScreen = new SelectLevelScreen(_board, _frame);
 		this.deadScreen = new DeadScreen(this);
 	}
 
@@ -172,7 +172,11 @@ public class Game extends Canvas {
 				if (System.currentTimeMillis() - timer > 1000) {
 					_frame.setTime(gameInfoManager.subtractTime());
 					_frame.setPoints(gameInfoManager.getPoints());
+					_frame.setLevel(Global.gameLevel);
+					_frame.setEnemy(Global.enemies);
+					_frame.setShowInfoPanel();
 					_frame.renderItemTime();
+
 					timer += 1000;
 					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 					updates = 0;

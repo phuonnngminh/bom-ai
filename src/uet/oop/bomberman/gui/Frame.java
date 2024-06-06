@@ -58,6 +58,22 @@ public class Frame extends JFrame {
 		_infopanel.setPoints(points);
 	}
 
+	public void setLevel(int level) {
+		_infopanel.setLevel(level);
+	}
+
+	public void setEnemy(int enemy) {
+		_infopanel.setEnemies(enemy);
+	}
+
+	public void setShowInfoPanel() {
+		_infopanel.showInfoPanel();
+	}
+
+	public void loadInfo() {
+		_infopanel.loadInfo();
+	}
+
 	public void renderItemTime() {
 		_infopanel.renderItemTime();
 	}

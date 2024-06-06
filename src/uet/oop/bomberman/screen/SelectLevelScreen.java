@@ -2,13 +2,11 @@ package uet.oop.bomberman.screen;
 
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.gui.Frame;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
 
-import uet.oop.bomberman.utils.EGameControl;
-import uet.oop.bomberman.utils.EGameLevel;
-import uet.oop.bomberman.utils.EScreenName;
-import uet.oop.bomberman.utils.Global;
+import uet.oop.bomberman.utils.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -22,11 +20,13 @@ public class SelectLevelScreen extends GameScreen {
     int selectorIndex = 0;
     private Optional<Keyboard> _input;
     private Board _board;
+    private Frame _frame;
     private BufferedImage backgroundImage;
     private BufferedImage pointerImage;
 
-    public SelectLevelScreen(Board board) {
+    public SelectLevelScreen(Board board, Frame frame) {
         _board = board;
+        _frame = frame;
 
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
@@ -57,6 +57,7 @@ public class SelectLevelScreen extends GameScreen {
                         Global.gameLevel = selectorIndex + 1;
                         _board.getLevelManager().loadGlobalLevel();
                         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        _frame.loadInfo();
                         onDestroy();
                         break;
                     default:
