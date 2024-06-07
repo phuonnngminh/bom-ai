@@ -284,8 +284,7 @@ public abstract class Character extends AnimatedEntitiy {
 				return false;
 			}
 		}
-		if (e instanceof LayeredEntity)
-			return (e.collide(this));
+
 		return true;
 	}
 
