@@ -66,8 +66,8 @@ public class Frame extends JFrame {
 		_infopanel.setEnemies(enemy);
 	}
 
-	public void setShowInfoPanel() {
-		_infopanel.showInfoPanel();
+	public void setHideInfoPanel() {
+		_infopanel.hideInfoPanel();
 	}
 
 	public void loadInfo() {

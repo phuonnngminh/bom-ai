@@ -65,6 +65,7 @@ public class LevelManager implements ILevelManager {
     @Override
     public void endGame() {
         Global.currentScreen = EScreenName.END_GAME_SCREEN;
+
         board.getGameInfoManager().pause();
     }
 

@@ -54,7 +54,7 @@ public class InfoPanel extends JPanel {
 		p2TimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
 		setBackground(Color.black);
-		setPreferredSize(new Dimension(0, 0));
+		setPreferredSize(new Dimension(0, 40));
 	}
 
 	public void setTime(int t) {
@@ -110,13 +110,14 @@ public class InfoPanel extends JPanel {
 		}
 	}
 
-	public void showInfoPanel() {
+	public void hideInfoPanel() {
 		if (Global.currentScreen == EScreenName.GAME_PLAY_SCREEN) {
-			setPreferredSize(new Dimension(0, 40));
-			setVisible(true);
-		} else {
-			setPreferredSize(new Dimension(0, 0));
-			setVisible(false);
+			System.out.println("vao day");
+			remove(itemTimeLabel);
+			remove(timeLabel);
+			remove(pointsLabel);
+			remove(enemyLabel);
+			remove(p2TimeLabel);
 		}
 	}
 

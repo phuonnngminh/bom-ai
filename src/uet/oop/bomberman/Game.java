@@ -149,6 +149,7 @@ public class Game extends Canvas {
 		Graphics g = bs.getDrawGraphics();
 
 		IGameInfoManager gameInfoManager = _board.getGameInfoManager();
+
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
 				Keyboard.i().keyboardInputCallback = Optional.empty();
@@ -174,7 +175,6 @@ public class Game extends Canvas {
 					_frame.setPoints(gameInfoManager.getPoints());
 					_frame.setLevel(Global.gameLevel);
 					_frame.setEnemy(Global.enemies);
-					_frame.setShowInfoPanel();
 					_frame.renderItemTime();
 
 					timer += 1000;
