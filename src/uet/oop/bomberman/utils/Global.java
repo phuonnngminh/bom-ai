@@ -10,4 +10,5 @@ public class Global {
     // GAME PLAY
     public static int gameLevel = 1;
     public static EGameMode gameMode;
+    public static int enemies = 0;
 }

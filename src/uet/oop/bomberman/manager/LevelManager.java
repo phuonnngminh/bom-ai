@@ -5,6 +5,7 @@ import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.exceptions.LoadLevelException;
 import uet.oop.bomberman.level.FileLevelLoader;
 import uet.oop.bomberman.level.LevelLoader;
+import uet.oop.bomberman.utils.EGameMode;
 import uet.oop.bomberman.utils.EScreenName;
 import uet.oop.bomberman.utils.Global;
 
@@ -32,6 +33,7 @@ public class LevelManager implements ILevelManager {
         board.clear();
         try {
             levelLoader = new FileLevelLoader(board, level);
+            calculateEnemies();
         } catch (LoadLevelException e) {
             e.printStackTrace();
         }
@@ -41,9 +43,29 @@ public class LevelManager implements ILevelManager {
         }
     }
 
+    private void calculateEnemies() {
+        int level = Global.gameLevel;
+        EGameMode gameMode = Global.gameMode;
+        if(level == 1 && gameMode == EGameMode.ONE_PLAYER) {
+            Global.enemies = 1;
+        } else if(level == 2 && gameMode == EGameMode.ONE_PLAYER) {
+            Global.enemies = 3;
+        } else if(level == 3 && gameMode == EGameMode.ONE_PLAYER) {
+            Global.enemies = 6;
+        } else if(level == 1 && gameMode == EGameMode.TWO_PLAYER) {
+            Global.enemies = 1;
+        } else if(level == 2 && gameMode == EGameMode.TWO_PLAYER) {
+            Global.enemies = 3;
+        } else if(level == 3 && gameMode == EGameMode.TWO_PLAYER) {
+            Global.enemies = 6;
+        }
+    }
+
+
     @Override
     public void endGame() {
         Global.currentScreen = EScreenName.END_GAME_SCREEN;
+
         board.getGameInfoManager().pause();
     }
 

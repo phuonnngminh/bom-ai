@@ -16,7 +16,6 @@ import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
 import uet.oop.bomberman.sound.Sound;
-import uet.oop.bomberman.utils.EGameMode;
 import uet.oop.bomberman.utils.Global;
 
 public class CharacterManager implements ICharacterManager {
@@ -91,6 +90,7 @@ public class CharacterManager implements ICharacterManager {
 			double messageY = (character.getY() * Game.SCALE) - (character.getSprite().SIZE / 2 * Game.SCALE);
 			int points = character.getPoints();
 			gameInfoManager.addPoints(points);
+			Global.enemies--;
 			Message msg = new Message("+" + points, messageX, messageY, 2, Color.white, 14);
 			gameInfoManager.addMessage(msg);
 			Sound.play("AA126_11");

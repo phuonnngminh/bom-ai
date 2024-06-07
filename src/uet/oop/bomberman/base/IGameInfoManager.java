@@ -25,6 +25,8 @@ public interface IGameInfoManager extends IMessageManager, IRender {
 
     public List<Item> getPlayerActiveItems();
 
+    public List<Item> getPlayer2ActiveItems();
+
     public void setEntityManager(IEntityManager entityManager);
 
     public void render(Screen screen, Graphics g);
