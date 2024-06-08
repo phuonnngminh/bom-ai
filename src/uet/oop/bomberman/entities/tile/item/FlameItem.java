@@ -20,6 +20,6 @@ public class FlameItem extends Item {
 
 	@Override
 	public String getDisplayActiveItem() {
-		return "🔥 ";
+		return " 🔥 ";
 	}
 }

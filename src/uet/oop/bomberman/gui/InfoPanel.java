@@ -33,24 +33,29 @@ public class InfoPanel extends JPanel {
 
 		enemyLabel = new JLabel("Enemies: " + Global.enemies);
 		enemyLabel.setForeground(Color.white);
+		enemyLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		enemyLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		timeLabel = new JLabel("Time: " + game.getBoard().getGameInfoManager().getTime());
 		timeLabel.setForeground(Color.white);
+		timeLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		timeLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		pointsLabel = new JLabel("Points: " + game.getBoard().getGameInfoManager().getPoints());
 		pointsLabel.setForeground(Color.white);
+		pointsLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		pointsLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		itemTimeLabel = new JLabel("");
 		itemTimeLabel.setForeground(Color.white);
 		itemTimeLabel.setHorizontalAlignment(JLabel.CENTER);
+		itemTimeLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		itemTimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
 		p2TimeLabel = new JLabel("");
 		p2TimeLabel.setForeground(Color.white);
 		p2TimeLabel.setHorizontalAlignment(JLabel.CENTER);
+		p2TimeLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		p2TimeLabel.setBorder(BorderFactory.createEmptyBorder(0, 40, 0, 0));
 
 		setBackground(Color.black);
@@ -97,10 +102,10 @@ public class InfoPanel extends JPanel {
 			}
 
 			if (label2 != "") {
-				label2 = "P2 " + label2;
+				label2 = "P2  " + label2;
 			}
 			if (label != "") {
-				label = "P1 " + label;
+				label = "P1  " + label;
 			}
 
 			p2TimeLabel.setText(label2);

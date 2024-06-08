@@ -20,6 +20,6 @@ public class SpeedItem extends Item {
 
 	@Override
 	public String getDisplayActiveItem() {
-		return "👟 ";
+		return " 👟 ";
 	}
 }

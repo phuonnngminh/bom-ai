@@ -20,6 +20,6 @@ public class BombItem extends Item {
 
 	@Override
 	public String getDisplayActiveItem() {
-		return "💣 ";
+		return " 💣 ";
 	}
 }
