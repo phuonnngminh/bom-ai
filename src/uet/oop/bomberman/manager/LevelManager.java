@@ -46,21 +46,20 @@ public class LevelManager implements ILevelManager {
     private void calculateEnemies() {
         int level = Global.gameLevel;
         EGameMode gameMode = Global.gameMode;
-        if(level == 1 && gameMode == EGameMode.ONE_PLAYER) {
+        if (level == 1 && gameMode == EGameMode.ONE_PLAYER) {
             Global.enemies = 1;
-        } else if(level == 2 && gameMode == EGameMode.ONE_PLAYER) {
-            Global.enemies = 3;
-        } else if(level == 3 && gameMode == EGameMode.ONE_PLAYER) {
-            Global.enemies = 6;
-        } else if(level == 1 && gameMode == EGameMode.TWO_PLAYER) {
+        } else if (level == 2 && gameMode == EGameMode.ONE_PLAYER) {
+            Global.enemies = 5;
+        } else if (level == 3 && gameMode == EGameMode.ONE_PLAYER) {
+            Global.enemies = 9;
+        } else if (level == 1 && gameMode == EGameMode.TWO_PLAYER) {
             Global.enemies = 1;
-        } else if(level == 2 && gameMode == EGameMode.TWO_PLAYER) {
-            Global.enemies = 3;
-        } else if(level == 3 && gameMode == EGameMode.TWO_PLAYER) {
-            Global.enemies = 6;
+        } else if (level == 2 && gameMode == EGameMode.TWO_PLAYER) {
+            Global.enemies = 5;
+        } else if (level == 3 && gameMode == EGameMode.TWO_PLAYER) {
+            Global.enemies = 9;
         }
     }
-
 
     @Override
     public void endGame() {

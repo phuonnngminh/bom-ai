@@ -58,11 +58,11 @@ public class InfoPanel extends JPanel {
 	}
 
 	public void setTime(int t) {
-		timeLabel.setText("Time: " + t);
+		timeLabel.setText("⏰ " + t);
 	}
 
 	public void setPoints(int t) {
-		pointsLabel.setText("Score: " + t);
+		pointsLabel.setText("💵 " + t);
 	}
 
 	public void setLevel(int t) {
@@ -70,7 +70,7 @@ public class InfoPanel extends JPanel {
 	}
 
 	public void setEnemies(int t) {
-		enemyLabel.setText("Enemies: " + t);
+		enemyLabel.setText("👻 " + t);
 	}
 
 	public void renderItemTime() {
