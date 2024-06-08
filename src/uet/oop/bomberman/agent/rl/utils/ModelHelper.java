@@ -1,9 +1,9 @@
-package uet.oop.bomberman.agent.rl;
+package uet.oop.bomberman.agent.rl.utils;
 
 import ai.djl.ndarray.NDArray;
 import ai.djl.ndarray.types.Shape;
 
-public final class Helper {
+public final class ModelHelper {
     public static NDArray gather(NDArray arr, int[] indexes) {
         boolean[][] mask = new boolean[(int) arr.size(0)][(int) arr.size(1)];
         for (int i = 0; i < indexes.length; i++) {

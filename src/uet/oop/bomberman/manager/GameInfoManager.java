@@ -86,6 +86,7 @@ public class GameInfoManager implements IGameInfoManager {
     @Override
     public void update() {
         updateMessages();
+		subtractTime();
     }
 
     @Override

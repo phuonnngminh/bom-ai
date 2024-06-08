@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.agent.KeyboardAgent;
 import uet.oop.bomberman.agent.KeyboardAgentPlayer1;
 import uet.oop.bomberman.agent.KeyboardAgentPlayer2;
@@ -86,7 +85,7 @@ public class FileLevelLoader extends LevelLoader {
     @Override
     public void createEntities() {
         Enemy enemy;
-        Agent agent;
+        uet.oop.bomberman.agent.base.Agent agent;
         LayeredEntity layeredEntity;
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {

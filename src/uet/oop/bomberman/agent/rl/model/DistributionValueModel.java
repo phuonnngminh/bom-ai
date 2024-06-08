@@ -8,9 +8,14 @@ import ai.djl.ndarray.types.DataType;
 import ai.djl.ndarray.types.Shape;
 import ai.djl.nn.Activation;
 import ai.djl.nn.Block;
+import ai.djl.nn.Blocks;
 import ai.djl.nn.Parameter;
+import ai.djl.nn.SequentialBlock;
 import ai.djl.nn.core.Linear;
+import ai.djl.nn.norm.BatchNorm;
 import ai.djl.training.ParameterStore;
+import ai.djl.training.initializer.ConstantInitializer;
+import ai.djl.training.initializer.NormalInitializer;
 import ai.djl.training.initializer.XavierInitializer;
 import ai.djl.util.PairList;
 
@@ -25,13 +30,24 @@ public class DistributionValueModel extends BaseModel {
     private final int output_size;
     private final Parameter gamma;
     private final Parameter beta;
+
+    private boolean isFirstUpdate = true;
     private float moving_mean = 0.0f;
     private float moving_var = 1.0f;
 
     private DistributionValueModel(NDManager manager, int hidden_size, int output_size) {
         super(manager);
-        this.linear_input = addChildBlock("linear_input", Linear.builder().setUnits(hidden_size).build());
-        this.linear_action = addChildBlock("linear_action", Linear.builder().setUnits(output_size).build());
+        Block input_block = new SequentialBlock()
+            .add(Linear.builder().setUnits(hidden_size).build())
+            .add(Activation.reluBlock())
+            .add(Linear.builder().setUnits(hidden_size).build())
+            .add(Activation.reluBlock())
+            ;
+        Block action_block = new SequentialBlock()
+            .add(Linear.builder().setUnits(output_size).build())
+            ;
+        this.linear_input = addChildBlock("linear_input", input_block);
+        this.linear_action = addChildBlock("linear_action", action_block);
         this.linear_value = addChildBlock("linear_value", Linear.builder().setUnits(1).build());
 
         Parameter pGamma = Parameter.builder()
@@ -68,9 +84,9 @@ public class DistributionValueModel extends BaseModel {
     protected NDList forwardInternal(ParameterStore parameter_store, NDList inputs, boolean training,
             PairList<String, Object> params) {
 
-        NDList hidden = new NDList(
-                Activation.relu(linear_input.forward(parameter_store, inputs, training).singletonOrThrow()));
-        NDArray scores = normalize(linear_action.forward(parameter_store, hidden, training).singletonOrThrow());
+        NDList hidden = linear_input.forward(parameter_store, inputs, training);
+        NDArray scores = linear_action.forward(parameter_store, hidden, training).singletonOrThrow();
+        scores = normalize(scores);
         NDArray distribution = scores.softmax(scores.getShape().dimension() - 1);
 
         NDArray value = linear_value.forward(parameter_store, hidden, training).singletonOrThrow();
@@ -85,20 +101,33 @@ public class DistributionValueModel extends BaseModel {
 
     @Override
     public void initializeChildBlocks(NDManager manager, DataType data_type, Shape... input_shapes) {
-        setInitializer(new XavierInitializer(), Parameter.Type.WEIGHT);
+        setInitializer(new NormalInitializer(), Parameter.Type.WEIGHT);
+        setInitializer(new ConstantInitializer(1f), Parameter.Type.GAMMA);
+        setInitializer(new ConstantInitializer(0f), Parameter.Type.BETA);
         
-        linear_input.initialize(manager, data_type, input_shapes[0]);
+        linear_input.initialize(manager, data_type, input_shapes);
         linear_action.initialize(manager, data_type, new Shape(hidden_size));
         linear_value.initialize(manager, data_type, new Shape(hidden_size));
+        gamma.initialize(manager, data_type);
+        beta.initialize(manager, data_type);
     }
 
     private NDArray normalize(NDArray arr) {
         float score_mean = arr.mean().getFloat();
-        moving_mean = moving_mean * LAYERNORM_MOMENTUM + score_mean * (1.0f - LAYERNORM_MOMENTUM);
-        moving_var = moving_var * LAYERNORM_MOMENTUM
-                + arr.sub(score_mean).pow(2).mean().getFloat() * (1.0f - LAYERNORM_MOMENTUM);
-        return arr.sub(moving_mean).div(Math.sqrt(moving_var + LAYERNORM_EPSILON)).mul(gamma.getArray())
-                .add(beta.getArray());
+        float score_var = arr.sub(score_mean).pow(2).mean().getFloat();
+        if (isFirstUpdate) {
+            moving_mean = score_mean;
+            moving_var = score_var;
+            isFirstUpdate = false;
+        } else {
+            moving_mean = moving_mean * LAYERNORM_MOMENTUM + score_mean * (1.0f - LAYERNORM_MOMENTUM);
+            moving_var = moving_var * LAYERNORM_MOMENTUM + score_var * (1.0f - LAYERNORM_MOMENTUM);
+        }
+        return arr
+            .sub(moving_mean)
+            .div(Math.sqrt(moving_var + LAYERNORM_EPSILON))
+            .mul(gamma.getArray())
+            .add(beta.getArray());
     }
 
 }

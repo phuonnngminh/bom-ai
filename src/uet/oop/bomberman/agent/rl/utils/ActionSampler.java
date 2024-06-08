@@ -1,4 +1,4 @@
-package uet.oop.bomberman.agent.rl;
+package uet.oop.bomberman.agent.rl.utils;
 
 import java.util.Random;
 

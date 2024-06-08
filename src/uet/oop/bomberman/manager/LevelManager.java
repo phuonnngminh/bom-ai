@@ -12,7 +12,7 @@ import uet.oop.bomberman.utils.Global;
 public class LevelManager implements ILevelManager {
 
     private LevelLoader levelLoader;
-    private Board board;
+    protected Board board;
 
     public LevelManager(Board board) {
         this.board = board;
@@ -20,6 +20,7 @@ public class LevelManager implements ILevelManager {
 
     @Override
     public void nextLevel() {
+        board.handleWinLevel();
         Global.gameLevel += 1;
         loadGlobalLevel();
     }
@@ -63,6 +64,7 @@ public class LevelManager implements ILevelManager {
 
     @Override
     public void endGame() {
+        board.handleLoseLevel();
         Global.currentScreen = EScreenName.END_GAME_SCREEN;
 
         board.getGameInfoManager().pause();

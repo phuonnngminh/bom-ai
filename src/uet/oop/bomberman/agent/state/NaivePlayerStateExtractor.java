@@ -3,14 +3,21 @@ package uet.oop.bomberman.agent.state;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import uet.oop.bomberman.Board;
+import uet.oop.bomberman.Game;
 import uet.oop.bomberman.agent.state.base.PlayerStateExtractor;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.LayeredEntity;
+import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.bomb.Flame;
+import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Character;
+import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.tile.Tile;
+import uet.oop.bomberman.entities.tile.item.Item;
 
 public class NaivePlayerStateExtractor extends PlayerStateExtractor {
 
-    private static final int FIELD_OF_VISION = 9;
+    private static final int FIELD_OF_VISION = 5;
 
     public NaivePlayerStateExtractor(Character player) {
         super(player);
@@ -18,7 +25,16 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
 
     @Override
     public int getDimension() {
-        return 3 * FIELD_OF_VISION * FIELD_OF_VISION;
+        return (
+            FIELD_OF_VISION * FIELD_OF_VISION // isPassable
+            + FIELD_OF_VISION * FIELD_OF_VISION // isItem
+            + FIELD_OF_VISION * FIELD_OF_VISION // isEnemy
+            + FIELD_OF_VISION * FIELD_OF_VISION // isBomb
+            + FIELD_OF_VISION * FIELD_OF_VISION // isFlame
+            + FIELD_OF_VISION * FIELD_OF_VISION // isDestroyable
+            + 1 // time
+            + player.getValidActions().size() // action availability
+        );
     }
 
     private interface BoardTilePredicate {
@@ -34,6 +50,19 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         addSurroundingTileMask(board, embedding, currentIndex, this::isPassable);
         addSurroundingTileMask(board, embedding, currentIndex, this::isItem);
         addSurroundingTileMask(board, embedding, currentIndex, this::isEnemy);
+        addSurroundingTileMask(board, embedding, currentIndex, this::isBomb);
+        addSurroundingTileMask(board, embedding, currentIndex, this::isFlame);
+        addSurroundingTileMask(board, embedding, currentIndex, this::isDestroyable);
+
+        embedding[currentIndex.getAndIncrement()] = board.getGameInfoManager().getTime();
+
+        for (Action action: player.getValidActions()) {
+            if (player.canPerformAction(action)) {
+                embedding[currentIndex.getAndIncrement()] = 1;
+            } else {
+                embedding[currentIndex.getAndIncrement()] = 0;
+            }
+        }
 
         return embedding;
     }
@@ -55,25 +84,45 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         return character.isPlayer() ? 0 : 1;
     }
 
+    private float isBomb(Board board, int x, int y) {
+        Entity entity = board.getEntityManager().getEntityAt(x, y);
+        if (entity == null) return 0;
+        if (entity instanceof Bomb) {
+            return ((Bomb) entity)._timeAfter;
+        }
+        return 0;
+    }
+
+    private float isFlame(Board board, int x, int y) {
+        Entity entity = board.getEntityManager().getEntityAt(x, y);
+        if (entity == null) return 0;
+        if (entity instanceof Flame || entity instanceof FlameSegment) {
+            return 1;
+        }
+        return 0;
+    }
+
     private float isItem(Board board, int x, int y) {
         Entity entity = board.getEntityManager().getEntityAt(x, y);
         if (entity == null) return 0;
         if (entity instanceof LayeredEntity) {
             LayeredEntity layeredEntity = (LayeredEntity) entity;
-            return layeredEntity.hasItem() ? 1 : 0;
+            return layeredEntity.getTopEntity() instanceof Item ? 1 : 0;
         }
         return 0;
     }
 
     private float isPassable(Board board, int x, int y) {
-        int width = board.getLevelManager().getBoardWidth();
-        int height = board.getLevelManager().getBoardHeight();
-        if (x < 0 || y < 0 || x >= width || y >= height) {
-            return 0;
-        }
         Entity entity = board.getEntityManager().getEntityAt(x, y);
         if (entity == null) return 0;
         return entity.canBePassedThroughBy(player) ? 1 : 0;
+    }
+
+    private float isDestroyable(Board board, int x, int y) {
+        Tile tile = board.getEntityManager().getTileManager().getTileAt(x, y);
+        if (tile == null) return 0;
+        if (tile.isDestroyable()) return 1;
+        return 0;
     }
 
     @Override
@@ -92,6 +141,43 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
             enemyPoints += character.getPoints();
         }
         value -= enemyPoints;
+
+        // Reward based on survival time
+        value -= board.getGameInfoManager().getTime() / Game.TICKS_PER_SECOND;
+
+        // Penalize based on number of destroyable tiles left
+        float destroyableTiles = 0;
+        for (int x = 0; x < board.getLevelManager().getBoardWidth(); x++) {
+            for (int y = 0; y < board.getLevelManager().getBoardHeight(); y++) {
+                Tile tile = board.getEntityManager().getTileManager().getTileAt(x, y);
+                if (tile == null) {
+                    continue;
+                }
+                if (tile.isDestroyable()) {
+                    destroyableTiles++;
+                }
+            }
+        }
+        value -= destroyableTiles * 10;
+
+        // Penalize based on number of items left
+        float items = 0;
+        for (int x = 0; x < board.getLevelManager().getBoardWidth(); x++) {
+            for (int y = 0; y < board.getLevelManager().getBoardHeight(); y++) {
+                Tile tile = board.getEntityManager().getTileManager().getTileAt(x, y);
+                if (tile == null) {
+                    continue;
+                }
+                if (!(tile instanceof LayeredEntity)) {
+                    continue;
+                }
+                LayeredEntity layeredEntity = (LayeredEntity) tile;
+                if (layeredEntity.hasItem()) {
+                    items++;
+                }
+            }
+        }
+        value -= items * 50;
 
         return value;
     }

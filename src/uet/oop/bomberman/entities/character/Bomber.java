@@ -164,6 +164,7 @@ public class Bomber extends Character implements CanUseItem {
     private static final List<Action> VALID_ACTIONS = new ArrayList<Action>() {
         {
             addAll(ActionConstants.LIST_ACTION_MOVE);
+            add(ActionConstants.DO_NOTHING);
             add(ActionConstants.PLACE_BOMB);
         }
     };

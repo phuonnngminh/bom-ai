@@ -1,4 +1,4 @@
-package uet.oop.bomberman.agent.rl;
+package uet.oop.bomberman.agent.rl.base;
 
 public abstract class BaseAgent {
     private boolean is_eval = false;

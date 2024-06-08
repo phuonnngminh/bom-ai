@@ -1,11 +1,14 @@
 package uet.oop.bomberman;
 
-import uet.oop.bomberman.agent.Agent;
+import uet.oop.bomberman.agent.base.Agent;
+import uet.oop.bomberman.agent.base.RewardBasedAgent;
 import uet.oop.bomberman.base.Copyable;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.ILevelManager;
 import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.character.action.ActionConstants;
+import uet.oop.bomberman.entities.character.exceptions.ActionOnCooldownException;
 import uet.oop.bomberman.entities.character.exceptions.CharacterActionException;
 import uet.oop.bomberman.graphics.IRender;
 import uet.oop.bomberman.graphics.Screen;
@@ -45,6 +48,11 @@ public class Board implements Copyable, IRender {
 		processAgentAction();
 	}
 
+	public void setLevelManager(ILevelManager levelManager) {
+		this.levelManager = levelManager;
+		levelManager.loadGlobalLevel();
+	}
+
 	private void clearAgents() {
 		agents.clear();
 	}
@@ -54,14 +62,45 @@ public class Board implements Copyable, IRender {
 	}
 
 	private void processAgentAction() {
-
 		for (Agent agent : agents) {
 			List<Action> actions = agent.getNextActions();
 			for (Action action : actions) {
 				try {
 					agent.getCharacter().performAction(action);
+					if (action == ActionConstants.DO_NOTHING) {
+						// Penalize the agent for doing nothing while they can perform something else
+						// for (Action performableAction: agent.getCharacter().getPerformableActions()) {
+						// 	if (performableAction != ActionConstants.DO_NOTHING) {
+						// 		if (agent instanceof RewardBasedAgent) {
+						// 			((RewardBasedAgent)agent).addReward(-10);
+						// 		}
+						// 		break;
+						// 	}
+						// }
+					}
+				} catch (ActionOnCooldownException ex) {
+					// Penalize the agent for spamming actions
+					if (agent instanceof RewardBasedAgent) {
+						((RewardBasedAgent)agent).addReward(-10);
+					}
 				} catch (CharacterActionException ignored) {
 				}
+			}
+		}
+	}
+
+	public void handleWinLevel() {
+		for (Agent agent : agents) {
+			if (agent instanceof RewardBasedAgent) {
+				((RewardBasedAgent)agent).handleWinLevel();
+			}
+		}
+	}
+
+	public void handleLoseLevel() {
+		for (Agent agent : agents) {
+			if (agent instanceof RewardBasedAgent) {
+				((RewardBasedAgent)agent).handleLoseLevel();
 			}
 		}
 	}

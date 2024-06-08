@@ -7,6 +7,6 @@ public class BombermanGame {
 
 	public static void main(String[] args) {
 		Sound.play("soundtrack");
-		new Frame();
+		new Frame().start();
 	}
 }

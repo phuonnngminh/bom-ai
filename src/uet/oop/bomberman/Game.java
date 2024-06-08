@@ -36,10 +36,10 @@ public class Game extends Canvas {
 	public static final int BOMBRADIUS = 1;
 	public static final double BOMBERSPEED = 3.0;// toc do bomber
 
-	public static final int TIME = 200;
+	public static final int TIME = 200 * TICKS_PER_SECOND;
 	public static final int POINTS = 0;
 
-	protected static int SCREENDELAY = 3;
+	protected static int SCREENDELAY = 3 * TICKS_PER_SECOND;
 
 	protected int _screenDelay = SCREENDELAY;
 
@@ -60,6 +60,8 @@ public class Game extends Canvas {
 	public SelectLevelScreen selectLevelScreen;
 	private SelectGameModeScreen selectGameModeScreen;
 	public DeadScreen deadScreen;
+
+	public boolean headless = false;
 
 	private int _screenToShow = -1; // 1:endgame, 2:changelevel, 3:paused
 
@@ -169,9 +171,17 @@ public class Game extends Canvas {
 					renderGame(g);
 				}
 
+				if (Keyboard.i().resume) {
+					gameInfoManager.unpause();
+					_screenToShow = -1;
+					_screenDelay = 0;
+				}
+
+				if (_screenToShow == 2) --_screenDelay;
+
 				frames++;
 				if (System.currentTimeMillis() - timer > 1000) {
-					_frame.setTime(gameInfoManager.subtractTime());
+					_frame.setTime(gameInfoManager.getTime());
 					_frame.setPoints(gameInfoManager.getPoints());
 					_frame.setLevel(Global.gameLevel);
 					_frame.setEnemy(Global.enemies);
@@ -181,9 +191,6 @@ public class Game extends Canvas {
 					_frame.setTitle(TITLE + " | " + updates + " rate, " + frames + " fps");
 					updates = 0;
 					frames = 0;
-
-					if (_screenToShow == 2)
-						--_screenDelay;
 				}
 				break;
 			case SELECT_LEVEL_SCREEN:
@@ -224,14 +231,26 @@ public class Game extends Canvas {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
-			while (delta >= 1) {
-				update();
-				updates++;
-				delta--;
-			}
 
-			showScreen();
+			if (headless) {
+				// Headless mode: update as fast as possible, without rendering
+				update();
+				showScreen();
+			} else {
+				// Keep updating to catch up with 60 frames per second
+				while (delta >= 1) {
+					update();
+					updates++;
+					delta--;
+				}
+	
+				showScreen();
+			}
 		}
+	}
+
+	public void stop() {
+		_running = false;
 	}
 
 	private void snapCameraToPlayer() {
