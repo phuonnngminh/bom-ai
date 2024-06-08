@@ -44,6 +44,9 @@ public class Keyboard implements KeyListener {
 		space = keys[KeyEvent.VK_SPACE];
 		x = keys[KeyEvent.VK_X];
 
+		pause = keys[KeyEvent.VK_ESCAPE];
+		resume = keys[KeyEvent.VK_ENTER];
+
 		// Player 1
 		player1_up = keys[KeyEvent.VK_W];
 		player1_down = keys[KeyEvent.VK_S];
