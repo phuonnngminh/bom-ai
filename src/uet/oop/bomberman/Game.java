@@ -120,10 +120,15 @@ public class Game extends Canvas {
 		switch (Global.currentScreen) {
 			case GAME_PLAY_SCREEN:
 				_board.update();
-				if (Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
+				if (_screenToShow == -1 && Keyboard.i().pause) { // Kiểm tra nếu phím "p" được nhấn
 					_screenToShow = 3; // Hiển thị màn hình tạm dừng
 					_board.getGameInfoManager().pause(); // Đặt trạng thái game là tạm dừng
 					return;
+				}
+				if (_screenToShow == 3 && Keyboard.i().resume) {
+					_board.getGameInfoManager().unpause();
+					_screenToShow = -1;
+					_screenDelay = 0;
 				}
 				snapCameraToPlayer();
 				break;
@@ -154,7 +159,7 @@ public class Game extends Canvas {
 			case GAME_PLAY_SCREEN:
 				Keyboard.i().keyboardInputCallback = Optional.empty();
 				if (gameInfoManager.isPaused()) {
-					if (_screenDelay <= 0) {
+					if (_screenToShow == 2 && _screenDelay <= 0) {
 						_screenToShow = -1;
 						gameInfoManager.unpause();
 					}
@@ -164,11 +169,6 @@ public class Game extends Canvas {
 					renderGame(g);
 				}
 
-				if (Keyboard.i().resume) {
-					gameInfoManager.unpause();
-					_screenToShow = -1;
-					_screenDelay = 0;
-				}
 				frames++;
 				if (System.currentTimeMillis() - timer > 1000) {
 					_frame.setTime(gameInfoManager.subtractTime());
