@@ -12,10 +12,10 @@ import uet.oop.bomberman.graphics.Screen;
 
 public class BombManager implements IBombManager {
 
-    private List<Bomb> bombs = new ArrayList<>();
+	private List<Bomb> bombs = new ArrayList<>();
 
-    public BombManager() {
-    }
+	public BombManager() {
+	}
 
 	@Override
 	public void addBomb(Bomb e) {
@@ -60,8 +60,8 @@ public class BombManager implements IBombManager {
 	public void update() {
 		bombs.forEach(Bomb::update);
 		bombs = bombs.stream()
-			.filter(bomb -> !bomb.isRemoved())
-			.collect(Collectors.toList());
+				.filter(bomb -> !bomb.isRemoved())
+				.collect(Collectors.toList());
 	}
 
 	@Override

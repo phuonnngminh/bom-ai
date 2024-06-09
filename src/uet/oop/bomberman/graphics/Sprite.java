@@ -12,6 +12,7 @@ public class Sprite {
 	protected int _realHeight;
 	private SpriteSheet _sheet;
 	private SpriteSheet1 _sheet1;
+	public static final int SCALED_SIZE = 16;
 	/*
 	 * |--------------------------------------------------------------------------
 	 * | Board sprites

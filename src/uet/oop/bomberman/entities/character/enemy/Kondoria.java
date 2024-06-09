@@ -5,11 +5,12 @@ import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Kondoria extends Enemy {
+    protected int bombCooldown = 0;
+
     public Kondoria(int x, int y, IEntityManager entityManager) {
-        super(x, y, entityManager, Sprite.balloom_dead, Game.BOMBERSPEED / 4, 1000);
+        super(x, y, entityManager, Sprite.kondoria_dead, Game.BOMBERSPEED * 2, 300);
 
         _sprite = Sprite.kondoria_right1;
-
     }
 
     @Override
@@ -33,4 +34,5 @@ public class Kondoria extends Enemy {
                 break;
         }
     }
+
 }

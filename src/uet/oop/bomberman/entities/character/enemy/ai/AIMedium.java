@@ -7,7 +7,7 @@ public class AIMedium extends AI {
 
 	private final Character character;
 	private final ICharacterManager characterManager;
-	
+
 	public AIMedium(Character character, ICharacterManager entityManager) {
 		this.character = character;
 		this.characterManager = entityManager;
@@ -16,19 +16,19 @@ public class AIMedium extends AI {
 	@Override
 	public int calculateDirection() {
 
-		int vertical = random.nextInt(2);
-		
-		if(vertical == 1) {
+		int vertical = random.nextInt(4);
+
+		if (vertical == 1) {
 			int v = calculateRowDirection();
-			if(v != -1)
+			if (v != -1)
 				return v;
 			else
 				return calculateColDirection();
-			
+
 		} else {
 			int h = calculateColDirection();
-			
-			if(h != -1)
+
+			if (h != -1)
 				return h;
 			else
 				return calculateRowDirection();
@@ -38,20 +38,20 @@ public class AIMedium extends AI {
 	protected int calculateColDirection() {
 		Character player = characterManager.getPlayer();
 
-		if(player.getXTile() < character.getXTile())
+		if (player.getXTile() < character.getXTile())
 			return 3;
-		else if(player.getXTile() > character.getXTile())
+		else if (player.getXTile() > character.getXTile())
 			return 1;
-		
+
 		return -1;
 	}
-	
+
 	protected int calculateRowDirection() {
 		Character player = characterManager.getPlayer();
 
-		if(player.getYTile() < character.getYTile())
+		if (player.getYTile() < character.getYTile())
 			return 0;
-		else if(player.getYTile() > character.getYTile())
+		else if (player.getYTile() > character.getYTile())
 			return 2;
 		return -1;
 	}

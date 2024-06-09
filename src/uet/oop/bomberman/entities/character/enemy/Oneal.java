@@ -7,7 +7,7 @@ import uet.oop.bomberman.graphics.Sprite;
 public class Oneal extends Enemy {
 	// private Random random = new Random();
 	public Oneal(int x, int y, IEntityManager entityManager) {
-		super(x, y, entityManager, Sprite.balloom_dead, Game.BOMBERSPEED, 100);
+		super(x, y, entityManager, Sprite.balloom_dead, Game.BOMBERSPEED * 1.5, 400);
 
 		_sprite = Sprite.oneal_left1;
 	}

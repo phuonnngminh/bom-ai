@@ -6,7 +6,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public class Minvo extends Enemy {
     public Minvo(int x, int y, IEntityManager entityManager) {
-        super(x, y, entityManager, Sprite.minvo_dead, Game.BOMBERSPEED * 1.5, 800);
+        super(x, y, entityManager, Sprite.minvo_dead, Game.BOMBERSPEED * 2, 500);
         _sprite = Sprite.minvo_right1;
     }
 

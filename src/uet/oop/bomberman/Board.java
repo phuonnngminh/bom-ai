@@ -2,6 +2,7 @@ package uet.oop.bomberman;
 
 import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.base.Copyable;
+import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.IEntityManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.ILevelManager;
@@ -27,6 +28,8 @@ public class Board implements Copyable, IRender {
 	private IEntityManager entityManager;
 	private IGameInfoManager gameInfoManager;
 	private ILevelManager levelManager;
+
+	private IBombManager bombManager;
 
 	public Board(Game game, Screen screen) {
 		_game = game;
@@ -79,11 +82,10 @@ public class Board implements Copyable, IRender {
 	public synchronized void init() {
 		gameInfoManager = new GameInfoManager();
 		entityManager = new EntityManager(
-			levelManager.getBoardWidth(),
-			levelManager.getBoardHeight(),
-			gameInfoManager,
-			levelManager
-		);
+				levelManager.getBoardWidth(),
+				levelManager.getBoardHeight(),
+				gameInfoManager,
+				levelManager);
 		gameInfoManager.setEntityManager(entityManager);
 		gameInfoManager.pause();
 		_game.setScreenToShow(2);
@@ -104,6 +106,10 @@ public class Board implements Copyable, IRender {
 
 	public ILevelManager getLevelManager() {
 		return levelManager;
+	}
+
+	public IBombManager getBombManager() {
+		return bombManager;
 	}
 
 	@Override

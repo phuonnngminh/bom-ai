@@ -20,6 +20,7 @@ import uet.oop.bomberman.entities.character.enemy.Enemy;
 import uet.oop.bomberman.entities.character.enemy.Kondoria;
 import uet.oop.bomberman.entities.character.enemy.Minvo;
 import uet.oop.bomberman.entities.character.enemy.Oneal;
+import uet.oop.bomberman.entities.character.enemy.ai.AIHigh;
 import uet.oop.bomberman.entities.character.enemy.ai.AILow;
 import uet.oop.bomberman.entities.character.enemy.ai.AIMedium;
 import uet.oop.bomberman.entities.tile.Grass;
@@ -191,8 +192,7 @@ public class FileLevelLoader extends LevelLoader {
                         _board.getEntityManager().getCharacterManager().addCharacter(enemy);
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
-                        agent = new MovingAgent(enemy,
-                                new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
+                        agent = new MovingAgent(enemy, new AILow());
                         _board.addAgent(agent);
                         break;
                     // Thêm minvo
@@ -218,7 +218,8 @@ public class FileLevelLoader extends LevelLoader {
                         _board.getEntityManager().getTileManager().addTile(x + y * _width,
                                 new Grass(x, y, Sprite.grass));
                         agent = new MovingAgent(enemy,
-                                new AIMedium(enemy, _board.getEntityManager().getCharacterManager()));
+                                new AIHigh(enemy, _board.getEntityManager().getCharacterManager(),
+                                        _board.getEntityManager().getBombManager()));
                         _board.addAgent(agent);
                         break;
                     // Thêm BomItem

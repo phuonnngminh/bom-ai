@@ -4,6 +4,7 @@ import java.util.List;
 
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.graphics.IRender;
+import uet.oop.bomberman.manager.BombManager;
 
 public interface ICharacterManager extends IRender {
 
@@ -24,4 +25,6 @@ public interface ICharacterManager extends IRender {
     public void addPlayer(Character e);
 
     public List<Character> getPlayers();
+
+    public IBombManager getBombManager();
 }
