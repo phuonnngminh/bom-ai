@@ -12,6 +12,7 @@ public class TrainAgent {
     }
 
     private TrainAgent() {
+        Global.isAIPlayer = true;
         Frame frame = new Frame();
         Game game = frame._gamepane.getGame();
         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;

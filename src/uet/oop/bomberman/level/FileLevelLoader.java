@@ -139,10 +139,12 @@ public class FileLevelLoader extends LevelLoader {
                         // if
                         if (Global.gameMode == EGameMode.TWO_PLAYER) {
                             agent = new KeyboardAgentPlayer1(bomber);
-                        } else {
+                        } else if (Global.isAIPlayer) {
                             PPOAgent ppoAgent = new NaivePPOAgent(bomber, _board);
                             ppoAgent.load();
                             agent = ppoAgent;
+                        } else {
+                            agent = new KeyboardAgent(bomber);
                         }
                         _board.addAgent(agent);
                         break;
