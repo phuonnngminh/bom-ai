@@ -161,15 +161,16 @@ public class Bomber extends Character implements CanUseItem {
         return 0;
     }
 
-    private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>() {
+    private static final List<Action> VALID_ACTIONS = new ArrayList<Action>() {
         {
             addAll(ActionConstants.LIST_ACTION_MOVE);
+            add(ActionConstants.DO_NOTHING);
             add(ActionConstants.PLACE_BOMB);
         }
     };
 
     @Override
-    protected List<? extends Action> getValidActions() {
+    public List<Action> getValidActions() {
         return VALID_ACTIONS;
     }
 

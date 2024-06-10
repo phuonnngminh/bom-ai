@@ -62,14 +62,14 @@ public abstract class Character extends AnimatedEntitiy {
 	@Override
 	public abstract void render(Screen screen);
 
-	private static final List<? extends Action> VALID_ACTIONS = new ArrayList<Action>() {
+	private static final List<Action> VALID_ACTIONS = new ArrayList<Action>() {
 		{
 			addAll(ActionConstants.LIST_ACTION_MOVE);
 			add(ActionConstants.DO_NOTHING);
 		}
 	};
 
-	protected List<? extends Action> getValidActions() {
+	public List<Action> getValidActions() {
 		return VALID_ACTIONS;
 	}
 
@@ -105,7 +105,7 @@ public abstract class Character extends AnimatedEntitiy {
 		}
 	};
 
-	public List<? extends Action> getPerformableActions() {
+	public List<Action> getPerformableActions() {
 		return getValidActions().stream()
 				.filter(this::canPerformAction)
 				.collect(Collectors.toList());

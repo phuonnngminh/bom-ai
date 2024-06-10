@@ -1,4 +1,4 @@
-package uet.oop.bomberman.agent;
+package uet.oop.bomberman.agent.base;
 
 import uet.oop.bomberman.entities.character.Character;
 

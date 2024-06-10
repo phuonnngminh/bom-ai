@@ -36,7 +36,7 @@ public class InfoPanel extends JPanel {
 		enemyLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		enemyLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		timeLabel = new JLabel("Time: " + game.getBoard().getGameInfoManager().getTime());
+		timeLabel = new JLabel("Time: " + game.getBoard().getGameInfoManager().getTime() / Game.TICKS_PER_SECOND);
 		timeLabel.setForeground(Color.white);
 		timeLabel.setFont(new Font("DejaVu Sans", Font.PLAIN, 15));
 		timeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -63,7 +63,7 @@ public class InfoPanel extends JPanel {
 	}
 
 	public void setTime(int t) {
-		timeLabel.setText("⏰ " + t);
+		timeLabel.setText("⏰ " + t / Game.TICKS_PER_SECOND);
 	}
 
 	public void setPoints(int t) {

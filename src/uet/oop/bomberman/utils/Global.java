@@ -9,6 +9,6 @@ public class Global {
 
     // GAME PLAY
     public static int gameLevel = 1;
-    public static EGameMode gameMode;
+    public static EGameMode gameMode = EGameMode.ONE_PLAYER;
     public static int enemies = 0;
 }

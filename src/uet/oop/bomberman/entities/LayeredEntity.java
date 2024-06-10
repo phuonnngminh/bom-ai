@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities;
 
 import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.entities.tile.destroyable.DestroyableTile;
+import uet.oop.bomberman.entities.tile.item.Item;
 import uet.oop.bomberman.graphics.Screen;
 
 import java.util.LinkedList;
@@ -55,6 +56,13 @@ public class LayeredEntity extends Tile {
 	
 	public void addBeforeTop(Tile e) {
 		_entities.add(_entities.size() - 1, e);
+	}
+
+	public boolean hasItem() {
+		for (Tile e : _entities) {
+			if(e instanceof Item) return true;
+		}
+		return false;
 	}
 	
 	@Override

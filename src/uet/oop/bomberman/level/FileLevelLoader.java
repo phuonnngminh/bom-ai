@@ -2,15 +2,18 @@ package uet.oop.bomberman.level;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.Game;
-import uet.oop.bomberman.agent.Agent;
 import uet.oop.bomberman.agent.KeyboardAgent;
 import uet.oop.bomberman.agent.KeyboardAgentPlayer1;
 import uet.oop.bomberman.agent.KeyboardAgentPlayer2;
 import uet.oop.bomberman.agent.MovingAgent;
+import uet.oop.bomberman.agent.base.Agent;
+import uet.oop.bomberman.agent.ppo.NaivePPOAgent;
+import uet.oop.bomberman.agent.ppo.PPOAgent;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Bomber2;
@@ -86,7 +89,7 @@ public class FileLevelLoader extends LevelLoader {
     @Override
     public void createEntities() {
         Enemy enemy;
-        Agent agent;
+        uet.oop.bomberman.agent.base.Agent agent;
         LayeredEntity layeredEntity;
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
@@ -137,7 +140,9 @@ public class FileLevelLoader extends LevelLoader {
                         if (Global.gameMode == EGameMode.TWO_PLAYER) {
                             agent = new KeyboardAgentPlayer1(bomber);
                         } else {
-                            agent = new KeyboardAgent(bomber);
+                            PPOAgent ppoAgent = new NaivePPOAgent(bomber, _board);
+                            ppoAgent.load();
+                            agent = ppoAgent;
                         }
                         _board.addAgent(agent);
                         break;

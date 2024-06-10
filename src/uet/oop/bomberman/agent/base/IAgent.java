@@ -1,4 +1,4 @@
-package uet.oop.bomberman.agent;
+package uet.oop.bomberman.agent.base;
 
 import java.util.List;
 

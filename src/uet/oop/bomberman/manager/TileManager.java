@@ -19,7 +19,11 @@ public class TileManager implements ITileManager {
 
 	@Override
 	public Tile getTileAt(double x, double y) {
-		return tiles[(int) x + (int) y * width];
+		int index = (int) x + (int) y * width;
+		if (index < 0 || index >= tiles.length) {
+			return null;
+		}
+		return tiles[index];
 	}
 
 	@Override

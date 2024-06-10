@@ -3,6 +3,7 @@ package uet.oop.bomberman.agent;
 import java.util.ArrayList;
 import java.util.List;
 
+import uet.oop.bomberman.agent.base.Agent;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
