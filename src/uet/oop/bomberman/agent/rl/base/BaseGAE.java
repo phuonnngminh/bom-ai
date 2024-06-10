@@ -56,7 +56,6 @@ public abstract class BaseGAE extends BaseAgent {
         this.hidden_size = hidden_size;
         this.optimizer = Optimizer.adam()
             .optLearningRateTracker(Tracker.fixed(learning_rate))
-            .optClipGrad(1.0f)
             .build();
         this.reset();
     }

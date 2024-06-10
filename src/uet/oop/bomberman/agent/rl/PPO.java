@@ -1,21 +1,17 @@
 package uet.oop.bomberman.agent.rl;
 
-import ai.djl.engine.Engine;
 import ai.djl.ndarray.NDArray;
-import ai.djl.ndarray.NDArrays;
 import ai.djl.ndarray.NDList;
 import ai.djl.ndarray.NDManager;
 import ai.djl.ndarray.index.NDIndex;
+import ai.djl.ndarray.types.DataType;
 import ai.djl.ndarray.types.Shape;
-import ai.djl.nn.Parameter;
 import ai.djl.training.DefaultTrainingConfig;
 import ai.djl.training.GradientCollector;
 import ai.djl.training.Trainer;
-import ai.djl.training.TrainingResult;
 import ai.djl.training.listener.TrainingListener;
 import ai.djl.training.loss.Loss;
 import ai.djl.translate.TranslateException;
-import ai.djl.util.Pair;
 import uet.oop.bomberman.agent.rl.base.BaseGAE;
 import uet.oop.bomberman.agent.rl.dtypes.MemoryBatch;
 import uet.oop.bomberman.agent.rl.utils.ModelHelper;
@@ -25,6 +21,8 @@ public class PPO extends BaseGAE {
     private final int inner_batch_size;
     private final float ratio_lower_bound;
     private final float ratio_upper_bound;
+
+    private NDArray last_gradient_01 = null;
 
     public PPO(int dim_of_state_space, int num_of_action, int hidden_size, float gamma, float gae_lambda,
             float learning_rate, int inner_updates, int inner_batch_size, float ratio_clip) {
@@ -48,7 +46,10 @@ public class PPO extends BaseGAE {
 
             NDList net_output = trainer.evaluate(new NDList(states));
     
-            NDArray distribution = ModelHelper.gather(net_output.get(0).duplicate(), actions.toIntArray());
+            NDArray distribution = ModelHelper.gather(
+                net_output.get(0).duplicate(),
+                actions.toIntArray()
+            );
             NDArray values = net_output.get(1).duplicate();
     
             NDArray rewards = batch.getRewards();
@@ -56,27 +57,27 @@ public class PPO extends BaseGAE {
             NDArray expected_returns = estimates.get(0);
             NDArray advantages = estimates.get(1);
     
-            int[] index = new int[inner_batch_size];
-
             float rewardsValue = rewards.sum().getFloat();
-            double lossValue = 0.0;
+            float lossValue = 0.0f;
     
             long iters = inner_updates * (1 + actions.size() / inner_batch_size);
             for (int i = 0; i < iters; i++) {
-                for (int j = 0; j < inner_batch_size; j++) {
-                    index[j] = random.nextInt((int) actions.size());
-                }
+
+                NDArray index = manager.randomInteger(0, actions.size(), new Shape(inner_batch_size), DataType.INT32);
                 
-                NDArray states_subset = getSample(submanager, states, index);
-                NDArray actions_subset = getSample(submanager, actions, index);
-                NDArray distribution_subset = getSample(submanager, distribution, index);
-                NDArray expected_returns_subset = getSample(submanager, expected_returns, index);
-                NDArray advantages_subset = getSample(submanager, advantages, index);
+                NDArray states_subset = states.get(index);
+                NDArray actions_subset = actions.get(index);
+                NDArray distribution_subset = distribution.get(index);
+                NDArray expected_returns_subset = expected_returns.get(index);
+                NDArray advantages_subset = advantages.get(index);
 
                 try (GradientCollector collector = trainer.newGradientCollector()) {
         
                     NDList net_output_updated = trainer.forward(new NDList(states_subset));
-                    NDArray distribution_updated = ModelHelper.gather(net_output_updated.get(0), actions_subset.toIntArray());
+                    NDArray distribution_updated = ModelHelper.gather(
+                        net_output_updated.get(0),
+                        actions_subset.toIntArray()
+                    );
                     NDArray values_updated = net_output_updated.get(1);
         
                     NDArray loss_critic = (expected_returns_subset.sub(values_updated.squeeze())).square().mean();
@@ -87,18 +88,34 @@ public class PPO extends BaseGAE {
                     NDArray loss_actor = td_objective.minimum(clipped_td_objective).mean();
 
                     NDArray distribution_entropy = net_output_updated.get(0).mul(
-                        net_output_updated.get(0).add(new Float(1e-2)).log()
+                        net_output_updated.get(0).add(1e-2).log()
                     ).sum().neg();
 
                     NDArray loss = loss_critic;
                     loss = loss.sub(loss_actor);
                     loss = loss.sub(distribution_entropy.mul(0.05));
 
-                    double _loss = loss.getDouble();
-
                     collector.backward(loss);
 
+                    float _loss = 0.0f;
+                    try {
+                        _loss = (float) loss.getDouble();
+                    } catch (IllegalStateException ex) {
+                        ex.printStackTrace();
+                        _loss = loss.getFloat();
+                    }
                     lossValue += _loss;
+
+                    NDArray gradient = model.getBlock()
+                        .getChildren().get(1).getValue()
+                        .getParameters().get(0).getValue()
+                        .getArray()
+                        .getGradient()
+                        .duplicate();
+                    if (gradient.isNaN().any().getBoolean() || gradient.isInfinite().any().getBoolean()) {
+                        throw new IllegalStateException();
+                    }
+                    last_gradient_01 = gradient;
 
                     trainer.step();
                 }
@@ -110,6 +127,8 @@ public class PPO extends BaseGAE {
             System.out.println("Iters: " + iters);
             System.out.println("Avg loss: " + lossValue / iters);
             System.out.println("Total rewards: " + rewardsValue);
+
+            System.out.println();
 
         }
     }

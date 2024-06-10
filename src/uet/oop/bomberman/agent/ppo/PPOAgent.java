@@ -32,7 +32,7 @@ public class PPOAgent extends Agent implements SerializableAgent, RewardBasedAge
             stateExtractor.getDimension(),
             validActions.size(),
             64,
-            0.99f,
+            0.97f,
             0.95f,
             3e-4f,
             8,

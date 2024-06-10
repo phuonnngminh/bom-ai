@@ -17,7 +17,7 @@ public class TrainAgent {
         Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
         game.getBoard().setLevelManager(new LoopingLevelManager(game.getBoard()));
         game.headless = true;
-        // frame.setVisible(false);
+        frame.setVisible(false);
         Thread thread = new Thread(frame::start, "GameThread");
         thread.start();
     }

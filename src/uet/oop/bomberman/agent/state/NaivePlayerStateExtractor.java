@@ -17,6 +17,7 @@ import uet.oop.bomberman.entities.tile.item.Item;
 
 public class NaivePlayerStateExtractor extends PlayerStateExtractor {
 
+    private static final float EPSILON = 0.01f;
     private static final int FIELD_OF_VISION = 5;
 
     public NaivePlayerStateExtractor(Character player) {
@@ -54,13 +55,13 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         addSurroundingTileMask(board, embedding, currentIndex, this::isFlame);
         addSurroundingTileMask(board, embedding, currentIndex, this::isDestroyable);
 
-        embedding[currentIndex.getAndIncrement()] = board.getGameInfoManager().getTime();
+        embedding[currentIndex.getAndIncrement()] = board.getGameInfoManager().getTime() * 1.0f / Game.TIME;
 
         for (Action action: player.getValidActions()) {
             if (player.canPerformAction(action)) {
                 embedding[currentIndex.getAndIncrement()] = 1;
             } else {
-                embedding[currentIndex.getAndIncrement()] = 0;
+                embedding[currentIndex.getAndIncrement()] = EPSILON;
             }
         }
 
@@ -72,7 +73,10 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
             for (int dx = -FIELD_OF_VISION / 2; dx <= FIELD_OF_VISION / 2; dx++) {
                 int x = player.getXTile() + dx;
                 int y = player.getYTile() + dy;
-                float value = predicate.test(board, x + dx, y + dy);
+                float value = predicate.test(board, x, y);
+                if (value == 0) {
+                    value += EPSILON;
+                }
                 embedding[currentIndex.getAndIncrement()] = value;
             }
         }

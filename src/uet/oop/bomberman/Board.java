@@ -81,6 +81,12 @@ public class Board implements Copyable, IRender {
 				} catch (ActionOnCooldownException ex) {
 					// Penalize the agent for spamming actions
 					if (agent instanceof RewardBasedAgent) {
+						System.out.println(
+							"Character "
+							+ agent.getCharacter().getClass().getSimpleName()
+							+ " action on cooldown: "
+							+ action.getClass().getSimpleName()
+						);
 						((RewardBasedAgent)agent).addReward(-10);
 					}
 				} catch (CharacterActionException ignored) {

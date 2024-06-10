@@ -22,9 +22,16 @@ import ai.djl.util.PairList;
 public class DistributionValueModel extends BaseModel {
     private static final float LAYERNORM_MOMENTUM = 0.9999f;
     private static final float LAYERNORM_EPSILON = 1e-5f;
+
     private final Block linear_input;
     private final Block linear_action;
     private final Block linear_value;
+
+    public NDArray last_linear_input;
+    public NDArray last_linear_action;
+    public NDArray last_linear_action_norm;
+    public NDArray last_linear_action_dist;
+    public NDArray last_linear_value;
 
     private final int hidden_size;
     private final int output_size;
@@ -85,11 +92,18 @@ public class DistributionValueModel extends BaseModel {
             PairList<String, Object> params) {
 
         NDList hidden = linear_input.forward(parameter_store, inputs, training);
-        NDArray scores = linear_action.forward(parameter_store, hidden, training).singletonOrThrow();
-        scores = normalize(scores);
-        NDArray distribution = scores.softmax(scores.getShape().dimension() - 1);
+        last_linear_input = hidden.singletonOrThrow();
+
+        NDArray output_action = linear_action.forward(parameter_store, hidden, training).singletonOrThrow();
+        last_linear_action = output_action;
+        // output_action = normalize(output_action, training);
+        // last_linear_action_norm = output_action;
+
+        NDArray distribution = output_action.softmax(output_action.getShape().dimension() - 1);
+        last_linear_action_dist = distribution;
 
         NDArray value = linear_value.forward(parameter_store, hidden, training).singletonOrThrow();
+        last_linear_value = value;
 
         return new NDList(distribution, value);
     }
@@ -112,20 +126,25 @@ public class DistributionValueModel extends BaseModel {
         beta.initialize(manager, data_type);
     }
 
-    private NDArray normalize(NDArray arr) {
-        float score_mean = arr.mean().getFloat();
-        float score_var = arr.sub(score_mean).pow(2).mean().getFloat();
-        if (isFirstUpdate) {
-            moving_mean = score_mean;
-            moving_var = score_var;
-            isFirstUpdate = false;
-        } else {
-            moving_mean = moving_mean * LAYERNORM_MOMENTUM + score_mean * (1.0f - LAYERNORM_MOMENTUM);
-            moving_var = moving_var * LAYERNORM_MOMENTUM + score_var * (1.0f - LAYERNORM_MOMENTUM);
-        }
+    private NDArray normalize(NDArray arr, boolean training) {
+        int last_dimension = arr.getShape().dimension() - 1;
+        NDArray score_mean = arr.mean(new int[]{last_dimension}).expandDims(last_dimension);
+        NDArray score_var = arr.sub(score_mean).pow(2)
+            .mean(new int[]{last_dimension})
+            .expandDims(last_dimension);
+        // float score_mean = arr.mean().getFloat();
+        // float score_var = arr.sub(score_mean).pow(2).mean().getFloat();
+        // if (isFirstUpdate) {
+        //     moving_mean = score_mean;
+        //     moving_var = score_var;
+        //     isFirstUpdate = false;
+        // } else {
+        //     moving_mean = moving_mean * LAYERNORM_MOMENTUM + score_mean * (1.0f - LAYERNORM_MOMENTUM);
+        //     moving_var = moving_var * LAYERNORM_MOMENTUM + score_var * (1.0f - LAYERNORM_MOMENTUM);
+        // }
         return arr
-            .sub(moving_mean)
-            .div(Math.sqrt(moving_var + LAYERNORM_EPSILON))
+            .sub(score_mean)
+            .div(score_var.add(LAYERNORM_EPSILON).sqrt())
             .mul(gamma.getArray())
             .add(beta.getArray());
     }
