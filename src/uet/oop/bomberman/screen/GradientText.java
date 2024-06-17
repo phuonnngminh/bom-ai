@@ -5,11 +5,14 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 
 public class GradientText {
-
     private Font font;
-    private Color color1, color2, color3;
+    private Color color1;
+    private Color color2;
+    private Color color3;
 
     public GradientText(Font font, Color color1, Color color2, Color color3) {
         this.font = font;
@@ -19,22 +22,24 @@ public class GradientText {
     }
 
     public void draw(Graphics2D g2d, String text, int x, int y) {
-        g2d.setFont(font);
-
-        FontMetrics fm = g2d.getFontMetrics();
-
-        // Create LinearGradientPaint
-        float[] fractions = { 0.0f, 0.5f, 1.0f };
-        Color[] colors = { color1, color2, color3 };
-        LinearGradientPaint gradient = new LinearGradientPaint(0, 0, fm.stringWidth(text), 0, fractions, colors);
-
-        g2d.setPaint(gradient);
-
         FontRenderContext frc = g2d.getFontRenderContext();
-        TextLayout textLayout = new TextLayout(text, font, frc);
-        Rectangle2D bounds = textLayout.getBounds();
-        Shape shape = textLayout.getOutline(AffineTransform.getTranslateInstance(x, y + bounds.getHeight()));
+        GlyphVector gv = font.createGlyphVector(frc, text);
+        Shape outline = gv.getOutline(x, y);
 
-        g2d.fill(shape);
+        Rectangle bounds = outline.getBounds();
+        GradientPaint gradientPaint1 = new GradientPaint(
+                bounds.x, bounds.y, color1,
+                bounds.x + bounds.width / 2f, bounds.y, color2);
+        GradientPaint gradientPaint2 = new GradientPaint(
+                bounds.x + bounds.width / 2f, bounds.y, color2,
+                bounds.x + bounds.width, bounds.y, color3);
+
+        // Draw first half of the text
+        g2d.setPaint(gradientPaint1);
+        g2d.fill(outline);
+
+        // Draw second half of the text
+        g2d.setPaint(gradientPaint2);
+        g2d.fill(outline);
     }
 }
