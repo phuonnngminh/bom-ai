@@ -9,4 +9,5 @@ public enum EGameControl {
     ENTER,
     SPACE,
     X,
+    BACK,
 }

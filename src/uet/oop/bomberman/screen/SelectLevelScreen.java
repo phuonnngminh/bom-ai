@@ -31,6 +31,7 @@ public class SelectLevelScreen extends GameScreen {
         levels.add(EGameLevel.EASY.getStringLevel());
         levels.add(EGameLevel.MEDIUM.getStringLevel());
         levels.add(EGameLevel.HARD.getStringLevel());
+        levels.add(EGameLevel.BACK.getStringLevel());
 
         try {
             backgroundImage = ImageIO.read(getClass().getResource("/menu/bgBombman.png"));
@@ -54,9 +55,18 @@ public class SelectLevelScreen extends GameScreen {
                         selectorIndex++;
                         break;
                     case ENTER:
-                        Global.gameLevel = selectorIndex + 1;
-                        _board.getLevelManager().loadGlobalLevel();
-                        Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        if (selectorIndex == levels.size() - 1) {
+                            Global.currentScreen = EScreenName.SELECT_GAME_MODE;
+                        } else {
+                            Global.gameLevel = selectorIndex + 1;
+                            _board.getLevelManager().loadGlobalLevel();
+                            Global.currentScreen = EScreenName.GAME_PLAY_SCREEN;
+                        }
+                        _frame.loadInfo();
+                        onDestroy();
+                        break;
+                    case BACK:
+                        Global.currentScreen = EScreenName.SELECT_GAME_MODE;
                         _frame.loadInfo();
                         onDestroy();
                         break;
@@ -96,7 +106,7 @@ public class SelectLevelScreen extends GameScreen {
 
         GradientText gradientText = new GradientText(font, color1, color2, color3);
         gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 5,
-                130);
+                80);
     }
 
     private void drawOptions(Graphics g) {
@@ -120,7 +130,7 @@ public class SelectLevelScreen extends GameScreen {
             String mode = levels.get(i);
 
             int x = (w - fm.stringWidth(mode)) / 2;
-            int y = marginTop + (textHeight + spacing) * i - 20;
+            int y = marginTop + (textHeight + spacing) * i - 50;
 
             if (i == selectorIndex) {
                 g.setColor(Color.YELLOW);
@@ -145,9 +155,9 @@ public class SelectLevelScreen extends GameScreen {
         int boxHeight = textHeight * this.levels.size();
         int marginTop = (h - boxHeight) / 2;
 
-        int spacing = 9 * Game.SCALE; // Khoảng cách giống như trong drawOptions
+        int spacing = 9 * Game.SCALE;
         int x = (w - fm.stringWidth(level)) / 2 - 50; // Đặt vị trí mũi tên ở bên trái văn bản
-        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex - 28;
+        int y = marginTop + fm.getAscent() + (textHeight + spacing) * selectorIndex - 60;
 
         g.drawImage(pointerImage, x, y - fm.getAscent(), null);
     }
