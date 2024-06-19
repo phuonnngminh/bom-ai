@@ -48,13 +48,13 @@ public class LevelManager implements ILevelManager {
         int level = Global.gameLevel;
         EGameMode gameMode = Global.gameMode;
         if (level == 1 && gameMode == EGameMode.ONE_PLAYER) {
-            Global.enemies = 1;
+            Global.enemies = 2;
         } else if (level == 2 && gameMode == EGameMode.ONE_PLAYER) {
             Global.enemies = 5;
         } else if (level == 3 && gameMode == EGameMode.ONE_PLAYER) {
             Global.enemies = 9;
         } else if (level == 1 && gameMode == EGameMode.TWO_PLAYER) {
-            Global.enemies = 1;
+            Global.enemies = 2;
         } else if (level == 2 && gameMode == EGameMode.TWO_PLAYER) {
             Global.enemies = 5;
         } else if (level == 3 && gameMode == EGameMode.TWO_PLAYER) {
