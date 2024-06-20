@@ -10,6 +10,8 @@ import uet.oop.bomberman.utils.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,14 +101,29 @@ public class SelectLevelScreen extends GameScreen {
     }
 
     private void drawTitle(Graphics g, String title) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
         Color color1 = Color.RED;
         Color color2 = Color.ORANGE;
         Color color3 = Color.YELLOW;
 
+        // Calculate the position for the title
+        int x = (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 5;
+        int y = 120;
+
         GradientText gradientText = new GradientText(font, color1, color2, color3);
         gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 5,
-                80);
+                120);
+
+        // Create outline for the text
+        FontRenderContext frc = g2d.getFontRenderContext();
+        GlyphVector gv = font.createGlyphVector(frc, title);
+        Shape outline = gv.getOutline(x, y);
+
+        // Draw the outline
+        g2d.setColor(Color.BLACK);
+        g2d.draw(outline);
     }
 
     private void drawOptions(Graphics g) {
@@ -130,7 +147,7 @@ public class SelectLevelScreen extends GameScreen {
             String mode = levels.get(i);
 
             int x = (w - fm.stringWidth(mode)) / 2;
-            int y = marginTop + (textHeight + spacing) * i - 50;
+            int y = marginTop + (textHeight + spacing) * i - 55;
 
             if (i == selectorIndex) {
                 g.setColor(Color.YELLOW);

@@ -2,10 +2,6 @@ package uet.oop.bomberman.screen;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 
 public class GradientText {
@@ -27,19 +23,32 @@ public class GradientText {
         Shape outline = gv.getOutline(x, y);
 
         Rectangle bounds = outline.getBounds();
+        float thirdWidth = bounds.width / 2f;
+
         GradientPaint gradientPaint1 = new GradientPaint(
                 bounds.x, bounds.y, color1,
-                bounds.x + bounds.width / 2f, bounds.y, color2);
+                bounds.x + thirdWidth, bounds.y, color2);
         GradientPaint gradientPaint2 = new GradientPaint(
-                bounds.x + bounds.width / 2f, bounds.y, color2,
+                bounds.x + thirdWidth, bounds.y, color2,
+                bounds.x + 2 * thirdWidth, bounds.y, color3);
+        GradientPaint gradientPaint3 = new GradientPaint(
+                bounds.x + 2 * thirdWidth, bounds.y, color3,
                 bounds.x + bounds.width, bounds.y, color3);
 
-        // Draw first half of the text
+        Shape originalClip = g2d.getClip();
+
+        g2d.setClip(bounds.x, bounds.y, (int) thirdWidth, bounds.height);
         g2d.setPaint(gradientPaint1);
         g2d.fill(outline);
 
-        // Draw second half of the text
+        g2d.setClip(bounds.x + (int) thirdWidth, bounds.y, (int) thirdWidth, bounds.height);
         g2d.setPaint(gradientPaint2);
         g2d.fill(outline);
+
+        g2d.setClip(bounds.x + 2 * (int) thirdWidth, bounds.y, (int) thirdWidth, bounds.height);
+        g2d.setPaint(gradientPaint3);
+        g2d.fill(outline);
+
+        g2d.setClip(originalClip);
     }
 }
