@@ -137,5 +137,4 @@ public class CharacterManager implements ICharacterManager {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'getBombManager'");
 	}
-
 }

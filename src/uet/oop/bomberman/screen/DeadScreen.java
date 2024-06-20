@@ -1,4 +1,5 @@
 package uet.oop.bomberman.screen;
+
 import uet.oop.bomberman.Game;
 import uet.oop.bomberman.gui.GameScreen;
 import uet.oop.bomberman.input.Keyboard;
@@ -18,8 +19,9 @@ public class DeadScreen extends GameScreen {
     private BufferedImage homeIcon;
     private BufferedImage backgroundImage;
     private BufferedImage gameover;
+
     public DeadScreen(Game game) {
-        this.game = game;   
+        this.game = game;
         options.add("Restart");
         options.add("Back Home");
         try {
@@ -65,6 +67,7 @@ public class DeadScreen extends GameScreen {
             }
         });
     }
+
     private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
         BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resizedImage.createGraphics();
@@ -72,6 +75,7 @@ public class DeadScreen extends GameScreen {
         g2d.dispose();
         return resizedImage;
     }
+
     // Rest of the class remains unchanged
     private BufferedImage colorizeIcon(BufferedImage icon, Color color) {
         BufferedImage newIcon = new BufferedImage(icon.getWidth(), icon.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -90,7 +94,7 @@ public class DeadScreen extends GameScreen {
 
     @Override
     public void drawScreen(Graphics g) {
-        
+
         if (backgroundImage != null) {
             g.drawImage(backgroundImage, 0, 0, Global.screenWidth, Global.screenHeight, null);
         } else {
@@ -102,7 +106,8 @@ public class DeadScreen extends GameScreen {
         drawTIMES(g, game.getBoard().getGameInfoManager().getTime());
         drawOptions(g);
         drawSelector(g);
-        g.drawImage(gameover, Global.screenWidth/3 + 40, Global.screenHeight/2 + 80, 50*Game.SCALE, 50*Game.SCALE, null);
+        g.drawImage(gameover, Global.screenWidth / 3 + 40, Global.screenHeight / 2 + 80, 50 * Game.SCALE,
+                50 * Game.SCALE, null);
     }
 
     private void drawTitle(Graphics g) {
@@ -118,9 +123,9 @@ public class DeadScreen extends GameScreen {
 
         g.drawString(title, x, y);
     }
-    private void drawPOINTS(Graphics g,int points)
-    {
-       String Point = "POINTS: " + points;
+
+    private void drawPOINTS(Graphics g, int points) {
+        String Point = "POINTS: " + points;
         Font font = new Font("Arial", Font.BOLD, 6 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.BLACK);
@@ -134,9 +139,9 @@ public class DeadScreen extends GameScreen {
         g.drawString(Point, x, y);
 
     }
-    private void drawTIMES(Graphics g,int times)
-    {
-       String Point = "TIME : " + times;
+
+    private void drawTIMES(Graphics g, int times) {
+        String Point = "TIME : " + times / Game.TICKS_PER_SECOND;
         Font font = new Font("Arial", Font.BOLD, 6 * Game.SCALE);
         g.setFont(font);
         g.setColor(Color.BLACK);
@@ -150,44 +155,45 @@ public class DeadScreen extends GameScreen {
         g.drawString(Point, x, y);
 
     }
+
     private void drawOptions(Graphics g) {
         int w = Global.screenWidth;
         int h = Global.screenHeight;
         int iconHeight = restartIcon.getHeight();
-        int marginTop = (h - iconHeight + 50) / (2); 
-    
-        int spacing = 70; 
+        int marginTop = (h - iconHeight + 50) / (2);
+
+        int spacing = 70;
         int totalOptionsWidth = restartIcon.getWidth() + spacing + homeIcon.getWidth();
-    
+
         int startX = (w - totalOptionsWidth) / 2;
-    
+
         g.drawImage(restartIcon, startX, marginTop, null);
-    
+
         int homeIconX = startX + restartIcon.getWidth() + spacing;
         g.drawImage(homeIcon, homeIconX, marginTop, null);
     }
-    
+
     private void drawSelector(Graphics g) {
         int w = Global.screenWidth;
         int h = Global.screenHeight;
         int iconHeight = restartIcon.getHeight();
-        int marginTop = (h - iconHeight) / 2; 
-    
-        int spacing = 80; 
+        int marginTop = (h - iconHeight) / 2;
+
+        int spacing = 80;
         int totalOptionsWidth = restartIcon.getWidth() + spacing + homeIcon.getWidth();
-    
+
         int startX = (w - totalOptionsWidth) / 2;
-    
+
         int selectorX = selectorIndex == 0 ? startX - 20 : startX + restartIcon.getWidth() + spacing - 30;
-        int y = marginTop + (iconHeight / 2)  + 35;
-    
+        int y = marginTop + (iconHeight / 2) + 35;
+
         g.drawString(">", selectorX, y);
     }
-    
 
     @Override
     public void update() {
     }
+
     @Override
     public void onDestroy() {
     }

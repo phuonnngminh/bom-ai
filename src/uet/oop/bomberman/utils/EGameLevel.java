@@ -3,7 +3,8 @@ package uet.oop.bomberman.utils;
 public enum EGameLevel {
     EASY("EASY"),
     MEDIUM("MEDIUM"),
-    HARD("HARD");
+    HARD("HARD"),
+    BACK("BACK (B)");
 
     private final String level;
 
