@@ -8,10 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Supplier;
 
 import ai.djl.MalformedModelException;
 import ai.djl.Model;
@@ -24,22 +20,10 @@ import ai.djl.training.optimizer.Optimizer;
 import ai.djl.training.tracker.Tracker;
 import ai.djl.translate.NoopTranslator;
 import ai.djl.translate.TranslateException;
-import uet.oop.bomberman.agent.rl.dtypes.Memory;
 import uet.oop.bomberman.agent.rl.model.DistributionValueModel;
 import uet.oop.bomberman.agent.rl.utils.ActionSampler;
 
-public abstract class BaseGAE extends BaseAgent {
-    protected final Random random = new Random();
-    protected final Memory memory = new Memory(1024);
-    protected final Optimizer optimizer;
-
-    public NDManager manager = NDManager.newBaseManager();
-    protected Model model;
-    public Model getModel() {
-        return model;
-    }
-
-    protected Predictor<NDList, NDList> predictor;
+public abstract class BaseGAE extends BaseAgentImpl {
 
     private final float gae_lambda;
     private final float gamma;
@@ -47,86 +31,28 @@ public abstract class BaseGAE extends BaseAgent {
     protected final int dim_of_state_space;
     private final int hidden_size;
 
+    protected Model model;
+    protected Predictor<NDList, NDList> predictor;
+
     public BaseGAE(int dim_of_state_space, int num_of_action, int hidden_size, float gamma, float gae_lambda,
             float learning_rate) {
+        super(
+            Optimizer.adam()
+                .optLearningRateTracker(Tracker.fixed(learning_rate))
+                .build(),
+            dim_of_state_space,
+            num_of_action
+        );
         this.gae_lambda = gae_lambda;
         this.gamma = gamma;
         this.dim_of_state_space = dim_of_state_space;
         this.num_of_action = num_of_action;
         this.hidden_size = hidden_size;
-        this.optimizer = Optimizer.adam()
-            .optLearningRateTracker(Tracker.fixed(learning_rate))
-            .build();
         this.reset();
     }
 
-    protected Supplier<Boolean[]> getActionMask;
-    public void setActionMaskGetter(Supplier<Boolean[]> getActionMask) {
-        this.getActionMask = getActionMask;
-    }
-
     @Override
-    public int react(float[] state) {
-        try (NDManager submanager = manager.newSubManager()) {
-            if (!isEval()) {
-                memory.setState(state);
-            }
-            
-            final float EXPLORE_RATE = 0.05f;
-            int action;
-            if (random.nextFloat() < EXPLORE_RATE) {
-                Boolean[] actionMask = getActionMask.get();
-                List<Integer> validActions = new ArrayList<>();
-                for (int i = 0; i < num_of_action; i++) {
-                    if (actionMask[i]) {
-                        validActions.add(i);
-                    }
-                }
-                action = validActions.get(random.nextInt(validActions.size()));
-                // System.out.println("Random action: " + action);
-            } else {
-                NDArray prob = predictor.predict(new NDList(submanager.create(state))).get(0);
-                action = ActionSampler.sampleMultinomial(prob, random);
-                System.out.println(" action: " + action);
-            }
-
-            if (!isEval()) {
-                memory.setAction(action);
-            }
-
-            return action;
-
-        } catch (TranslateException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public void collect(float reward, boolean done) {
-        if (!isEval()) {
-            memory.setRewardAndMask(reward, done);
-            if (done) {
-                try (NDManager submanager = manager.newSubManager()) {
-                    updateModel(submanager);
-                } catch (TranslateException e) {
-                    throw new IllegalStateException(e);
-                }
-                memory.reset();
-            }
-        }
-    }
-
-    @Override
-    public void reset() {
-        if (manager != null) {
-            manager.close();
-        }
-        manager = NDManager.newBaseManager();
-        model = DistributionValueModel.newModel(manager, dim_of_state_space, hidden_size, num_of_action);
-        predictor = model.newPredictor(new NoopTranslator());
-    }
-
-    public void load() {
+    public void load(String path) {
         try {
             Path dir = Paths.get("models");
             File file = new File("models/PPO.params");
@@ -144,7 +70,8 @@ public abstract class BaseGAE extends BaseAgent {
         }
     }
 
-    public void save() {
+    @Override
+    public void save(String path) {
         try {
             File file = new File("models/PPO.params");
 
@@ -154,6 +81,27 @@ public abstract class BaseGAE extends BaseAgent {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int sampleAction(NDManager submanager, float[] state) {
+        try {
+            NDArray prob = predictor.predict(new NDList(submanager.create(state))).get(0);
+            int action = ActionSampler.sampleMultinomial(prob, random);
+            return action;
+        } catch (TranslateException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void reset() {
+        if (manager != null) {
+            manager.close();
+        }
+        manager = NDManager.newBaseManager();
+        model = DistributionValueModel.newModel(manager, dim_of_state_space, hidden_size, num_of_action);
+        predictor = model.newPredictor(new NoopTranslator());
     }
 
     protected NDList estimateAdvantage(NDArray values, NDArray rewards) {
@@ -168,7 +116,5 @@ public abstract class BaseGAE extends BaseAgent {
 
         return new NDList(expected_returns, advantages);
     }
-
-    protected abstract void updateModel(NDManager submanager) throws TranslateException;
 
 }

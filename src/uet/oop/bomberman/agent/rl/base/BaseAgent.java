@@ -10,6 +10,7 @@ public abstract class BaseAgent {
      * @return action
      */
     public abstract int react(float[] state);
+    public abstract int react(float[] state, int action);
 
     /**
      * Collect the result of the previous action

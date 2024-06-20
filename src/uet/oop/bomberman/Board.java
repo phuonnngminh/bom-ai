@@ -93,6 +93,10 @@ public class Board implements Copyable, IRender {
 						((RewardBasedAgent)agent).addReward(-10);
 					}
 				} catch (CharacterActionException ignored) {
+					// Penalize the agent for doing invalid actions
+					if (agent instanceof RewardBasedAgent) {
+						((RewardBasedAgent)agent).addReward(-10);
+					}
 				}
 			}
 		}
