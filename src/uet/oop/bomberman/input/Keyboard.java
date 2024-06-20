@@ -35,6 +35,8 @@ public class Keyboard implements KeyListener {
 	public boolean player1_up, player1_down, player1_left, player1_right, player1_bomb;
 	public boolean player2_up, player2_down, player2_left, player2_right, player2_bomb;
 
+	public boolean back;
+
 	public void update() {
 		up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
 		down = keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];
@@ -46,6 +48,7 @@ public class Keyboard implements KeyListener {
 
 		pause = keys[KeyEvent.VK_ESCAPE];
 		resume = keys[KeyEvent.VK_ENTER];
+		back = keys[KeyEvent.VK_B];
 
 		// Player 1
 		player1_up = keys[KeyEvent.VK_W];
@@ -89,6 +92,9 @@ public class Keyboard implements KeyListener {
 		}
 		if (keyCode == KeyEvent.VK_X) {
 			return EGameControl.X;
+		}
+		if (keyCode == KeyEvent.VK_B) {
+			return EGameControl.BACK;
 		}
 
 		return EGameControl.NONE;

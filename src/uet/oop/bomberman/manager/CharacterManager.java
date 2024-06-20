@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import uet.oop.bomberman.Game;
+import uet.oop.bomberman.base.IBombManager;
 import uet.oop.bomberman.base.ICharacterManager;
 import uet.oop.bomberman.base.IGameInfoManager;
 import uet.oop.bomberman.base.ILevelManager;
@@ -131,4 +132,9 @@ public class CharacterManager implements ICharacterManager {
 		return characters;
 	}
 
+	@Override
+	public IBombManager getBombManager() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getBombManager'");
+	}
 }

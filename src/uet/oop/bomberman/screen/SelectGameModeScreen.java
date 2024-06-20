@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 
 public class SelectGameModeScreen extends GameScreen {
     ArrayList<String> gameModes = new ArrayList<String>();
@@ -80,19 +82,34 @@ public class SelectGameModeScreen extends GameScreen {
     }
 
     private void drawTitle(Graphics g, String title) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Font font = new Font("Minecraft", Font.BOLD, 20 * Game.SCALE);
 
-        // Tạo màu gradient với 3 màu
+        // Create gradient colors
         Color color1 = Color.RED;
         Color color2 = Color.ORANGE;
         Color color3 = Color.YELLOW;
 
-        // Tạo đối tượng GradientText
+        // Create GradientText object
         GradientText gradientText = new GradientText(font, color1, color2, color3);
 
-        // Vẽ văn bản gradient bằng cách sử dụng GradientText
+        // Calculate the position for the title
+        int x = (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 15;
+        int y = 190;
+
+        // Draw the gradient text
         gradientText.draw((Graphics2D) g, title, (Global.screenWidth - g.getFontMetrics().stringWidth(title)) / 15,
                 190);
+
+        // Create outline for the text
+        FontRenderContext frc = g2d.getFontRenderContext();
+        GlyphVector gv = font.createGlyphVector(frc, title);
+        Shape outline = gv.getOutline(x, y);
+
+        // Draw the outline
+        g2d.setColor(Color.BLACK);
+        g2d.draw(outline);
     }
 
     private void drawOptions(Graphics g) {
