@@ -11,6 +11,7 @@ public class Global {
     public static int gameLevel = 1;
     public static EGameMode gameMode = EGameMode.ONE_PLAYER;
     public static int enemies = 0;
-
-    public static boolean isAIPlayer = true;
+    
+    public static boolean isAIPlayer = false;
+    public static boolean isRuleBasedPlayer = false;
 }

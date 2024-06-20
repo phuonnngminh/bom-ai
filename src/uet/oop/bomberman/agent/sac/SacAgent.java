@@ -1,45 +1,50 @@
-package uet.oop.bomberman.agent.ppo;
+package uet.oop.bomberman.agent.sac;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ai.djl.training.optimizer.Optimizer;
+import ai.djl.training.tracker.Tracker;
 import uet.oop.bomberman.Board;
 import uet.oop.bomberman.agent.base.Agent;
 import uet.oop.bomberman.agent.base.RewardBasedAgent;
 import uet.oop.bomberman.agent.base.SerializableAgent;
-import uet.oop.bomberman.agent.rl.PPO;
+import uet.oop.bomberman.agent.rl.ExpertGuidedAgent;
+import uet.oop.bomberman.agent.rl.SAC;
+import uet.oop.bomberman.agent.rl.base.BaseAgentImpl;
+import uet.oop.bomberman.agent.rulebased.RuleBasedBomberAgent;
 import uet.oop.bomberman.agent.state.base.IStateExtractor;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
 
-public class PPOAgent extends Agent implements SerializableAgent, RewardBasedAgent {
+public class SacAgent extends Agent implements SerializableAgent, RewardBasedAgent {
 
     private IStateExtractor stateExtractor;
     private Board board;
-    private PPO ppo;
+    private BaseAgentImpl agent;
     private List<Action> validActions;
 
     private float prevValue;
     private float bonusReward = 0;
 
-    public PPOAgent(Character character, Board board, IStateExtractor stateExtractor) {
+    private String dir = "models";
+
+    public SacAgent(Character character, Board board, IStateExtractor stateExtractor) {
         super(character);
         this.board = board;
         this.prevValue = stateExtractor.getValue(board);
         this.stateExtractor = stateExtractor;
         this.validActions = character.getValidActions();
-        this.ppo = new PPO(
-            stateExtractor.getDimension(),
-            validActions.size(),
-            64,
-            0.97f,
-            0.95f,
-            3e-4f,
-            8,
-            64,
-            0.05f
-        );
-        this.ppo.setActionMaskGetter(() -> {
+        final Optimizer optimizer = Optimizer.adam()
+            .optLearningRateTracker(Tracker.fixed(3e-4f))
+            .build();
+        this.agent = SAC.builder()
+            .setStateSize(stateExtractor.getDimension())
+            .setActionSize(validActions.size())
+            .setOptimizer(optimizer)
+            .optPolicyUpdateInterval(32)
+            .build();
+        this.agent.setActionMaskGetter(() -> {
             List<Action> performableActions = character.getPerformableActions();
             Boolean[] mask = new Boolean[validActions.size()];
             for (int i = 0; i < validActions.size(); i++) {
@@ -47,6 +52,19 @@ public class PPOAgent extends Agent implements SerializableAgent, RewardBasedAge
             }
             return mask;
         });
+        this.agent = ExpertGuidedAgent.builder()
+            .setOriginalAgent(this.agent)
+            .setExpertAgent(new RuleBasedBomberAgent(character, board))
+            .setValidActions(validActions)
+            .build();
+    }
+
+    public String getModelPath() {
+        return dir;
+    }
+
+    public void setModelPath(String dir) {
+        this.dir = dir;
     }
 
     @Override
@@ -62,38 +80,38 @@ public class PPOAgent extends Agent implements SerializableAgent, RewardBasedAge
     private void collectReward() {
         float currentValue = stateExtractor.getValue(board);
         try {
-            ppo.collect(currentValue - prevValue + bonusReward, false);
+            agent.collect(currentValue - prevValue + bonusReward, false);
             bonusReward = 0;
         } catch (IllegalStateException ignored) {}
     }
 
     private Action getAction() {
         float[] state = stateExtractor.getEmbedding(board);
-        int actionIndex = ppo.react(state);
+        int actionIndex = agent.react(state);
         Action action = validActions.get(actionIndex);
         return action;
     }
 
     @Override
     public void load(String path) {
-        ppo.load(path);
+        agent.load(path);
     }
 
     @Override
     public void save(String path) {
-        ppo.save(path);
+        agent.save(path);
     }
 
     @Override
     public void handleWinLevel() {
-        ppo.collect(100, true);
-        save(null);
+        agent.collect(100, true);
+        save(dir);
     }
 
     @Override
     public void handleLoseLevel() {
-        ppo.collect(-100, true);
-        save(null);
+        agent.collect(-100, true);
+        save(dir);
     }
 
     @Override

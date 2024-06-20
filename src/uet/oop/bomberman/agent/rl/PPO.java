@@ -34,7 +34,7 @@ public class PPO extends BaseGAE {
     }
 
     @Override
-    protected void updateModel(NDManager submanager) throws TranslateException {
+    public void updateModel(NDManager submanager) throws TranslateException {
         MemoryBatch batch = memory.getOrderedBatch(submanager);
         NDArray states = batch.getStates();
         NDArray actions = batch.getActions();

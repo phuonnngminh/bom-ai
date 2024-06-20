@@ -226,7 +226,7 @@ public class Game extends Canvas {
 		long lastTime = System.nanoTime();
 		final double ns = 1000000000.0 / 60.0; // nanosecond, 60 frames per second
 		double delta = 0;
-		requestFocus();
+		// requestFocus();
 		while (_running) {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;

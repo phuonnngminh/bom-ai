@@ -13,7 +13,9 @@ import uet.oop.bomberman.agent.KeyboardAgentPlayer2;
 import uet.oop.bomberman.agent.MovingAgent;
 import uet.oop.bomberman.agent.base.Agent;
 import uet.oop.bomberman.agent.ppo.NaivePPOAgent;
-import uet.oop.bomberman.agent.ppo.PPOAgent;
+import uet.oop.bomberman.agent.rulebased.RuleBasedBomberAgent;
+import uet.oop.bomberman.agent.sac.SacAgent;
+import uet.oop.bomberman.agent.state.NaivePlayerStateExtractor;
 import uet.oop.bomberman.entities.LayeredEntity;
 import uet.oop.bomberman.entities.character.Bomber;
 import uet.oop.bomberman.entities.character.Bomber2;
@@ -140,10 +142,17 @@ public class FileLevelLoader extends LevelLoader {
                         // if
                         if (Global.gameMode == EGameMode.TWO_PLAYER) {
                             agent = new KeyboardAgentPlayer1(bomber);
+                        } else if (Global.isRuleBasedPlayer) {
+                            agent = new RuleBasedBomberAgent(bomber, _board);
                         } else if (Global.isAIPlayer) {
-                            PPOAgent ppoAgent = new NaivePPOAgent(bomber, _board);
-                            ppoAgent.load();
-                            agent = ppoAgent;
+                            SacAgent bomberAgent = new SacAgent(
+                                bomber,
+                                _board,
+                                new NaivePlayerStateExtractor(bomber)
+                            );
+                            bomberAgent.setModelPath("models/sac");
+                            bomberAgent.load(bomberAgent.getModelPath());
+                            agent = bomberAgent;
                         } else {
                             agent = new KeyboardAgent(bomber);
                         }

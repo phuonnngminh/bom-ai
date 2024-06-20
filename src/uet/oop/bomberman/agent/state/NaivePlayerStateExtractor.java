@@ -12,13 +12,14 @@ import uet.oop.bomberman.entities.bomb.Flame;
 import uet.oop.bomberman.entities.bomb.FlameSegment;
 import uet.oop.bomberman.entities.character.Character;
 import uet.oop.bomberman.entities.character.action.Action;
+import uet.oop.bomberman.entities.tile.Portal;
 import uet.oop.bomberman.entities.tile.Tile;
 import uet.oop.bomberman.entities.tile.item.Item;
 
 public class NaivePlayerStateExtractor extends PlayerStateExtractor {
 
     private static final float EPSILON = 0.01f;
-    private static final int FIELD_OF_VISION = 5;
+    private static final int FIELD_OF_VISION = 15;
 
     public NaivePlayerStateExtractor(Character player) {
         super(player);
@@ -33,6 +34,7 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
             + FIELD_OF_VISION * FIELD_OF_VISION // isBomb
             + FIELD_OF_VISION * FIELD_OF_VISION // isFlame
             + FIELD_OF_VISION * FIELD_OF_VISION // isDestroyable
+            + FIELD_OF_VISION * FIELD_OF_VISION // isPortal
             + 1 // time
             + player.getValidActions().size() // action availability
         );
@@ -54,6 +56,7 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         addSurroundingTileMask(board, embedding, currentIndex, this::isBomb);
         addSurroundingTileMask(board, embedding, currentIndex, this::isFlame);
         addSurroundingTileMask(board, embedding, currentIndex, this::isDestroyable);
+        addSurroundingTileMask(board, embedding, currentIndex, this::isPortal);
 
         embedding[currentIndex.getAndIncrement()] = board.getGameInfoManager().getTime() * 1.0f / Game.TIME;
 
@@ -129,6 +132,16 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         return 0;
     }
 
+    private float isPortal(Board board, int x, int y) {
+        Tile tile = board.getEntityManager().getTileManager().getTileAt(x, y);
+        if (tile == null) return 0;
+        if (tile instanceof LayeredEntity) {
+            LayeredEntity layeredEntity = (LayeredEntity) tile;
+            return layeredEntity.getTopEntity() instanceof Portal ? 1 : 0;
+        }
+        return 0;
+    }
+
     @Override
     public float getValue(Board board) {
         float value = 0;
@@ -147,7 +160,7 @@ public class NaivePlayerStateExtractor extends PlayerStateExtractor {
         value -= enemyPoints;
 
         // Reward based on survival time
-        value -= board.getGameInfoManager().getTime() / Game.TICKS_PER_SECOND;
+        value -= 5 * board.getGameInfoManager().getTime() / Game.TICKS_PER_SECOND;
 
         // Penalize based on number of destroyable tiles left
         float destroyableTiles = 0;

@@ -143,7 +143,7 @@ public final class Memory {
         float[][] next_states = new float[batch_size][];
         int[] actions = new int[batch_size];
         float[] rewards = new float[batch_size];
-        boolean[] masks = new boolean[batch_size];
+        int[] masks = new int[batch_size];
 
         int index = head;
         for (int i = 0; i < batch_size; i++) {
@@ -156,7 +156,7 @@ public final class Memory {
             next_states[i] = next_state != null ? next_state : new float[states[i].length];
             actions[i] = transitions[index].getAction();
             rewards[i] = transitions[index].getReward();
-            masks[i] = transitions[index].isMasked();
+            masks[i] = transitions[index].isMasked() ? 1 : 0;
         }
 
         return new MemoryBatch(manager.create(states), manager.create(next_states), manager.create(actions),
